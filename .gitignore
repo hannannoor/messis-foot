@@ -1,0 +1,32 @@
+# Local match assets and derived per-frame outputs
+data/
+outputs/
+upload/
+reference/
+examples/
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.csv
+*.tsv
+*.xml
+*.txt
+*.json
+!config.example.json
+!requirements*.txt
+
+# Python and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.env
+.env.*
+.DS_Store
+Thumbs.db

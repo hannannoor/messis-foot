@@ -1,0 +1,10 @@
+{
+  "fps": 25.0,
+  "control_distance_m": 2.0,
+  "distance_margin_m": 0.75,
+  "confirmation_s": 0.24,
+  "short_bridge_s": 0.6,
+  "tagged_bridge_s": 2.0,
+  "interpolation_s": 0.4,
+  "max_ball_speed_m_s": 35.0
+}
