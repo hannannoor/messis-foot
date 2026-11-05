@@ -1,5 +1,17 @@
 # Verification record
 
+## Tactical experiment and automatic synchronization, 5 November 2026
+
+- Publication checkout verification: `C:\Python314\python.exe -m unittest discover -s tests` ran 183 tests, OK with 4 skips, using absolute `FOOTBALL_STANDALONE`, workspace TEMP/TMP and local OCR dependencies. The skips were opt-in full-index, training-only sklearn and two local-delivery integrations whose protected fixtures are absent. A fresh separate publication training/export run passed all 3 tests.
+- Original local-delivery suite: 183 tests, OK with 2 skips (opt-in full-index and training-only sklearn under Python 3.14). The two Windows delivery tests passed there. In a clean publication checkout those two additionally skip because protected output/report fixtures are intentionally absent. They now state that dependency explicitly.
+- Separate isolated development check:3 training/export tests passed using Python 3.12/NumPy 1.26.4/SciPy 1.13.1/sklearn 1.5.1. Six CLI tests passed in the football environment using isolated standalone child processes. Production inference imports neither NumPy nor sklearn.
+- The standalone bundles 20 modules with exact source parity and Python 3.9 syntax. All 21 external raw source checksums were reverified. Freeze/source checks confirm the selected artifact predates final test scoring and was not refitted. The local 199,319-row output passed official format validation, but was not scored against challenge labels.
+- RED->GREEN review regressions cover negative homography errors, dead-label injection in geometry evidence, and tag removal from an identical-input baseline. Delivery recovery was reproduced failing before staging/atomic replacement; recovery and unrelated-file preservation then passed. See [review disposition](docs/four-goal-final-review.md).
+- Automatic-sync fixtures check original decoder counts, fixed preprocessing parity, moving overlays, half ambiguity, output aliases and interrupted output publication. Actual camera processing produced no bounded clock correspondence; no replay/live or possession-accuracy claim follows.
+- The external benchmark improves the complete provider target. Provider coordinate freezing and active-only/team-share regressions limit scientific interpretation; see [FOUR_GOALS.md](FOUR_GOALS.md). Synthetic tests verify implementation behavior, not transferable possession quality.
+- This publication includes code, narrative aggregates and external manifest/model metadata only. No challenge videos, tracking, tags, homography rows, predictions or frame-level diagnostics are committed. Requirements for the tested external-training environment are pinned separately from standard-library production inference.
+- The publication executable was rebuilt with exact 20-module source parity and is byte-identical to the installed/tested local file: SHA256 `a09c7c373ea95e3719b24a973cf269057e69def96c7d9529deb5aa795eabbfc3`. The frozen model/source integrity check also passed in the publication checkout. These are local verification results; no GitHub-hosted CI result is claimed.
+
 ## Automatic clock discovery, 5 November 2026
 
 - Current suite: 124 tests ran, 123 passed and one opt-in full-index integration skipped. The skipped full-index integration was last exercised for the earlier restart release, not rerun for discovery.

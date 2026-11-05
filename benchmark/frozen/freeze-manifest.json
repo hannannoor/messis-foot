@@ -1,0 +1,30 @@
+{
+  "artifact_sha256": "be756fce3c52d21fda0b10d8a6026f78f9b7d599298d467d2d6ebc59efe9fd38",
+  "source_sha256": {
+    "tactical.py": "b0e4550ae80d6f6d7293781f1bb2401450397591f3239a1bdff7a961aa19f93f",
+    "external.py": "3dd225ed05ab11e6367a5c3cb637ffcf9784c7be57bc6523975ddd0ef2ce2d78",
+    "benchmark.py": "a90f2267bfc8b4a15e965b21895c3f77a7f4a435d6e1c34177b86a4ab2ed92c6",
+    "official_metrics.py": "3b10408fd91228c388fdbb1cd7b08a432bc59f88989c6eaf56c2153f92f11fe2",
+    "core.py": "fc9c0f864422992314b4f26c104319c5e082030f1956ffb5d5250fa801f2974f",
+    "selection.py": "e465e9e2f3b66548eb814bd02681814f2b73e6db5aebb8d189c61c02bc4a659e"
+  },
+  "split": {
+    "development": [
+      "J03WOH",
+      "J03WOY",
+      "J03WPY",
+      "J03WMX"
+    ],
+    "validation": [
+      "J03WQQ"
+    ],
+    "test": [
+      "J03WR9",
+      "J03WN1"
+    ]
+  },
+  "frozen_before_test_scores": true,
+  "frozen_at_utc": "2026-11-05T08:45:13.212258+00:00",
+  "selection_rule": "Pass natural and 30% masked validation safeguards; maximize natural spellF1, then macroF1, then coverage.",
+  "validation_safeguards": "spellF1 increases; macroF1 no worse; X decreases; >=250 new frames in >=20 intervals; >=90% newly resolved correctness"
+}

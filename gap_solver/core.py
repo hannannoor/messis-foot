@@ -218,7 +218,7 @@ def summary(frames, decisions):
     n = len(active)
     counts = Counter(d.label for _, d in active)
     missing = sum(not f.ball_observed for f, _ in active)
-    inferred = sum(d.evidence_level in ('inferred_heuristic', 'fused_heuristic') for _, d in active)
+    inferred = sum(d.evidence_level in ('inferred_heuristic', 'fused_heuristic','external_model') for _, d in active)
     return {'total_frames': len(frames), 'active_frames': n,
             'missing_ball_frames': missing, 'missing_ball_fraction': missing / n if n else 0,
             'published_dead_frames': sum(f.dead_source == 'published_pre_kickoff' and f.dead_evidence
