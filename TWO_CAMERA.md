@@ -4,9 +4,24 @@
 
 The newer organiser clarification in RULES.md supersedes this historical experiment guide. Do not check predictions against provided video, manually create game data, upload provided data to AI services, or train/fit/calibrate/tune on the provided ground truth or video. All parameter tuning requires external data. Automatic checks and inference on provided inputs remain allowed.
 
-The manual crop/clock-anchor and selected-clip instructions below record an earlier experiment, not an approved final-entry workflow. The executable still includes manual setup and the earlier organiser-answer D interval. Automatic replacement setup is not implemented; eligibility of the D exception needs clarification before final use. The controlled report includes a restart-only stage without that exception.
+The manual crop/clock-anchor and selected-clip instructions below record an earlier experiment, not an approved final-entry workflow. The executable still includes manual setup and the earlier organiser-answer D interval. Automatic clock-region discovery is now implemented as the first replacement stage; dense alignment and half assignment are still pending. Eligibility of the D exception needs clarification before final use. The controlled report includes a restart-only stage without that exception.
 
 The new aggregate report is recorded in PROGRESS.md: restart-only resolved coverage was 30.808%, the earlier D context raised it to 32.251%, and fusion reached 32.259%. Fusion changed 13 raw labels and zero scorer-expanded labels. Of 284 compared missing-tactical-ball frames, none had an observed broadcast ball. No accuracy claim or match-based parameter adjustment follows from these counts.
+
+## Automatic clock discovery
+
+The clarification does not require training. It requires external data if training or tuning is performed. The new command uses the installed pretrained Tesseract engine without training it:
+
+```powershell
+python football_pipeline.py camera discover-clock --video "C:\football-data\tactical cam\BAR-ATH_tactical.mp4" --out "outputs/tactical-discovery.json"
+python football_pipeline.py camera discover-clock --video "C:\football-data\broadcast cam\BAR-ATH_broadcast.mp4" --out "outputs/broadcast-discovery.json"
+```
+
+It scans the whole recording every 30 seconds by default, without a selected ROI, half or playback-time anchor. Full images are streamed through memory into local OCR and discarded; only the JSON report remains and is overwritten on the next run. At least three spatially consistent progressing readings support a candidate segment. Competing clocks remain competing candidates. Freezes, resets, moved overlays and long unreadable gaps split support.
+
+The report includes sampled original frame indices, clock text/scores/boxes, candidate segments and explicit `ready_for_fusion: false` / `live_verified: false` fields. Sparse observations do not form a dense clock map, determine halves or prove the pictures are live. A replay with a live clock may pass discovery. Do not pass this JSON to fusion. Keep per-frame/region details local; aggregate console counts describe execution only. Do not tune scan settings from challenge-video or match-coverage feedback.
+
+This feature was tested on generated clocks/video only. It makes no real-match OCR, alignment, replay-rejection or accuracy claim.
 
 ## Controlled restart comparison, 2 November 2026
 

@@ -153,6 +153,10 @@ def probe_video(video, ffprobe='ffprobe'):
     if not result.get('streams'):
         raise ValueError('No video stream')
     stream = result['streams'][0]
+    dimensions = [str(stream.get(field, '')) for field in ('width', 'height')]
+    if (not all(value.isdigit() and int(value) > 0 for value in dimensions)
+            or int(dimensions[0])*int(dimensions[1]) > 40000000):
+        raise ValueError('Invalid or unsupported video dimensions')
     fps = float(Fraction(stream['avg_frame_rate']))
     if abs(fps - 25) > 1e-6 or abs(float(Fraction(stream['r_frame_rate'])) - fps) > 1e-6:
         raise ValueError('Prototype requires the reference 25 fps export; do not resample to force alignment.')

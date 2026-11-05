@@ -1,6 +1,6 @@
 # Progress record
 
-Updated on 5 November 2026. Current inference implementation: `2026.11.02-restart-audit`. [RULES.md](RULES.md) controls current work; earlier manual setup and video-informed OCR trials below are historical experiments.
+Updated on 5 November 2026. Current source: `2026.11.05-clock-discovery`; possession inference remains `2026.11.02-restart-audit`. [RULES.md](RULES.md) controls current work; earlier manual setup and video-informed OCR trials below are historical experiments.
 
 ## 1. Tactical missing-observation prototype
 
@@ -87,4 +87,12 @@ Aggregate checks passed for graded label/reason totals, complete fusion-status t
 
 ## 8. Current boundaries and pending work
 
-The newer organiser clarification controls all subsequent work; see [RULES.md](RULES.md). No inference weights, distances, timing gates, bridge durations or OCR cutoffs were adjusted from this report. The executable still needs a route without match-specific manual clock setup before it can be treated as a final-entry candidate. Automatic clock localization/alignment, temporal replay checks, longer-gap inference and general stoppage detection require licensed external development/validation data. Do not relax gates or select models to increase this match's assignment count.
+The newer organiser clarification controls all subsequent work; see [RULES.md](RULES.md). No inference weights, distances, timing gates, bridge durations or existing OCR cutoffs were adjusted from this report. New training is optional; any training/tuning must use external data. The executable needs a complete route without match-specific manual clock setup before it can be treated as a final-entry candidate. Validate automatic setup, temporal replay checks, longer-gap inference and general stoppage detection externally. Do not relax gates or select models to increase this match's assignment count.
+
+## 9. Automatic clock discovery
+
+Added `camera discover-clock` as the first replacement for manual camera setup. It samples the entire recording, locates full-frame clock text through local pretrained Tesseract and groups spatially stable progressing observations. It requires no human ROI, half or playback anchor. Decoded grayscale images stream through memory; no collection of frame files is created. Two camera runs overwrite their respective small JSON reports.
+
+Synthetic tests exercise clock detection away from old presets, a blank opening, exclusion of score text, split tokens, invalid boxes/confidence, freezes/resets, short versus long missing stretches, moved overlays, multiple clocks, original-index preservation and corrupt decoder output. This is implementation verification only. No challenge assets or possession ground truth were processed, and no parameters were selected from the controlled match report.
+
+The output explicitly remains candidate discovery: no dense timing map, half assignment, replay/live verification or new possession decisions. These later stages remain pending. The discovery feature does not resolve the earlier fixed-D exception's eligibility.

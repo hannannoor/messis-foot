@@ -291,6 +291,15 @@ def main():
     sub = parser.add_subparsers(dest='command', required=True)
     demo = sub.add_parser('demo')
     demo.add_argument('--out', default='outputs/two-camera-demo')
+    discovery = sub.add_parser('discover-clock', help='scan the whole video for clock regions automatically; discovery only')
+    discovery.add_argument('--video', required=True)
+    discovery.add_argument('--stride-seconds', type=float, default=30.0,
+                           help='whole-recording sample interval, at least 1 second; choose/tune externally')
+    discovery.add_argument('--min-confidence', type=float, default=.7)
+    discovery.add_argument('--ffmpeg', default='ffmpeg')
+    discovery.add_argument('--ffprobe', default='ffprobe')
+    discovery.add_argument('--tesseract', default='tesseract')
+    discovery.add_argument('--out', required=True, help='one overwritten local discovery JSON; not an alignment CSV')
     check = sub.add_parser('ocr-check', help='test one local clock image without rescanning video')
     check.add_argument('--image', required=True)
     check.add_argument('--source', choices=('tactical', 'broadcast'), required=True)
@@ -331,6 +340,22 @@ def main():
     try:
         if args.command == 'demo':
             _demo(args.out)
+        elif args.command == 'discover-clock':
+            from .clock_discovery import scan_video
+            video, output = Path(args.video), Path(args.out)
+            if (video.resolve() == output.resolve()
+                    or video.exists() and output.exists() and video.samefile(output)):
+                raise ValueError('Discovery output must not overwrite the source video or an alias of it')
+            report = scan_video(args.video, args.stride_seconds, args.min_confidence,
+                                args.ffmpeg, args.ffprobe, args.tesseract)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
+            print('Clock discovery samples: {}'.format(report['sample_count']))
+            print('Samples with clock candidates: {}'.format(report['samples_with_clock_candidate']))
+            print('Samples with multiple candidates: {}'.format(report['samples_with_multiple_candidates']))
+            print('Candidate progressing-clock segments: {}'.format(report['candidate_segment_count']))
+            print('Discovery only: dense alignment and live/replay verification are not included.')
+            print('Output: '+str(output.resolve()))
         elif args.command == 'ocr-check':
             from .clock_ocr import check_clock_image
             raw, processed = check_clock_image(args.image, args.source, args.ffmpeg, args.tesseract)

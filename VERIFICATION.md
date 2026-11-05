@@ -1,5 +1,15 @@
 # Verification record
 
+## Automatic clock discovery, 5 November 2026
+
+- Current suite: 124 tests ran, 123 passed and one opt-in full-index integration skipped. The skipped full-index integration was last exercised for the earlier restart release, not rerun for discovery.
+- New discovery coverage: 27 tests, including actual local FFmpeg/ffprobe/Tesseract on a generated clock video with a blank prefix and a clock away from the historical crop. Original sample indices, progressing readings, score exclusion and absence of extracted frame files were verified. A blank video returned zero candidates successfully.
+- Parser/temporal regressions cover split tokens, split stoppage-time prefixes and suffixes, weak prefixes, malformed boxes/confidence, freezes, resets, competing clocks, excessive gaps and cumulative box drift.
+- One independent whole-change review reproduced source-file overwrite, tolerant decoder frame skipping, cumulative box drift, stoppage-token duplication and invalid probe dimensions. Regression tests were observed failing before fixes. Source/alias output paths are now rejected before scanning. Decoder errors are fatal and all decoded frames are counted before sampling; a damaged generated packet and a full-count mismatch with identical sparse count both fail. Diagnostic logging stays bounded.
+- Standalone version `2026.11.05-clock-discovery` contains the same 11 modular sources. Python 3.9 syntax, isolated help/version/guide and generated-video discovery execution are checked. A native Windows run remains unverified.
+- Existing possession/fusion thresholds were not tuned. Discovery exports neither dense alignment nor half identity nor possession labels. No challenge assets or ground truth were used in these checks. Match OCR accuracy, replay discrimination and match runtime remain unmeasured.
+- Tool interfaces follow official Tesseract documentation: https://tesseract-ocr.github.io/tessdoc/Command-Line-Usage.html and https://github.com/tesseract-ocr/tesseract/blob/main/doc/tesseract.1.asc . Sparse OCR reads stdin and returns TSV; no training is invoked.
+
 ## Restart controlled comparison, 2 November 2026
 
 - Routine suite: 96 tests passed; one full-index integration skipped by default. That integration passed separately with `FOOTBALL_SLOW_TESTS=1 python3 -m unittest discover -s tests -p test_controlled_cli.py`.

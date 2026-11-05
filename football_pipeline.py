@@ -19,7 +19,7 @@ import importlib.util
 import importlib
 import sys
 
-VERSION = '2026.11.02-restart-audit'
+VERSION = '2026.11.05-clock-discovery'
 
 # Inspectable source modules, bundled verbatim and loaded only in memory.
 SOURCES = {
@@ -237,6 +237,323 @@ def build_baseline_audit(raw_frames, corrected_frames, fused_decisions, cfg=Conf
     }
     return report, stages
 ''',
+    'gap_solver.clock_discovery': r'''"""Automatic local clock-region discovery; not dense alignment or replay verification."""
+import csv
+import io
+import re
+import subprocess
+import threading
+from collections import defaultdict, deque
+from math import ceil, isfinite
+from pathlib import Path
+
+from .clock_ocr import probe_video
+from .clock_sync import parse_clock
+
+
+def _valid_roi(roi):
+    return (len(roi) == 4 and all(isfinite(v) for v in roi)
+            and min(roi[0], roi[1]) >= 0 and min(roi[2], roi[3]) > 0
+            and roi[0] + roi[2] <= 1.000000001 and roi[1] + roi[3] <= 1.000000001)
+
+
+def _iou(a, b):
+    intersection = (max(0, min(a[0]+a[2], b[0]+b[2])-max(a[0], b[0]))
+                    * max(0, min(a[1]+a[3], b[1]+b[3])-max(a[1], b[1])))
+    return intersection / (a[2]*a[3]+b[2]*b[3]-intersection)
+
+
+def clock_candidates(tsv, width, height, min_confidence=.7):
+    """Find clock words or adjacent split tokens anywhere in a full-frame TSV."""
+    if (not isfinite(width) or not isfinite(height) or min(width, height) <= 0
+            or not isfinite(min_confidence) or not 0 <= min_confidence <= 1):
+        raise ValueError('invalid image dimensions or OCR confidence cutoff')
+    reader = csv.DictReader(io.StringIO(tsv.lstrip('\ufeff')), delimiter='\t')
+    required = {'level', 'page_num', 'block_num', 'par_num', 'line_num',
+                'left', 'top', 'width', 'height', 'conf', 'text'}
+    if not required.issubset(reader.fieldnames or []):
+        raise ValueError('Tesseract did not return full-frame TSV box columns')
+    lines = defaultdict(list)
+    for row in reader:
+        if row.get('level') != '5' or not (row.get('text') or '').strip():
+            continue
+        try:
+            x, y, w, h = (int(row[k]) for k in ('left', 'top', 'width', 'height'))
+            confidence = float(row['conf']) / 100
+        except (ValueError, TypeError):
+            continue
+        if (not isfinite(confidence) or not 0 <= confidence <= 1
+                or min(x, y) < 0 or min(w, h) <= 0 or x+w > width or y+h > height):
+            continue
+        line = tuple(row[k] for k in ('page_num', 'block_num', 'par_num', 'line_num'))
+        lines[line].append((x, y, w, h, row['text'].strip(), confidence))
+    result, seen = [], set()
+    for line, words in lines.items():
+        words.sort(key=lambda w: w[0])
+        for start in range(len(words)):
+            for count in range(1, min(3, len(words)-start)+1):
+                span = words[start:start+count]
+                if any(b[0]-(a[0]+a[2]) > max(a[3], b[3])
+                       or min(a[1]+a[3], b[1]+b[3])-max(a[1], b[1]) < .5*min(a[3], b[3])
+                       for a, b in zip(span, span[1:])):
+                    break
+                text = ''.join(w[4] for w in span)
+                seconds = parse_clock(text)
+                confidence = min(w[5] for w in span)
+                if seconds is None:
+                    continue
+                # A complete clock must not absorb an adjacent unrelated number.
+                # Explicit stoppage notation is different: 45+ and 01:30 together
+                # are one clock, and the suffix is not independent evidence.
+                if (count > 1 and any(parse_clock(w[4]) is not None for w in span)
+                        and not text.startswith(('45+', '90+'))):
+                    continue
+                x, y = min(w[0] for w in span), min(w[1] for w in span)
+                right, bottom = max(w[0]+w[2] for w in span), max(w[1]+w[3] for w in span)
+                key = (seconds, x, y, right, bottom)
+                if key not in seen:
+                    seen.add(key)
+                    result.append(({'text': text, 'seconds': seconds, 'confidence': confidence,
+                                    'roi': [x/width, y/height, (right-x)/width, (bottom-y)/height]},
+                                   frozenset((line, i) for i in range(start, start+count))))
+    # Suppress constituent readings before the confidence cutoff. A weak
+    # recognised stoppage prefix must not turn its strong suffix into a clock.
+    clocks = [c for c, tokens in result if c['confidence'] >= min_confidence
+              and not any(tokens < other for _, other in result)]
+    return sorted(clocks, key=lambda c: (c['roi'][1], c['roi'][0], c['seconds']))
+
+
+def clock_segments(samples, fps, stride):
+    """Associate unique stable boxes with progressing clocks; export observations only."""
+    if not isfinite(fps) or fps <= 0 or not isinstance(stride, int) or stride < 1:
+        raise ValueError('invalid clock discovery rate or stride')
+    active, finished, previous_frame = [], [], -1
+    for sample in samples:
+        frame, candidates = sample['frame'], sample['candidates']
+        if not isinstance(frame, int) or frame < 0 or frame <= previous_frame:
+            raise ValueError('discovery samples need ordered original frame IDs')
+        previous_frame = frame
+        for c in candidates:
+            if (not _valid_roi(c['roi']) or parse_clock(c['text']) != c['seconds']
+                    or not isfinite(c['confidence']) or not 0 <= c['confidence'] <= 1):
+                raise ValueError('invalid clock detection')
+        expired = [t for t in active if frame-t[-1]['frame'] > 2*stride]
+        finished.extend(expired)
+        active = [t for t in active if frame-t[-1]['frame'] <= 2*stride]
+        # Contradictory overlapping detections are ambiguity, not confidence votes.
+        ambiguous = {i for i, c in enumerate(candidates)
+                     if any(i != j and _iou(c['roi'], b['roi']) >= .5
+                            for j, b in enumerate(candidates))}
+        blocked = [t for t in active
+                   if any(_iou(t[-1]['roi'], candidates[i]['roi']) >= .5 for i in ambiguous)]
+        finished.extend(blocked)
+        active = [t for t in active if t not in blocked]
+        candidates = [c for i, c in enumerate(candidates) if i not in ambiguous]
+        edges = [[j for j, c in enumerate(candidates) if _iou(t[-1]['roi'], c['roi']) >= .5]
+                 for t in active]
+        incoming = [[i for i, neighbors in enumerate(edges) if j in neighbors]
+                    for j in range(len(candidates))]
+        next_active = []
+        for track, neighbors in zip(active, edges):
+            if not neighbors:
+                next_active.append(track)
+                continue
+            if len(neighbors) != 1 or len(incoming[neighbors[0]]) != 1:
+                finished.append(track)
+                continue
+            c = candidates[neighbors[0]]
+            reading = dict(c, frame=frame)
+            elapsed = (frame-track[-1]['frame']) / fps
+            delta = c['seconds']-track[-1]['seconds']
+            if (delta > 0 and abs(delta-elapsed) <= 1.000000001
+                    and _iou(track[0]['roi'], c['roi']) >= .5):
+                track.append(reading)
+                next_active.append(track)
+            else:
+                finished.append(track)
+                next_active.append([reading])
+        next_active.extend([[dict(c, frame=frame)] for j, c in enumerate(candidates) if not incoming[j]])
+        active = next_active
+    finished.extend(active)
+    result = []
+    for track in finished:
+        if len(track) < 3:
+            continue
+        x, y = min(r['roi'][0] for r in track), min(r['roi'][1] for r in track)
+        right = max(r['roi'][0]+r['roi'][2] for r in track)
+        bottom = max(r['roi'][1]+r['roi'][3] for r in track)
+        result.append({'start_frame': track[0]['frame'], 'end_frame_exclusive': track[-1]['frame']+1,
+                       'roi': [x, y, right-x, bottom-y], 'readings': track,
+                       'live_verified': False})
+    return sorted(result, key=lambda s: (s['start_frame'], s['roi'][1], s['roi'][0]))
+
+
+def read_pgm(stream):
+    """Read exactly one 8-bit grayscale image, retaining all binary pixel values."""
+    magic = stream.readline(4097)
+    if magic == b'':
+        return None
+    if magic.strip() != b'P5':
+        raise ValueError('Invalid PGM sample from video decoder')
+    header_size, tokens = len(magic), []
+    while len(tokens) < 3:
+        line = stream.readline(4097)
+        header_size += len(line)
+        if not line or header_size > 4096 or not line.endswith(b'\n'):
+            raise ValueError('Truncated or oversized PGM header')
+        tokens.extend(line.split(b'#', 1)[0].split())
+    try:
+        width, height, maximum = map(int, tokens)
+    except (ValueError, TypeError) as exc:
+        raise ValueError('Invalid PGM dimensions') from exc
+    if min(width, height) <= 0 or width*height > 40000000 or maximum != 255:
+        raise ValueError('Unsupported PGM dimensions or pixel depth')
+    remaining, chunks = width*height, []
+    while remaining:
+        chunk = stream.read(remaining)
+        if not chunk:
+            raise ValueError('Truncated PGM pixels; refusing to shift sample indices')
+        chunks.append(chunk)
+        remaining -= len(chunk)
+    header = 'P5\n{} {}\n255\n'.format(width, height).encode('ascii')
+    return header+b''.join(chunks), width, height
+
+
+def iter_video_samples(video, n_frames, stride, ffmpeg='ffmpeg'):
+    """One decoder, bounded image memory, no frame files and original decoded indices."""
+    if (not isinstance(n_frames, int) or n_frames < 1
+            or not isinstance(stride, int) or stride < 1):
+        raise ValueError('invalid video frame count or discovery stride')
+    expected = (n_frames+stride-1)//stride
+    command = [ffmpeg, '-nostdin', '-hide_banner', '-nostats', '-loglevel', 'info',
+               '-xerror', '-err_detect', 'explode', '-i', str(video),
+               '-map', '0:v:0', '-an', '-sn', '-dn', '-vf',
+               "showinfo=checksum=0,select='not(mod(n,{}))',format=gray".format(stride),
+               '-fps_mode', 'vfr', '-frames:v', str(expected+1), '-c:v', 'pgm',
+               '-f', 'image2pipe', 'pipe:1']
+    try:
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except FileNotFoundError as exc:
+        raise ValueError('Executable not found: {}. Install it locally or pass its path.'.format(ffmpeg)) from exc
+    timed_out, recent = threading.Event(), deque(maxlen=10)
+    decoded = {'frames': 0, 'ordered': True, 'log_error': False}
+
+    def drain_log():
+        # Count before selection so dropped/extra decoded frames cannot hide
+        # inside the same sparse sample count. No growing log file is retained.
+        try:
+            for line in iter(lambda: process.stderr.readline(8192), b''):
+                match = re.search(rb'\bn:\s*(\d+)\s+pts:', line)
+                if match:
+                    number = int(match.group(1))
+                    decoded['ordered'] &= number == decoded['frames']
+                    decoded['frames'] += 1
+                elif b'showinfo' not in line:
+                    recent.append(line[-400:].decode('utf-8', errors='replace').strip())
+        except (OSError, ValueError):
+            decoded['log_error'] = True
+
+    log_reader = threading.Thread(target=drain_log, daemon=True)
+    log_reader.start()
+
+    def stop_decoder():
+        timed_out.set()
+        try:
+            process.kill()
+        except OSError:
+            pass
+
+    def next_image():
+        watchdog = threading.Timer(120, stop_decoder)
+        watchdog.daemon = True
+        watchdog.start()
+        try:
+            result = read_pgm(process.stdout)
+            if timed_out.is_set():
+                raise ValueError('Video decoder timed out while reading a clock sample')
+            return result
+        finally:
+            watchdog.cancel()
+
+    try:
+        for index in range(expected):
+            image = next_image()
+            if image is None:
+                raise ValueError('Decoded sample count differs from original indices: '+'\n'.join(recent)[-2000:])
+            yield (index*stride, *image)
+        if next_image() is not None:
+            raise ValueError('Decoded sample count exceeds the reported video frame count')
+        try:
+            status = process.wait(timeout=30)
+        except subprocess.TimeoutExpired as exc:
+            raise ValueError('Video decoder did not finish after its final clock sample') from exc
+        log_reader.join(timeout=5)
+        if status:
+            raise ValueError('Video decoder failed: '+'\n'.join(recent)[-2000:])
+        if (log_reader.is_alive() or decoded['log_error'] or not decoded['ordered']
+                or decoded['frames'] != n_frames):
+            raise ValueError('Decoded full frame count differs from reported original frame count')
+    finally:
+        if process.poll() is None:
+            process.kill()
+        process.wait()
+        process.stdout.close()
+        log_reader.join(timeout=5)
+        process.stderr.close()
+
+
+def _sparse_ocr(image, tesseract):
+    command = [tesseract, 'stdin', 'stdout', '-l', 'eng', '--oem', '1', '--psm', '11',
+               '-c', 'tessedit_create_tsv=1']
+    try:
+        result = subprocess.run(command, input=image, capture_output=True, timeout=60)
+    except FileNotFoundError as exc:
+        raise ValueError('Executable not found: {}. Install it locally or pass its path.'.format(tesseract)) from exc
+    except subprocess.TimeoutExpired as exc:
+        raise ValueError('Tesseract timed out reading a full-frame clock sample') from exc
+    if result.returncode:
+        raise ValueError('Tesseract failed: '+result.stderr.decode('utf-8', errors='replace')[-2000:])
+    return result.stdout.decode('utf-8-sig', errors='replace')
+
+
+def scan_video(video, stride_seconds=30.0, min_confidence=.7,
+               ffmpeg='ffmpeg', ffprobe='ffprobe', tesseract='tesseract'):
+    """Scan a whole recording automatically; do not infer halves, dense time or live play."""
+    if not isfinite(stride_seconds) or stride_seconds < 1:
+        raise ValueError('discovery stride must be finite and at least one second')
+    if not isfinite(min_confidence) or not 0 <= min_confidence <= 1:
+        raise ValueError('OCR confidence cutoff must be between 0 and 1')
+    try:
+        n_frames, fps = probe_video(video, ffprobe)
+    except subprocess.TimeoutExpired as exc:
+        raise ValueError('Video metadata probe timed out') from exc
+    if n_frames < 1:
+        raise ValueError('Video must contain at least one frame')
+    stride = max(1, round(stride_seconds*fps))
+    samples, stream = [], iter_video_samples(video, n_frames, stride, ffmpeg)
+    try:
+        for frame, image, width, height in stream:
+            candidates = clock_candidates(_sparse_ocr(image, tesseract), width, height, min_confidence)
+            samples.append({'frame': frame, 'candidates': candidates})
+            if len(samples) == 1 or len(samples) % 10 == 0:
+                print('Scanned {} / {} full-frame clock samples'.format(len(samples), ceil(n_frames/stride)), flush=True)
+    finally:
+        stream.close()
+    segments = clock_segments(samples, fps, stride)
+    return {'schema_version': 1, 'method': 'automatic_sparse_full_frame_tesseract',
+            'frame_count': n_frames, 'fps': fps, 'sample_stride_frames': stride,
+            'settings': {'stride_seconds': stride_seconds, 'min_confidence': min_confidence,
+                         'minimum_segment_readings': 3, 'minimum_box_iou': .5,
+                         'progression_tolerance_seconds': 1.0, 'maximum_missed_samples': 1},
+            'parameter_provenance': 'Engineering defaults or caller values; not calibrated correctness probabilities. Tune only on permitted external data.',
+            'sample_count': len(samples),
+            'samples_with_clock_candidate': sum(bool(s['candidates']) for s in samples),
+            'samples_with_multiple_candidates': sum(len(s['candidates']) > 1 for s in samples),
+            'candidate_segment_count': len(segments), 'samples': samples, 'segments': segments,
+            'ready_for_fusion': False, 'live_verified': False, 'accuracy_measured': False,
+            'half_assignment_included': False, 'dense_clock_included': False,
+            'warning': 'Candidate discovery only. No dense alignment, half assignment, possession evidence or replay verification. A replay may carry a progressing live clock.'}
+''',
     'gap_solver.clock_ocr': r'''"""Optional FFmpeg + Tesseract OCR, entirely local. No model/API uploads."""
 import csv
 import io
@@ -392,6 +709,10 @@ def probe_video(video, ffprobe='ffprobe'):
     if not result.get('streams'):
         raise ValueError('No video stream')
     stream = result['streams'][0]
+    dimensions = [str(stream.get(field, '')) for field in ('width', 'height')]
+    if (not all(value.isdigit() and int(value) > 0 for value in dimensions)
+            or int(dimensions[0])*int(dimensions[1]) > 40000000):
+        raise ValueError('Invalid or unsupported video dimensions')
     fps = float(Fraction(stream['avg_frame_rate']))
     if abs(fps - 25) > 1e-6 or abs(float(Fraction(stream['r_frame_rate'])) - fps) > 1e-6:
         raise ValueError('Prototype requires the reference 25 fps export; do not resample to force alignment.')
@@ -1454,6 +1775,15 @@ def main():
     sub = parser.add_subparsers(dest='command', required=True)
     demo = sub.add_parser('demo')
     demo.add_argument('--out', default='outputs/two-camera-demo')
+    discovery = sub.add_parser('discover-clock', help='scan the whole video for clock regions automatically; discovery only')
+    discovery.add_argument('--video', required=True)
+    discovery.add_argument('--stride-seconds', type=float, default=30.0,
+                           help='whole-recording sample interval, at least 1 second; choose/tune externally')
+    discovery.add_argument('--min-confidence', type=float, default=.7)
+    discovery.add_argument('--ffmpeg', default='ffmpeg')
+    discovery.add_argument('--ffprobe', default='ffprobe')
+    discovery.add_argument('--tesseract', default='tesseract')
+    discovery.add_argument('--out', required=True, help='one overwritten local discovery JSON; not an alignment CSV')
     check = sub.add_parser('ocr-check', help='test one local clock image without rescanning video')
     check.add_argument('--image', required=True)
     check.add_argument('--source', choices=('tactical', 'broadcast'), required=True)
@@ -1494,6 +1824,22 @@ def main():
     try:
         if args.command == 'demo':
             _demo(args.out)
+        elif args.command == 'discover-clock':
+            from .clock_discovery import scan_video
+            video, output = Path(args.video), Path(args.out)
+            if (video.resolve() == output.resolve()
+                    or video.exists() and output.exists() and video.samefile(output)):
+                raise ValueError('Discovery output must not overwrite the source video or an alias of it')
+            report = scan_video(args.video, args.stride_seconds, args.min_confidence,
+                                args.ffmpeg, args.ffprobe, args.tesseract)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
+            print('Clock discovery samples: {}'.format(report['sample_count']))
+            print('Samples with clock candidates: {}'.format(report['samples_with_clock_candidate']))
+            print('Samples with multiple candidates: {}'.format(report['samples_with_multiple_candidates']))
+            print('Candidate progressing-clock segments: {}'.format(report['candidate_segment_count']))
+            print('Discovery only: dense alignment and live/replay verification are not included.')
+            print('Output: '+str(output.resolve()))
         elif args.command == 'ocr-check':
             from .clock_ocr import check_clock_image
             raw, processed = check_clock_image(args.image, args.source, args.ffmpeg, args.tesseract)
@@ -1741,7 +2087,7 @@ def choose_roi(video, frame, source, save_path, ffmpeg='ffmpeg', ffprobe='ffprob
 ''',
 }
 
-GUIDE = '# Local two-camera clock and fusion experiment\n\n## Controlling update, 5 November 2026\n\nThe newer organiser clarification in RULES.md supersedes this historical experiment guide. Do not check predictions against provided video, manually create game data, upload provided data to AI services, or train/fit/calibrate/tune on the provided ground truth or video. All parameter tuning requires external data. Automatic checks and inference on provided inputs remain allowed.\n\nThe manual crop/clock-anchor and selected-clip instructions below record an earlier experiment, not an approved final-entry workflow. The executable still includes manual setup and the earlier organiser-answer D interval. Automatic replacement setup is not implemented; eligibility of the D exception needs clarification before final use. The controlled report includes a restart-only stage without that exception.\n\nThe new aggregate report is recorded in PROGRESS.md: restart-only resolved coverage was 30.808%, the earlier D context raised it to 32.251%, and fusion reached 32.259%. Fusion changed 13 raw labels and zero scorer-expanded labels. Of 284 compared missing-tactical-ball frames, none had an observed broadcast ball. No accuracy claim or match-based parameter adjustment follows from these counts.\n\n## Controlled restart comparison, 2 November 2026\n\nUse your existing tracking and cached alignment to isolate the Council\'s first proposed repair. No clock scan, video playback time or crop selection is needed:\n\n```powershell\npython football_pipeline.py camera fuse --data-dir "C:\\football-data" --alignment "outputs/alignment.csv" --audit-baseline --out "outputs/ensemble"\n```\n\nThis updates the existing outputs. Keep replacing the same single Python source file. A full-size tracking load may take time; progress is printed.\n\nThe corrected restart policy evaluates sustained observed proximity even inside an automatic set-piece phase. It resets control confirmation at phase edges, retains explicit dead-evidence precedence, and still blocks unsupported bridges across restart phases. Proximity is a heuristic, including during a stationary restart. The repair does not establish live play or correct possession by itself. Mapped restart/dead context constrains both cameras, so broadcast cannot simply escape the tactical phase restrictions.\n\nThe organiser-published tactical interval [110808,113742) is marked D, with reason `published_pre_kickoff` and evidence level `published_metadata`. This is exactly 2934 frames of the reference export, independently of general stoppage detection. The adapter refuses incompatible dimensions/half context. Missing ball and stationary proximity alone still do not establish D.\n\n`ensemble_report.json` now contains:\n- `controlled_comparison.stages`: legacy tactical, restart-repaired tactical, and repaired tactical plus published D context. The existing `after` field is the final fused stage.\n- `controlled_comparison.comparisons`: separate changes due to restart repair, published context and fusion, plus the total.\n- Each comparison includes raw label changes, scorer-expanded label changes, predicted possession-spell counts, changed reasons, missing-ball assignments and propagation into unchanged raw frames. These are behavior diagnostics, not spellF1 or measured accuracy. X filling follows the official half-local policy, including head backfill and all-X blocks remaining X.\n- `verification_reason_counts`: the detailed reasons behind camera verification outcomes; rejected geometry must not be counted as known replays.\n- `missing_ball_funnel`: matched frames with missing tactical ball, unresolved opportunities, visible broadcast ball, direct broadcast control, passing geometry, sufficient weight and rescues. Zero opportunities and zero successful recoveries are different outcomes.\n- `controlled_comparison.remaining_gap_diagnostics`: why the existing bridge rules still leave X runs.\n- `camera_comparison_frames`, skip reasons and alignment statuses distinguish attempted comparisons from frames with no eligible link. Alignment alone cannot identify whether every missing clock was unscanned or unreadable.\n\nThe existing diagnostics CSV gains the baseline-stage labels and their scorer-expanded forms when `--audit-baseline` is used. The existing fusion CSV gains timing uncertainty, geometry quality, ball visibility, phase/dead context and source/final labels. No extra prediction files are created for baseline variants.\n\nThe legacy restart behavior is reproduced for comparison, not used as the new baseline. Restoring tactical observations may turn previous broadcast rescues into baseline assignments; that is not evidence that broadcast became worse. This delivery deliberately preserves the existing clock/geometry fusion gates so their effects remain isolated. A dedicated replay detector, general live/dead detector and validated longer-gap possession model are later stages, not features claimed by this controlled repair.\n\nThe two display layouts both use MM:SS. Different fonts/backgrounds require different crops, not different time units. Screenshots from different moments do not establish a time offset. The program discovers candidate correspondence from the original video clocks; it does not use the screenshot values as anchors.\n\n## Run the new demo first\n\nFrom the extracted folder in Anaconda Prompt or PowerShell:\n\n```bash\npython -m gap_solver.multicam demo\n```\n\nExpected synthetic-only output:\n\n```text\nUnresolved tactical frames before/after: 40 / 20\nVerified broadcast rescues: 20\n```\n\nThe demonstration has two missing tactical intervals. Broadcast geometry supports one; an invalid broadcast homography blocks the other. This proves test behaviour, not real alignment or improved competition accuracy. This first ensemble runs the same possession rules independently on each camera, then combines the resulting evidence. No neural ensemble was trained.\n\n## What the pipeline does\n\n1. **Read the clock locally.** FFmpeg extracts small clock crops at original decoded frame indices; Tesseract reads the digits. Low-confidence/invalid OCR stays missing.\n2. **Build a bounded per-frame time map.** Consecutive readings bracket second ticks. At least three consistent ticks establish a run. Between ticks, the script estimates fractional match time and records timing uncertainty. It leaves unsupported frames blank and does not extrapolate.\n3. **Find corresponding moments.** Match half and fractional time, keeping separate tactical/broadcast frame numbers. Reject excessive uncertainty, duplicate clock candidates and unsupported stretches. Dense clocks with contradictory chronology fail validation.\n4. **Check the pictures indirectly through tracking.** Require valid, nondegenerate homographies, enough distinct same-team player matches and consistent ball positions when both balls are visible. Team point sets are used because tracking slots are not persistent player IDs.\n5. **Fuse reliable evidence.** Missing/inferred broadcast predictions have no vote. A verified direct broadcast prediction can fill a tactical X or outweigh a weak inferred label. Disagreement with direct tactical evidence is retained as a diagnostic conflict. D is never inferred from tracking absence.\n\n## What you need on your computer\n\nThe synthetic demo uses only Python 3.9+. Reading actual video additionally requires **FFmpeg (including ffprobe)** and **Tesseract OCR with English language data**, installed locally. These are external executables, not pip packages. Check:\n\n```bash\nffmpeg -version\nffprobe -version\ntesseract --version\n```\n\nYou can pass full executable paths using `--ffmpeg`, `--ffprobe` and `--tesseract`. The prototype requires the reference constant-25-fps export and a reported frame count; it refuses to resample/pad/trim an incompatible export. Metadata rate checks are a preliminary check, not a complete proof that a file has no irregular timestamps.\n\nTo fuse possession evidence, you also need the supplied ATD metadata, ATD tracking and homography for **both** sources. Footage alone is sufficient for clock extraction, but this version does not detect players/balls from video itself.\n\nThe fusion command accepts either `tactical/` and `broadcast/` or the existing Windows folders `tactical cam/` and `broadcast cam/` under `--data-dir`. It opens those files in place. You can also specify `--tactical-dir "PATH" --broadcast-dir "PATH"` directly; these override the parent-folder lookup. If multiple complete copies exist, it asks for explicit folders instead of guessing. All six required tracking and homography files are checked before loading. The command prints progress, total unresolved tactical frames before/after, broadcast rescues and fusion status counts. With a short clock pilot, only eligible mapped frames can change; the overall counts still cover the full tactical recording.\n\n```text\ndata/\n  tactical/BAR-ATH_tactical.mp4\n  tactical/BAR-ATH_tactical_atd.xml\n  tactical/BAR-ATH_tactical_atd.txt\n  tactical/BAR-ATH_tactical_homography.csv\n  tactical/BAR-ATH_tactical_smart_tagging.xml  (optional)\n  broadcast/BAR-ATH_broadcast.mp4\n  broadcast/BAR-ATH_broadcast_atd.xml\n  broadcast/BAR-ATH_broadcast_atd.txt\n  broadcast/BAR-ATH_broadcast_homography.csv\n```\n\n## Historical pilot: a short first-half interval\n\nStart with roughly 30 seconds showing a progressing clock in each feed. Choose overlapping **match** time; the files\' elapsed playback times will differ. Use original frame indices: at 25 fps, frame = elapsed playback seconds * 25. The newer prohibition on manually created game data means this earlier manual setup must not be assumed eligible for a final entry. Never hand-correct possession labels or training/validation labels on this match.\n\nThe published tactical first-half kickoff is frame 11185, so a first tactical pilot can use:\n\n```bash\npython -m gap_solver.multicam clock --video "D:/mtah-data/tactical/BAR-ATH_tactical.mp4" --source tactical --half 1 --start-frame 11185 --end-frame 11935 --stride 5 --preview outputs/tactical-clock-preview.png --out outputs/tactical-clock.csv\n```\n\nFor broadcast, replace START and END below with the original frame range containing the same match-clock interval. These are placeholders, not literal arguments:\n\n```bash\npython -m gap_solver.multicam clock --video "D:/mtah-data/broadcast/BAR-ATH_broadcast.mp4" --source broadcast --half 1 --start-frame START --end-frame END --stride 5 --preview outputs/broadcast-clock-preview.png --out outputs/broadcast-clock.csv\n```\n\nInspect the saved clock previews **locally**. Crop presets are provisional normalised coordinates based on the supplied display layouts, not guaranteed original-video coordinates. If the crop misses digits or includes the score, override with `--roi x,y,width,height`, where values are fractions from 0 to 1. For example `--roi 0.1,0.02,0.06,0.05`. ROI describes the clock box only; it does not label the match. Temporary crops are deleted after OCR; previews remain at the chosen local path.\n\n**Historical selector capability:** add `--select-roi` to the clock command. A local window opens on the first selected frame. Drag around the complete time digits, leaving a small margin and excluding the score. Inspect the enlarged preview, redraw if necessary, and click **Use clock box**. OCR then continues automatically using your selection. The window uses Python\'s tkinter; if it is unavailable, the command explains how to install `tk` in your conda environment. Selection geometry and frame extraction are automatically tested; the graphical window still needs verification on your Windows desktop.\n\nThe clock box is saved beside the clock CSV, for example `outputs/tactical-clock.csv.roi.json`. Future runs can replace `--select-roi` with `--roi-file "outputs/tactical-clock.csv.roi.json"`. These options are mutually exclusive with `--roi`. These manual options remain software capabilities, not an exemption from the newer rule. Do not upload provided frames or crops to AI services.\n\n**OCR update:** tactical crops are converted to dark digits on a light background and given a small white border. Broadcast crops retain their dark-on-light polarity and receive the same border. TSV output is requested with the explicit `tessedit_create_tsv=1` parameter; an optional `configs/tsv` file is no longer required. Unexpected non-TSV output raises a format error instead of silently becoming zero clock readings. Polarity processing can help or hurt depending on the installed model. Default confidence cutoff is 0.7; for the user-authorised initial trial, add `--min-confidence 0.5` to the clock command. This changes OCR eligibility only; it is not a claim of better timing or possession accuracy. All existing progressing-tick, half, duplicate-match and geometry checks remain.\n\nThe trial prints the first percentile (linear interpolation), median and minimum confidence across ALL sampled crops in the requested clip, counting unreadable/invalid clocks as zero. It also prints parsed, unreadable and accepted counts. `First-percentile confidence > 0.5` means the first percentile, not the minimum or a calibrated probability of correctness. Expected clock-absent intervals will lower these all-crop statistics; the first trial intentionally uses a visible mid-game interval. Do not optimise from this challenge clip; subsequent tuning requires external data.\n\n**Retry update:** only a crop that is unreadable or below the chosen cutoff is retried. Two local treatments restore the original enlarged crop (undoing the tactical inversion and added border) and threshold the processed crop to black and white. If eligible treatments disagree on the clock, the sample stays unresolved. Otherwise the highest measured eligible score is retained; scores are never increased by agreement. Retry counts, recoveries at the cutoff and conflicts are printed. These are selected OCR scores after retries, not independent accuracy measurements. The reads CSV records the chosen treatment and number of attempts.\n\nThe timeline can now skip a weak or unreadable sample when the accepted observations on either side are at most 0.5 seconds apart and the clock remains consistent. At the pilot\'s stride 5 and 25 fps, this tolerates one missed sample; two consecutive misses split the run. Tick uncertainty increases across the gap. At least three consistent second ticks are still required, with no extrapolation. A bounded time estimate can therefore exist at a frame whose own OCR remained unreadable; this does not change its all-crop OCR score from zero. Stricter combined timing uncertainty can still reject a two-camera correspondence.\n\nTo test one existing raw crop without rescanning a video:\n\n```bash\npython -m gap_solver.multicam ocr-check --image "outputs/tactical-clock-preview.png" --source tactical\n```\n\nThis prints OCR text and Tesseract\'s confidence score before and after preprocessing. Scores are not measured accuracy. Previews saved by the updated clock command already show the preprocessed OCR input; applying `ocr-check` to one of those compares that input against an additional polarity transformation, so the Original score is the relevant current-input score. No image leaves your machine.\n\nThe user-specified half must match the entire selected interval. Do not run a half-1 command across halftime or the second half. MM:SS alone cannot distinguish first-half stoppage time from overlapping second-half minutes. This version is a selected-clip pilot; joining separate half pilots into one full-match clock map is not automated. A later merge must preserve original indices and use distinct segment IDs.\n\nThen build candidate alignment and fuse:\n\n```bash\npython -m gap_solver.multicam align --tactical-clock outputs/tactical-clock.csv --broadcast-clock outputs/broadcast-clock.csv --out outputs/alignment.csv\npython -m gap_solver.multicam fuse --data-dir "D:/mtah-data" --alignment outputs/alignment.csv --out outputs/ensemble\n```\n\nThe dense clock CSV has one row per original video frame, including blank estimates outside the pilot. Fusion retains the original tactical-only result wherever no eligible broadcast correspondence exists. The resulting submission-shaped CSV remains experimental; an automatic live/dead classifier is still absent.\n\nAutomatic diagnostics can report missing readings, timing uncertainty and absent overlap. Do not check predictions against challenge video or hand-adjust its crop/timing setup. Choose processing parameters and OCR stride using external evaluation, not this game\'s assignment coverage. Clock scans decode from the start of the file to preserve decoded indices; later intervals can therefore cost more than their clip duration suggests.\n\n## Files to inspect\n\n| File | Meaning |\n|---|---|\n| `tactical-clock.csv` / `broadcast-clock.csv` | Original frame, half, estimated match seconds, timing uncertainty, segment ID |\n| `*.reads.csv` | Selected OCR reading, measured score, chosen treatment and attempt count; generated automatically |\n| `alignment.csv` | Tactical frame, candidate broadcast frame, uncertainty and candidate/rejection status |\n| `fusion_diagnostics.csv` | Camera weights, fusion decision and geometry result per tactical frame |\n| `ensemble_report.json` | Tactical-only vs fused label coverage; rescues, replacements and conflicts |\n| `submission.csv` | Experimental predictions on the tactical timeline |\n\nFor example, a frame can have estimated match time 1622.32 seconds while its counterpart has a completely different file frame index. Timing uncertainty is reported separately; this is not a claim of exact frame synchronisation.\n\n## Weights and safeguards\n\nProvisional values in code:\n\n- Direct tactical control: weight 1.0. Inferred tactical continuity: 0.35.\n- Eligible broadcast control: `0.9 * geometry_quality * (1 - 0.5 * uncertainty / 0.25)`.\n- Geometry quality combines player-position agreement with reprojection error.\n- Broadcast needs weight >= 0.3 to rescue X; replacing a conflicting inferred tactical label additionally requires a normalised vote advantage >= 0.2.\n- Maximum combined clock uncertainty: 0.25 seconds. Coarse one-second OCR is often insufficient. The geometry limits default to 3 m median player residual, at least three distinct matches per team and 60% of unique broadcast points, 4 m ball residual when visible in both views, and reprojection error <= 3.\n\nThese values are engineering defaults, not calibrated probabilities or values tuned on the public five minutes. The exact numbers will need independent evaluation on compatible other-match data. The fusion default preserves direct tactical disagreements; it is intentionally more restrictive than blindly averaging two labels.\n\n## Limitations to assess on local data\n\n- A replay can carry a live clock and plausible player positions. The checks reduce false matches but do **not** constitute a complete replay detector.\n- Camera overlays can have systematic delay or rounding differences; tick matching alone does not prove the same physical moment.\n- Both ATD exports must use compatible pitch orientation and coordinates. If they disagree, geometry rejects the match; automatic orientation calibration is not implemented.\n- A narrow broadcast shot may have too few players to verify. Invalid homography does not mean dead ball.\n- Player point sets can agree accidentally; no persistent player identity is assumed. Distinct spatial matching prevents duplicate tracks from counting as independent support.\n- Added-time parser accepts `45+02:13` and `90+01:02`, but actual live OCR/crop behaviour for added-time overlays is untested. Clocks freezing at 45:00/90:00 without a readable added-time timer leave unsupported intervals.\n- No actual competition footage/tracking was processed here. The displayed screenshots were only used to identify clock format and approximate layout. They are not bundled or used as labels or timing anchors.\n\nKeep all footage, crops, tracking and derived alignment outputs local. Do not upload restricted competition assets or extracts to hosted/cloud LLMs, publish them, or use public labels for model selection. No network calls exist in these modules.\n\nOfficial tool references: https://tesseract-ocr.github.io/tessdoc/Command-Line-Usage.html and https://ffmpeg.org/ffmpeg-filters.html . Competition formats follow the uploaded starter snapshot.\n'
+GUIDE = '# Local two-camera clock and fusion experiment\n\n## Controlling update, 5 November 2026\n\nThe newer organiser clarification in RULES.md supersedes this historical experiment guide. Do not check predictions against provided video, manually create game data, upload provided data to AI services, or train/fit/calibrate/tune on the provided ground truth or video. All parameter tuning requires external data. Automatic checks and inference on provided inputs remain allowed.\n\nThe manual crop/clock-anchor and selected-clip instructions below record an earlier experiment, not an approved final-entry workflow. The executable still includes manual setup and the earlier organiser-answer D interval. Automatic clock-region discovery is now implemented as the first replacement stage; dense alignment and half assignment are still pending. Eligibility of the D exception needs clarification before final use. The controlled report includes a restart-only stage without that exception.\n\nThe new aggregate report is recorded in PROGRESS.md: restart-only resolved coverage was 30.808%, the earlier D context raised it to 32.251%, and fusion reached 32.259%. Fusion changed 13 raw labels and zero scorer-expanded labels. Of 284 compared missing-tactical-ball frames, none had an observed broadcast ball. No accuracy claim or match-based parameter adjustment follows from these counts.\n\n## Automatic clock discovery\n\nThe clarification does not require training. It requires external data if training or tuning is performed. The new command uses the installed pretrained Tesseract engine without training it:\n\n```powershell\npython football_pipeline.py camera discover-clock --video "C:\\football-data\\tactical cam\\BAR-ATH_tactical.mp4" --out "outputs/tactical-discovery.json"\npython football_pipeline.py camera discover-clock --video "C:\\football-data\\broadcast cam\\BAR-ATH_broadcast.mp4" --out "outputs/broadcast-discovery.json"\n```\n\nIt scans the whole recording every 30 seconds by default, without a selected ROI, half or playback-time anchor. Full images are streamed through memory into local OCR and discarded; only the JSON report remains and is overwritten on the next run. At least three spatially consistent progressing readings support a candidate segment. Competing clocks remain competing candidates. Freezes, resets, moved overlays and long unreadable gaps split support.\n\nThe report includes sampled original frame indices, clock text/scores/boxes, candidate segments and explicit `ready_for_fusion: false` / `live_verified: false` fields. Sparse observations do not form a dense clock map, determine halves or prove the pictures are live. A replay with a live clock may pass discovery. Do not pass this JSON to fusion. Keep per-frame/region details local; aggregate console counts describe execution only. Do not tune scan settings from challenge-video or match-coverage feedback.\n\nThis feature was tested on generated clocks/video only. It makes no real-match OCR, alignment, replay-rejection or accuracy claim.\n\n## Controlled restart comparison, 2 November 2026\n\nUse your existing tracking and cached alignment to isolate the Council\'s first proposed repair. No clock scan, video playback time or crop selection is needed:\n\n```powershell\npython football_pipeline.py camera fuse --data-dir "C:\\football-data" --alignment "outputs/alignment.csv" --audit-baseline --out "outputs/ensemble"\n```\n\nThis updates the existing outputs. Keep replacing the same single Python source file. A full-size tracking load may take time; progress is printed.\n\nThe corrected restart policy evaluates sustained observed proximity even inside an automatic set-piece phase. It resets control confirmation at phase edges, retains explicit dead-evidence precedence, and still blocks unsupported bridges across restart phases. Proximity is a heuristic, including during a stationary restart. The repair does not establish live play or correct possession by itself. Mapped restart/dead context constrains both cameras, so broadcast cannot simply escape the tactical phase restrictions.\n\nThe organiser-published tactical interval [110808,113742) is marked D, with reason `published_pre_kickoff` and evidence level `published_metadata`. This is exactly 2934 frames of the reference export, independently of general stoppage detection. The adapter refuses incompatible dimensions/half context. Missing ball and stationary proximity alone still do not establish D.\n\n`ensemble_report.json` now contains:\n- `controlled_comparison.stages`: legacy tactical, restart-repaired tactical, and repaired tactical plus published D context. The existing `after` field is the final fused stage.\n- `controlled_comparison.comparisons`: separate changes due to restart repair, published context and fusion, plus the total.\n- Each comparison includes raw label changes, scorer-expanded label changes, predicted possession-spell counts, changed reasons, missing-ball assignments and propagation into unchanged raw frames. These are behavior diagnostics, not spellF1 or measured accuracy. X filling follows the official half-local policy, including head backfill and all-X blocks remaining X.\n- `verification_reason_counts`: the detailed reasons behind camera verification outcomes; rejected geometry must not be counted as known replays.\n- `missing_ball_funnel`: matched frames with missing tactical ball, unresolved opportunities, visible broadcast ball, direct broadcast control, passing geometry, sufficient weight and rescues. Zero opportunities and zero successful recoveries are different outcomes.\n- `controlled_comparison.remaining_gap_diagnostics`: why the existing bridge rules still leave X runs.\n- `camera_comparison_frames`, skip reasons and alignment statuses distinguish attempted comparisons from frames with no eligible link. Alignment alone cannot identify whether every missing clock was unscanned or unreadable.\n\nThe existing diagnostics CSV gains the baseline-stage labels and their scorer-expanded forms when `--audit-baseline` is used. The existing fusion CSV gains timing uncertainty, geometry quality, ball visibility, phase/dead context and source/final labels. No extra prediction files are created for baseline variants.\n\nThe legacy restart behavior is reproduced for comparison, not used as the new baseline. Restoring tactical observations may turn previous broadcast rescues into baseline assignments; that is not evidence that broadcast became worse. This delivery deliberately preserves the existing clock/geometry fusion gates so their effects remain isolated. A dedicated replay detector, general live/dead detector and validated longer-gap possession model are later stages, not features claimed by this controlled repair.\n\nThe two display layouts both use MM:SS. Different fonts/backgrounds require different crops, not different time units. Screenshots from different moments do not establish a time offset. The program discovers candidate correspondence from the original video clocks; it does not use the screenshot values as anchors.\n\n## Run the new demo first\n\nFrom the extracted folder in Anaconda Prompt or PowerShell:\n\n```bash\npython -m gap_solver.multicam demo\n```\n\nExpected synthetic-only output:\n\n```text\nUnresolved tactical frames before/after: 40 / 20\nVerified broadcast rescues: 20\n```\n\nThe demonstration has two missing tactical intervals. Broadcast geometry supports one; an invalid broadcast homography blocks the other. This proves test behaviour, not real alignment or improved competition accuracy. This first ensemble runs the same possession rules independently on each camera, then combines the resulting evidence. No neural ensemble was trained.\n\n## What the pipeline does\n\n1. **Read the clock locally.** FFmpeg extracts small clock crops at original decoded frame indices; Tesseract reads the digits. Low-confidence/invalid OCR stays missing.\n2. **Build a bounded per-frame time map.** Consecutive readings bracket second ticks. At least three consistent ticks establish a run. Between ticks, the script estimates fractional match time and records timing uncertainty. It leaves unsupported frames blank and does not extrapolate.\n3. **Find corresponding moments.** Match half and fractional time, keeping separate tactical/broadcast frame numbers. Reject excessive uncertainty, duplicate clock candidates and unsupported stretches. Dense clocks with contradictory chronology fail validation.\n4. **Check the pictures indirectly through tracking.** Require valid, nondegenerate homographies, enough distinct same-team player matches and consistent ball positions when both balls are visible. Team point sets are used because tracking slots are not persistent player IDs.\n5. **Fuse reliable evidence.** Missing/inferred broadcast predictions have no vote. A verified direct broadcast prediction can fill a tactical X or outweigh a weak inferred label. Disagreement with direct tactical evidence is retained as a diagnostic conflict. D is never inferred from tracking absence.\n\n## What you need on your computer\n\nThe synthetic demo uses only Python 3.9+. Reading actual video additionally requires **FFmpeg (including ffprobe)** and **Tesseract OCR with English language data**, installed locally. These are external executables, not pip packages. Check:\n\n```bash\nffmpeg -version\nffprobe -version\ntesseract --version\n```\n\nYou can pass full executable paths using `--ffmpeg`, `--ffprobe` and `--tesseract`. The prototype requires the reference constant-25-fps export and a reported frame count; it refuses to resample/pad/trim an incompatible export. Metadata rate checks are a preliminary check, not a complete proof that a file has no irregular timestamps.\n\nTo fuse possession evidence, you also need the supplied ATD metadata, ATD tracking and homography for **both** sources. Footage alone is sufficient for clock extraction, but this version does not detect players/balls from video itself.\n\nThe fusion command accepts either `tactical/` and `broadcast/` or the existing Windows folders `tactical cam/` and `broadcast cam/` under `--data-dir`. It opens those files in place. You can also specify `--tactical-dir "PATH" --broadcast-dir "PATH"` directly; these override the parent-folder lookup. If multiple complete copies exist, it asks for explicit folders instead of guessing. All six required tracking and homography files are checked before loading. The command prints progress, total unresolved tactical frames before/after, broadcast rescues and fusion status counts. With a short clock pilot, only eligible mapped frames can change; the overall counts still cover the full tactical recording.\n\n```text\ndata/\n  tactical/BAR-ATH_tactical.mp4\n  tactical/BAR-ATH_tactical_atd.xml\n  tactical/BAR-ATH_tactical_atd.txt\n  tactical/BAR-ATH_tactical_homography.csv\n  tactical/BAR-ATH_tactical_smart_tagging.xml  (optional)\n  broadcast/BAR-ATH_broadcast.mp4\n  broadcast/BAR-ATH_broadcast_atd.xml\n  broadcast/BAR-ATH_broadcast_atd.txt\n  broadcast/BAR-ATH_broadcast_homography.csv\n```\n\n## Historical pilot: a short first-half interval\n\nStart with roughly 30 seconds showing a progressing clock in each feed. Choose overlapping **match** time; the files\' elapsed playback times will differ. Use original frame indices: at 25 fps, frame = elapsed playback seconds * 25. The newer prohibition on manually created game data means this earlier manual setup must not be assumed eligible for a final entry. Never hand-correct possession labels or training/validation labels on this match.\n\nThe published tactical first-half kickoff is frame 11185, so a first tactical pilot can use:\n\n```bash\npython -m gap_solver.multicam clock --video "D:/mtah-data/tactical/BAR-ATH_tactical.mp4" --source tactical --half 1 --start-frame 11185 --end-frame 11935 --stride 5 --preview outputs/tactical-clock-preview.png --out outputs/tactical-clock.csv\n```\n\nFor broadcast, replace START and END below with the original frame range containing the same match-clock interval. These are placeholders, not literal arguments:\n\n```bash\npython -m gap_solver.multicam clock --video "D:/mtah-data/broadcast/BAR-ATH_broadcast.mp4" --source broadcast --half 1 --start-frame START --end-frame END --stride 5 --preview outputs/broadcast-clock-preview.png --out outputs/broadcast-clock.csv\n```\n\nInspect the saved clock previews **locally**. Crop presets are provisional normalised coordinates based on the supplied display layouts, not guaranteed original-video coordinates. If the crop misses digits or includes the score, override with `--roi x,y,width,height`, where values are fractions from 0 to 1. For example `--roi 0.1,0.02,0.06,0.05`. ROI describes the clock box only; it does not label the match. Temporary crops are deleted after OCR; previews remain at the chosen local path.\n\n**Historical selector capability:** add `--select-roi` to the clock command. A local window opens on the first selected frame. Drag around the complete time digits, leaving a small margin and excluding the score. Inspect the enlarged preview, redraw if necessary, and click **Use clock box**. OCR then continues automatically using your selection. The window uses Python\'s tkinter; if it is unavailable, the command explains how to install `tk` in your conda environment. Selection geometry and frame extraction are automatically tested; the graphical window still needs verification on your Windows desktop.\n\nThe clock box is saved beside the clock CSV, for example `outputs/tactical-clock.csv.roi.json`. Future runs can replace `--select-roi` with `--roi-file "outputs/tactical-clock.csv.roi.json"`. These options are mutually exclusive with `--roi`. These manual options remain software capabilities, not an exemption from the newer rule. Do not upload provided frames or crops to AI services.\n\n**OCR update:** tactical crops are converted to dark digits on a light background and given a small white border. Broadcast crops retain their dark-on-light polarity and receive the same border. TSV output is requested with the explicit `tessedit_create_tsv=1` parameter; an optional `configs/tsv` file is no longer required. Unexpected non-TSV output raises a format error instead of silently becoming zero clock readings. Polarity processing can help or hurt depending on the installed model. Default confidence cutoff is 0.7; for the user-authorised initial trial, add `--min-confidence 0.5` to the clock command. This changes OCR eligibility only; it is not a claim of better timing or possession accuracy. All existing progressing-tick, half, duplicate-match and geometry checks remain.\n\nThe trial prints the first percentile (linear interpolation), median and minimum confidence across ALL sampled crops in the requested clip, counting unreadable/invalid clocks as zero. It also prints parsed, unreadable and accepted counts. `First-percentile confidence > 0.5` means the first percentile, not the minimum or a calibrated probability of correctness. Expected clock-absent intervals will lower these all-crop statistics; the first trial intentionally uses a visible mid-game interval. Do not optimise from this challenge clip; subsequent tuning requires external data.\n\n**Retry update:** only a crop that is unreadable or below the chosen cutoff is retried. Two local treatments restore the original enlarged crop (undoing the tactical inversion and added border) and threshold the processed crop to black and white. If eligible treatments disagree on the clock, the sample stays unresolved. Otherwise the highest measured eligible score is retained; scores are never increased by agreement. Retry counts, recoveries at the cutoff and conflicts are printed. These are selected OCR scores after retries, not independent accuracy measurements. The reads CSV records the chosen treatment and number of attempts.\n\nThe timeline can now skip a weak or unreadable sample when the accepted observations on either side are at most 0.5 seconds apart and the clock remains consistent. At the pilot\'s stride 5 and 25 fps, this tolerates one missed sample; two consecutive misses split the run. Tick uncertainty increases across the gap. At least three consistent second ticks are still required, with no extrapolation. A bounded time estimate can therefore exist at a frame whose own OCR remained unreadable; this does not change its all-crop OCR score from zero. Stricter combined timing uncertainty can still reject a two-camera correspondence.\n\nTo test one existing raw crop without rescanning a video:\n\n```bash\npython -m gap_solver.multicam ocr-check --image "outputs/tactical-clock-preview.png" --source tactical\n```\n\nThis prints OCR text and Tesseract\'s confidence score before and after preprocessing. Scores are not measured accuracy. Previews saved by the updated clock command already show the preprocessed OCR input; applying `ocr-check` to one of those compares that input against an additional polarity transformation, so the Original score is the relevant current-input score. No image leaves your machine.\n\nThe user-specified half must match the entire selected interval. Do not run a half-1 command across halftime or the second half. MM:SS alone cannot distinguish first-half stoppage time from overlapping second-half minutes. This version is a selected-clip pilot; joining separate half pilots into one full-match clock map is not automated. A later merge must preserve original indices and use distinct segment IDs.\n\nThen build candidate alignment and fuse:\n\n```bash\npython -m gap_solver.multicam align --tactical-clock outputs/tactical-clock.csv --broadcast-clock outputs/broadcast-clock.csv --out outputs/alignment.csv\npython -m gap_solver.multicam fuse --data-dir "D:/mtah-data" --alignment outputs/alignment.csv --out outputs/ensemble\n```\n\nThe dense clock CSV has one row per original video frame, including blank estimates outside the pilot. Fusion retains the original tactical-only result wherever no eligible broadcast correspondence exists. The resulting submission-shaped CSV remains experimental; an automatic live/dead classifier is still absent.\n\nAutomatic diagnostics can report missing readings, timing uncertainty and absent overlap. Do not check predictions against challenge video or hand-adjust its crop/timing setup. Choose processing parameters and OCR stride using external evaluation, not this game\'s assignment coverage. Clock scans decode from the start of the file to preserve decoded indices; later intervals can therefore cost more than their clip duration suggests.\n\n## Files to inspect\n\n| File | Meaning |\n|---|---|\n| `tactical-clock.csv` / `broadcast-clock.csv` | Original frame, half, estimated match seconds, timing uncertainty, segment ID |\n| `*.reads.csv` | Selected OCR reading, measured score, chosen treatment and attempt count; generated automatically |\n| `alignment.csv` | Tactical frame, candidate broadcast frame, uncertainty and candidate/rejection status |\n| `fusion_diagnostics.csv` | Camera weights, fusion decision and geometry result per tactical frame |\n| `ensemble_report.json` | Tactical-only vs fused label coverage; rescues, replacements and conflicts |\n| `submission.csv` | Experimental predictions on the tactical timeline |\n\nFor example, a frame can have estimated match time 1622.32 seconds while its counterpart has a completely different file frame index. Timing uncertainty is reported separately; this is not a claim of exact frame synchronisation.\n\n## Weights and safeguards\n\nProvisional values in code:\n\n- Direct tactical control: weight 1.0. Inferred tactical continuity: 0.35.\n- Eligible broadcast control: `0.9 * geometry_quality * (1 - 0.5 * uncertainty / 0.25)`.\n- Geometry quality combines player-position agreement with reprojection error.\n- Broadcast needs weight >= 0.3 to rescue X; replacing a conflicting inferred tactical label additionally requires a normalised vote advantage >= 0.2.\n- Maximum combined clock uncertainty: 0.25 seconds. Coarse one-second OCR is often insufficient. The geometry limits default to 3 m median player residual, at least three distinct matches per team and 60% of unique broadcast points, 4 m ball residual when visible in both views, and reprojection error <= 3.\n\nThese values are engineering defaults, not calibrated probabilities or values tuned on the public five minutes. The exact numbers will need independent evaluation on compatible other-match data. The fusion default preserves direct tactical disagreements; it is intentionally more restrictive than blindly averaging two labels.\n\n## Limitations to assess on local data\n\n- A replay can carry a live clock and plausible player positions. The checks reduce false matches but do **not** constitute a complete replay detector.\n- Camera overlays can have systematic delay or rounding differences; tick matching alone does not prove the same physical moment.\n- Both ATD exports must use compatible pitch orientation and coordinates. If they disagree, geometry rejects the match; automatic orientation calibration is not implemented.\n- A narrow broadcast shot may have too few players to verify. Invalid homography does not mean dead ball.\n- Player point sets can agree accidentally; no persistent player identity is assumed. Distinct spatial matching prevents duplicate tracks from counting as independent support.\n- Added-time parser accepts `45+02:13` and `90+01:02`, but actual live OCR/crop behaviour for added-time overlays is untested. Clocks freezing at 45:00/90:00 without a readable added-time timer leave unsupported intervals.\n- No actual competition footage/tracking was processed here. The displayed screenshots were only used to identify clock format and approximate layout. They are not bundled or used as labels or timing anchors.\n\nKeep all footage, crops, tracking and derived alignment outputs local. Do not upload restricted competition assets or extracts to hosted/cloud LLMs, publish them, or use public labels for model selection. No network calls exist in these modules.\n\nOfficial tool references: https://tesseract-ocr.github.io/tessdoc/Command-Line-Usage.html and https://ffmpeg.org/ffmpeg-filters.html . Competition formats follow the uploaded starter snapshot.\n'
 
 class _BundledModules(importlib.abc.MetaPathFinder, importlib.abc.Loader):
     def find_spec(self, fullname, path=None, target=None):
