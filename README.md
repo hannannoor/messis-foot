@@ -2,7 +2,9 @@
 
 An experimental local football possession pipeline for More Than a Hack 2027. It combines tactical tracking, short-gap handling, clock OCR, candidate camera alignment and quality-gated broadcast evidence.
 
-Current source version: `2026.11.02-restart-audit`. The real pilot completed; the updated controlled restart comparison is ready for a local run. Accuracy improvement has not been established.
+Current inference version: `2026.11.02-restart-audit`. The controlled comparison has run locally: restart repair raised resolved coverage from 22.00% to 30.81%; the earlier published D context raised it to 32.25%. Fusion added 13 raw labels but changed no scorer-expanded labels. Accuracy improvement has not been established.
+
+Read [RULES.md](RULES.md) first. The latest organiser clarification supersedes earlier experiment guidance. Manual clock setup, the historical OCR-cutoff trial and the fixed D context must not be assumed eligible for a final entry. The 5 November update changes documentation only; inference parameters remain unchanged.
 
 ## Run one file
 
@@ -23,7 +25,9 @@ For the previously used conda environment:
 conda activate football
 ```
 
-## Run the controlled comparison with existing alignment
+## Historical controlled comparison with existing alignment
+
+This reproduces an engineering experiment, not a certified challenge-entry workflow. Existing alignment may depend on earlier manual setup, and the executable still applies the earlier organiser-answer D interval. See [RULES.md](RULES.md) before reusing these results.
 
 Put the organiser-provided files on your own computer. Under `C:\football-data`, either `tactical/` and `broadcast/` or `tactical cam/` and `broadcast cam/` are supported by fusion. Each camera needs its `BAR-ATH_<source>_atd.xml`, `_atd.txt` and `_homography.csv`. Tactical Smart Tagging XML is optional.
 
@@ -33,7 +37,7 @@ From the folder containing the Python file and your existing `outputs/alignment.
 python football_pipeline.py camera fuse --data-dir "C:\football-data" --alignment "outputs/alignment.csv" --audit-baseline --out "outputs/ensemble"
 ```
 
-This reuses cached alignment and opens no crop-selection window. It compares legacy tactical inference, repaired restart handling, the organiser-published pre-kickoff dead interval, and final broadcast fusion. The output folder is reused on later runs. For initial clock extraction, ROI selection and alignment, read [TWO_CAMERA.md](TWO_CAMERA.md).
+This reuses cached alignment and opens no crop-selection window. It compares legacy tactical inference, repaired restart handling, the earlier organiser-answer pre-kickoff dead interval, and final broadcast fusion. The output folder is reused. [TWO_CAMERA.md](TWO_CAMERA.md) records the historical implementation; its manual setup is not the route for a final run under the new clarification.
 
 ## What is implemented
 
@@ -79,4 +83,4 @@ The current system is a heuristic prototype. A nearest-player control candidate 
 
 Only code, documentation, configuration and generated synthetic test fixtures belong in this repository. Obtain competition assets separately and keep videos, crops, tracking, tagging, homography, alignment maps, predictions and frame-level diagnostics local. Do not commit match data or reconstruction-capable derivatives.
 
-No competition-game manual labels or corrections are used. The public five-minute labels are for pipeline sanity checks, not training, tuning or model selection. Changes to inference quality require independent evaluation on permitted other-match data. Coverage and synthetic test success are not accuracy measurements.
+Do not check predictions against the provided video, create manual game data or upload provided data to AI services. Training, fitting, calibration and tuning require permitted external data, never provided ground truth or video. Earlier manual clock setup and video-informed OCR experiments are historical, not a compliance claim. See [RULES.md](RULES.md). Coverage and synthetic test success are not accuracy measurements.

@@ -35,6 +35,6 @@ Steps 1 and 2 are implemented in version `2026.11.02-restart-audit`, alongside t
 
 ## Acceptance evidence
 
-Synthetic invariants establish implementation behavior. Use permitted other-match labels to evaluate spellF1, macroF1, transition timing, false switches, false-dead decisions, missing-ball cases and replay rejection. Keep validation examples separate from tuning choices. Public competition labels remain pipeline sanity checks only.
+Synthetic invariants establish implementation behavior. Use permitted other-match labels to evaluate spellF1, macroF1, transition timing, false switches, false-dead decisions, missing-ball cases and replay rejection. Keep validation examples separate from tuning choices. The newer organiser clarification in [RULES.md](RULES.md) controls subsequent work: no output-versus-video checking, manual game data, AI-service uploads of provided data or training/fitting/calibration/tuning on challenge ground truth or video. Historical manual setup and the earlier fixed D context are not assumed eligible final-entry components.
 
 The first local experiment reuses the cached alignment and tracking; no new OCR scan is needed. It compares the legacy tactical baseline, restart-repaired tactical inference, published-context tactical inference and final fusion. Additional coverage is not described as improved correctness.

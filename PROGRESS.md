@@ -1,6 +1,6 @@
 # Progress record
 
-Snapshot prepared on 3 November 2026. Current implementation: `2026.11.02-restart-audit`.
+Updated on 5 November 2026. Current inference implementation: `2026.11.02-restart-audit`. [RULES.md](RULES.md) controls current work; earlier manual setup and video-informed OCR trials below are historical experiments.
 
 ## 1. Tactical missing-observation prototype
 
@@ -62,8 +62,29 @@ Implemented the first controlled stage:
 
 Verification passed 96 routine tests and the full-index synthetic integration through both modular and standalone entry points. Independent code review found no actionable blockers and reproduced legacy Decision fields on 1000 randomized inputs. The standalone bundle passed source-parity and isolated execution checks.
 
-## 7. Pending
+## 7. Controlled local result received, 5 November 2026
 
-The participant's post-repair controlled real-run report has not yet been provided. No post-repair real-match coverage or accuracy improvement is claimed.
+The participant supplied an aggregate `ensemble_report.json`. No predictions were checked against video or ground truth in this analysis.
 
-Next, inspect the controlled stage changes, detailed verification reasons and the eligible missing-ball denominator. Then evaluate sequence-based replay/current-view checks, timing-offset robustness, general stoppage detection and longer-gap inference on permitted other-match labels. Do not widen thresholds merely to increase assignments, and do not use the competition game's public labels for model selection.
+| Stage | H | A | D | X | Resolved graded coverage |
+|---|---:|---:|---:|---:|---:|
+| Legacy tactical | 21105 | 13847 | 0 | 123905 | 22.002% |
+| Restart repaired | 30475 | 18465 | 0 | 109917 | 30.808% |
+| Earlier published D context | 29841 | 18458 | 2934 | 107624 | 32.251% |
+| Broadcast fusion | 29854 | 18458 | 2934 | 107611 | 32.259% |
+
+Restart repair newly assigned 13988 frames, an 8.805 percentage-point coverage change. Its scorer-expanded sequence changed at 21626 frames through both direct changes and propagation. These are behavior changes, not verified improvements. The earlier D context changed 2935 raw labels: 2934 explicit D assignments and one boundary-state change. Its eligibility under the newer clarification remains unresolved.
+
+Fusion added 13 H assignments, equivalent to 0.52 seconds at 25 fps, all from restart-ambiguous frames. All 13 had no effect on the scorer-expanded sequence; predicted possession spells remained 467. The earlier 49-rescue result was confounded by the old restart policy and unequal source context.
+
+Only 700 graded frames reached comparison: 0.441% of 158857 graded frames, or 28 seconds of comparison frames. Geometry was consistent in 355, ball geometry disagreed in 131 and homographies were unreliable in 214. These categories do not identify known replays. The other 158157 graded frames lacked an eligible tactical-clock link; alignment cannot separate unscanned ranges from unreadable OCR.
+
+Of 284 compared frames with an unresolved missing tactical ball, **none had an observed broadcast ball**. Every later missing-ball recovery gate consequently received zero opportunities. This does not show that broadcast cannot help elsewhere; it shows no usable secondary ball observations in this subset. The tactical baseline still has 64079 unresolved missing-ball frames.
+
+The baseline's 107624 X frames were grouped automatically into 58804 frames in restart/dead-context gaps, 20663 with opposing anchors, 15270 with conflicting tags, 10962 limited by duration/tag support and 1925 in unbounded gaps. These are bridge-rule categories, not established physical explanations. They describe the baseline before the final 13 fusion assignments.
+
+Aggregate checks passed for graded label/reason totals, complete fusion-status totals, verification-reason totals and baseline gap totals. Accuracy, spellF1, alignment correctness and possession correctness were not measured.
+
+## 8. Current boundaries and pending work
+
+The newer organiser clarification controls all subsequent work; see [RULES.md](RULES.md). No inference weights, distances, timing gates, bridge durations or OCR cutoffs were adjusted from this report. The executable still needs a route without match-specific manual clock setup before it can be treated as a final-entry candidate. Automatic clock localization/alignment, temporal replay checks, longer-gap inference and general stoppage detection require licensed external development/validation data. Do not relax gates or select models to increase this match's assignment count.

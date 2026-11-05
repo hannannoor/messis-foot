@@ -1,5 +1,7 @@
 # Two-camera experiment
 
+Historical design. The newer organiser clarification in [RULES.md](RULES.md) supersedes manual setup and validation guidance. No inference parameters changed in the 5 November documentation update.
+
 User authorised a local clock-alignment and reliability-weighted possession experiment. The supplied display examples both use MM:SS, with different clock crops. They depict different match moments, not an offset measurement.
 
 ## Chosen approach and alternatives
@@ -19,7 +21,7 @@ Use the existing possession inference separately for each camera. A broadcast la
 
 ## Boundaries
 
-This is an experiment, not a trained ensemble. Real alignment and improvement remain unmeasured. Clock crops from screenshots are provisional normalised presets; the user must verify them on their original video locally. Images and competition assets are not bundled or uploaded. No public labels are used. The existing absent live/dead classifier remains absent.
+This is an experiment, not a trained ensemble. Real alignment and improvement remain unmeasured. Earlier screenshot-derived crops and manual ROI/time setup are historical; their eligibility is not established under the newer clarification. Develop and evaluate automatic setup externally. Do not check predictions against challenge video or tune parameters on it. Images and competition assets are not bundled or uploaded. No public labels are used. The existing absent live/dead classifier remains absent.
 
 ## Implementation plan
 

@@ -15,6 +15,8 @@ Use bounded, two-sided team continuity first. A probabilistic sequence model nee
 
 ## Constraints
 
+The newer organiser clarification in [RULES.md](RULES.md) takes precedence: no output-versus-video checking, manually created game data or AI-service uploads of provided data. Training, fitting, calibration and tuning require external data, never challenge ground truth or video. The earlier fixed D exception must not be assumed eligible.
+
 No gated assets leave the local machine. No public-ground-truth training, tuning, or model selection. Reset at half boundaries. Preserve X for unresolved intervals. Heuristic evidence levels are not calibrated probabilities. A same-team gap can still contain a hidden turnover or stoppage: bounded bridging is a hypothesis, not proof.
 
 ## Defaults chosen for synthetic development

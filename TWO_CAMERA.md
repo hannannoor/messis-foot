@@ -1,5 +1,13 @@
 # Local two-camera clock and fusion experiment
 
+## Controlling update, 5 November 2026
+
+The newer organiser clarification in RULES.md supersedes this historical experiment guide. Do not check predictions against provided video, manually create game data, upload provided data to AI services, or train/fit/calibrate/tune on the provided ground truth or video. All parameter tuning requires external data. Automatic checks and inference on provided inputs remain allowed.
+
+The manual crop/clock-anchor and selected-clip instructions below record an earlier experiment, not an approved final-entry workflow. The executable still includes manual setup and the earlier organiser-answer D interval. Automatic replacement setup is not implemented; eligibility of the D exception needs clarification before final use. The controlled report includes a restart-only stage without that exception.
+
+The new aggregate report is recorded in PROGRESS.md: restart-only resolved coverage was 30.808%, the earlier D context raised it to 32.251%, and fusion reached 32.259%. Fusion changed 13 raw labels and zero scorer-expanded labels. Of 284 compared missing-tactical-ball frames, none had an observed broadcast ball. No accuracy claim or match-based parameter adjustment follows from these counts.
+
 ## Controlled restart comparison, 2 November 2026
 
 Use your existing tracking and cached alignment to isolate the Council's first proposed repair. No clock scan, video playback time or crop selection is needed:
@@ -83,9 +91,9 @@ data/
   broadcast/BAR-ATH_broadcast_homography.csv
 ```
 
-## First real-video pilot: a short first-half interval
+## Historical pilot: a short first-half interval
 
-Start with roughly 30 seconds showing a progressing clock in each feed. Choose overlapping **match** time; the files' elapsed playback times will differ. Use original frame indices: at 25 fps, frame = elapsed playback seconds * 25. Choosing a crop, half and processing range is setup metadata, not possession annotation. Never hand-correct possession labels or training/validation labels on this match.
+Start with roughly 30 seconds showing a progressing clock in each feed. Choose overlapping **match** time; the files' elapsed playback times will differ. Use original frame indices: at 25 fps, frame = elapsed playback seconds * 25. The newer prohibition on manually created game data means this earlier manual setup must not be assumed eligible for a final entry. Never hand-correct possession labels or training/validation labels on this match.
 
 The published tactical first-half kickoff is frame 11185, so a first tactical pilot can use:
 
@@ -101,13 +109,13 @@ python -m gap_solver.multicam clock --video "D:/mtah-data/broadcast/BAR-ATH_broa
 
 Inspect the saved clock previews **locally**. Crop presets are provisional normalised coordinates based on the supplied display layouts, not guaranteed original-video coordinates. If the crop misses digits or includes the score, override with `--roi x,y,width,height`, where values are fractions from 0 to 1. For example `--roi 0.1,0.02,0.06,0.05`. ROI describes the clock box only; it does not label the match. Temporary crops are deleted after OCR; previews remain at the chosen local path.
 
-**Preferred when a preset crop is wrong:** add `--select-roi` to the clock command. A local window opens on the first selected frame. Drag around the complete time digits, leaving a small margin and excluding the score. Inspect the enlarged preview, redraw if necessary, and click **Use clock box**. OCR then continues automatically using your selection. The window uses Python's tkinter; if it is unavailable, the command explains how to install `tk` in your conda environment. Selection geometry and frame extraction are automatically tested; the graphical window still needs verification on your Windows desktop.
+**Historical selector capability:** add `--select-roi` to the clock command. A local window opens on the first selected frame. Drag around the complete time digits, leaving a small margin and excluding the score. Inspect the enlarged preview, redraw if necessary, and click **Use clock box**. OCR then continues automatically using your selection. The window uses Python's tkinter; if it is unavailable, the command explains how to install `tk` in your conda environment. Selection geometry and frame extraction are automatically tested; the graphical window still needs verification on your Windows desktop.
 
-The clock box is saved beside the clock CSV, for example `outputs/tactical-clock.csv.roi.json`. Future runs can replace `--select-roi` with `--roi-file "outputs/tactical-clock.csv.roi.json"`. These options are mutually exclusive with `--roi`. A clock crop is camera setup, not a possession label. No frames or crops need to be uploaded.
+The clock box is saved beside the clock CSV, for example `outputs/tactical-clock.csv.roi.json`. Future runs can replace `--select-roi` with `--roi-file "outputs/tactical-clock.csv.roi.json"`. These options are mutually exclusive with `--roi`. These manual options remain software capabilities, not an exemption from the newer rule. Do not upload provided frames or crops to AI services.
 
 **OCR update:** tactical crops are converted to dark digits on a light background and given a small white border. Broadcast crops retain their dark-on-light polarity and receive the same border. TSV output is requested with the explicit `tessedit_create_tsv=1` parameter; an optional `configs/tsv` file is no longer required. Unexpected non-TSV output raises a format error instead of silently becoming zero clock readings. Polarity processing can help or hurt depending on the installed model. Default confidence cutoff is 0.7; for the user-authorised initial trial, add `--min-confidence 0.5` to the clock command. This changes OCR eligibility only; it is not a claim of better timing or possession accuracy. All existing progressing-tick, half, duplicate-match and geometry checks remain.
 
-The trial prints the first percentile (linear interpolation), median and minimum confidence across ALL sampled crops in the requested clip, counting unreadable/invalid clocks as zero. It also prints parsed, unreadable and accepted counts. `First-percentile confidence > 0.5` means the first percentile, not the minimum or a calibrated probability of correctness. Expected clock-absent intervals will lower these all-crop statistics; the first trial intentionally uses a visible mid-game interval. Optimise based on the trial output and independent evidence afterwards.
+The trial prints the first percentile (linear interpolation), median and minimum confidence across ALL sampled crops in the requested clip, counting unreadable/invalid clocks as zero. It also prints parsed, unreadable and accepted counts. `First-percentile confidence > 0.5` means the first percentile, not the minimum or a calibrated probability of correctness. Expected clock-absent intervals will lower these all-crop statistics; the first trial intentionally uses a visible mid-game interval. Do not optimise from this challenge clip; subsequent tuning requires external data.
 
 **Retry update:** only a crop that is unreadable or below the chosen cutoff is retried. Two local treatments restore the original enlarged crop (undoing the tactical inversion and added border) and threshold the processed crop to black and white. If eligible treatments disagree on the clock, the sample stays unresolved. Otherwise the highest measured eligible score is retained; scores are never increased by agreement. Retry counts, recoveries at the cutoff and conflicts are printed. These are selected OCR scores after retries, not independent accuracy measurements. The reads CSV records the chosen treatment and number of attempts.
 
@@ -132,7 +140,7 @@ python -m gap_solver.multicam fuse --data-dir "D:/mtah-data" --alignment outputs
 
 The dense clock CSV has one row per original video frame, including blank estimates outside the pilot. Fusion retains the original tactical-only result wherever no eligible broadcast correspondence exists. The resulting submission-shaped CSV remains experimental; an automatic live/dead classifier is still absent.
 
-If few candidates survive, first inspect OCR reads, crop placement, timing uncertainty and the selected match-time overlap. Do not loosen every threshold to make the coverage number look better. A finer OCR stride, such as `--stride 1`, can reduce tick timing uncertainty at increased runtime. Clock scans decode from the start of the file to preserve decoded indices; later intervals can therefore cost more than their clip duration suggests.
+Automatic diagnostics can report missing readings, timing uncertainty and absent overlap. Do not check predictions against challenge video or hand-adjust its crop/timing setup. Choose processing parameters and OCR stride using external evaluation, not this game's assignment coverage. Clock scans decode from the start of the file to preserve decoded indices; later intervals can therefore cost more than their clip duration suggests.
 
 ## Files to inspect
 
