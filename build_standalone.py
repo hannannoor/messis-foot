@@ -9,7 +9,14 @@ sources={}
 for file in sorted((root/'gap_solver').glob('*.py')):
     key='gap_solver' if file.name=='__init__.py' else 'gap_solver.'+file.stem
     sources[key]=file.read_text(encoding='utf-8')
-prefix='''Frozen tactical possession update, 5 November 2026
+prefix='''Temporal external research update, 6 November 2026
+
+New motion/reference adapters and a portable temporal model support independent
+development experiments. These research modules do not change the existing
+tactical command or install a new local prediction policy. See
+TEMPORAL_RECOVERY.md for eligibility, held-out results and limitations.
+
+Frozen tactical possession update, 5 November 2026
 
 The experimental new route is tactical-only. Its small state model was fitted on
 four licensed external matches, selected on a fifth, frozen and evaluated on two
@@ -56,7 +63,7 @@ for node in tree.body:
     if 'SOURCES' in names:
         content='SOURCES = {\n'+''.join('    {!r}: r\'\'\'{}\'\'\',\n'.format(key,value) for key,value in sources.items())+'}'
     elif 'VERSION' in names:
-        content="VERSION = '2026.11.05-tactical-validated'"
+        content="VERSION = '2026.11.06-temporal-research'"
     elif 'GUIDE' in names:
         content='GUIDE = '+repr(prefix+ast.literal_eval(node.value))
     else:

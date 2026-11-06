@@ -2,7 +2,7 @@
 
 An experimental local football-possession pipeline for More Than a Hack 2027.
 
-Current version: `2026.11.05-tactical-validated`. The new **opt-in tactical route** uses a compact model selected on licensed external matches and frozen before final testing. The historical camera and legacy commands remain available. This is a provider-validated experiment, not established challenge accuracy.
+Current source version: `2026.11.06-temporal-research`. The existing **opt-in tactical route** retains its frozen model and behavior. New motion adapters and an independent-provider experiment are documented in [TEMPORAL_RECOVERY.md](TEMPORAL_RECOVERY.md). The temporal candidate was rejected on validation; no new local inference policy is installed. This remains provider-reference research, with challenge accuracy unmeasured.
 
 Read [RULES.md](RULES.md) before processing competition inputs. [CHANGELOG.md](CHANGELOG.md) explains what changed and why; [FOUR_GOALS.md](FOUR_GOALS.md) records reasoning, results, regressions and limitations.
 
@@ -14,7 +14,7 @@ Read [RULES.md](RULES.md) before processing competition inputs. [CHANGELOG.md](C
 - Local undecided coverage fell from **69.192% to 56.151%**, or 20,717 fewer X frames; unresolved intervals fell from 1,045 to 509. Local correctness was not measured.
 - External inactive ball coordinates are almost always frozen. This can inflate D performance. Active-only spellF1 slightly declined on both held-out matches; the pooled 96.32% newly resolved agreement is dominated by D. H/A agreement was 86.36%/88.95%.
 
-More assignments do not establish better possession accuracy. Independent provider validation and missing-ball interval recovery are the next proposed work, not implemented features.
+The independent-provider follow-up compared the old model on eight SkillCorner development matches: mean known-play spellF1 changed from.524729 to.527643 while unknown output fell from48.98% to23.01%. A new player-motion/temporal candidate was trained externally and rejected across the fixed27-policy validation grid. [The experiment report](TEMPORAL_RECOVERY.md) records the frozen diagnostic evaluation, simpler alternatives, review fixes and limitations. More assignments alone do not establish better possessions.
 
 ## Run one file
 
@@ -53,7 +53,7 @@ Training/reproduction was verified with Python 3.12, NumPy 1.26.4, SciPy 1.13.1,
 python -m unittest discover -s tests
 ```
 
-The publication checkout ran **183 tests successfully, with four skips** under Python 3.14: the opt-in full-index fixture, training-only sklearn, and two local-delivery tests whose protected local artifacts are absent. The original local-delivery run passed those two tests (183 tests, two skips). Three training/export tests and six isolated standalone CLI tests passed separately. OCR integration uses generated video and optional Pillow/FFmpeg/Tesseract; availability can change skip counts. See [VERIFICATION.md](VERIFICATION.md).
+The current checkout ran **243 tests successfully, with five skips** under Python3.14: the opt-in full-index fixture, two training-only sklearn checks, and two local-delivery tests whose protected local artifacts are absent. Five temporal training/export/calibration/gate checks passed separately under Python3.12. The new40-tree motion/decoder ran from the exact31-module bundle under Python3.11 `-I -S` with no third-party runtime imports. OCR integration uses generated video and optional Pillow/FFmpeg/Tesseract; availability can change skip counts. See [VERIFICATION.md](VERIFICATION.md) and the temporal report for distinct author/reviewer checks.
 
 `install_four_goal_results.ps1` and the delivery-verification utilities are local handover tools, not required for inference. They expect the completed local output/report layout; their integration tests skip when those private local fixtures are absent. `.gitattributes` preserves exact Python source bytes used by the frozen-source integrity checks.
 
