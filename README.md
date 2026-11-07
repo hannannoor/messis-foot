@@ -2,9 +2,9 @@
 
 An experimental local football-possession pipeline for More Than a Hack 2027.
 
-**7 November update:** the [input-contract candidate](docs/input-contract-candidate.md) now runs four frozen policies with original indices and separate uncertainty. Two clean tactical runs matched byte-for-byte; reviewed agreement reduced active X from56.15% to34.36%, then explicit carry produced0% active X. Local accuracy remains unmeasured. Both camera contracts were audited; fresh full H/A/D data remains unavailable. Software verification:294 tests passed,6 skips. Existing Desktop baseline and34 frozen sources are preserved.
+**7 November update:** the [accuracy-first experiment](docs/accuracy-first-results.md) selected a finite H/A/D sequence decoder using the frozen tactical head (motion weight 0, switch cost 32). Natural seen-regression possession-spell F1 improves from 0.4977 to 0.5646; frame accuracy improves modestly on observed tracking but declines under the SkillCorner ball-gap stress. This is an experimental opt-in route, not fresh or target accuracy validation. The original pipeline, four-policy candidate and Desktop output are preserved. Software verification: 317 tests OK, 6 skipped.
 
-Current source version: `2026.11.06-temporal-research`. The existing **opt-in tactical route** retains its frozen model and behavior. New motion adapters and an independent-provider experiment are documented in [TEMPORAL_RECOVERY.md](TEMPORAL_RECOVERY.md). The temporal candidate was rejected on validation; no new local inference policy is installed. This remains provider-reference research, with challenge accuracy unmeasured.
+Existing standalone source version: `2026.11.06-temporal-research`. The existing **opt-in tactical route** retains its frozen model and behavior. New motion adapters and an independent-provider experiment are documented in [TEMPORAL_RECOVERY.md](TEMPORAL_RECOVERY.md). The temporal candidate was rejected on validation; no new local inference policy is installed. This remains provider-reference research, with challenge accuracy unmeasured.
 
 Read [RULES.md](RULES.md) before processing competition inputs. [CHANGELOG.md](CHANGELOG.md) explains what changed and why; [FOUR_GOALS.md](FOUR_GOALS.md) records reasoning, results, regressions and limitations.
 
@@ -66,3 +66,5 @@ Commit code, documentation, configuration, external model/provenance metadata an
 Do not check predictions against provided video, create manual game labels/correspondences, upload provided assets to AI services, or train/tune/calibrate using challenge data. External provider labels are evaluation targets, not inference inputs. Aggregate coverage is not accuracy, and zero X alone does not guarantee a better official temporal score.
 
 Experimental channel-contract candidate: see [input audit, reproducible command and limitations](docs/input-contract-candidate.md). This preserves the frozen baseline and reports carry separately from latent uncertainty.
+
+The new opt-in sequence route uses `python soft_candidate.py --prefix "C:/football-data/tactical cam/BAR-ATH_tactical" --out "../soft-sequence-new-run"`. Use a fresh/empty output folder. See [results, commands and tradeoffs](docs/accuracy-first-results.md), [method](docs/accuracy-first-method.md) and [fresh review/fixes](docs/accuracy-first-code-review.md).

@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "status": "Design approval pending; read-only readiness inspection, no new predictions or candidate scores",
+  "target_data_used": false,
+  "predictor_fitting_performed": false,
+  "fresh_holdout": false,
+  "existing_heads_trained_on_named_validation_matches": false,
+  "design_sha256": "13e08664a55290a85fa4eb2757653abe896c823570abd68d63a0ffbbbd67e944",
+  "sources": [
+    {
+      "cohort": "dfl",
+      "stage": "validation",
+      "match": "J03WQQ",
+      "rows": 142345,
+      "reference_counts": {
+        "H": 37030,
+        "A": 47322,
+        "D": 57993,
+        "X": 0
+      },
+      "reference_sha256": "b459022e5446f70393bcfc823348bb5c4db1cbd62903a255c44b47a6093df650",
+      "reference_scope": "provider full H/A/D"
+    },
+    {
+      "cohort": "dfl",
+      "stage": "seen_regression",
+      "match": "J03WR9",
+      "rows": 146810,
+      "reference_counts": {
+        "H": 53239,
+        "A": 32077,
+        "D": 61494,
+        "X": 0
+      },
+      "reference_sha256": "49ef3fe09fbd96514f859971f200cd9f71ed8bc3c1704c786c4e534e8697b7b7",
+      "reference_scope": "provider full H/A/D"
+    },
+    {
+      "cohort": "dfl",
+      "stage": "seen_regression",
+      "match": "J03WN1",
+      "rows": 141561,
+      "reference_counts": {
+        "H": 36421,
+        "A": 31956,
+        "D": 73184,
+        "X": 0
+      },
+      "reference_sha256": "bc50dbc75a467694a7618cfef1c5bb4935813fd541c7c8947aca75e5c4a037db",
+      "reference_scope": "provider full H/A/D"
+    },
+    {
+      "cohort": "skillcorner",
+      "stage": "validation",
+      "match": 2006229,
+      "rows": 148175,
+      "reference_counts": {
+        "H": 47984,
+        "A": 33386,
+        "D": 0,
+        "X": 66805
+      },
+      "reference_sha256": "3d55212006360868bf2429f7fd7caf09f6df9840f17f88364e5d2d4f5193882b",
+      "reference_scope": "known-play H/A, unknown outside annotation"
+    },
+    {
+      "cohort": "skillcorner",
+      "stage": "validation",
+      "match": 2006363,
+      "rows": 147753,
+      "reference_counts": {
+        "H": 44637,
+        "A": 36380,
+        "D": 0,
+        "X": 66736
+      },
+      "reference_sha256": "f402f7ff6eca84937fc62f1e2221644120a3f98a5d1a42c9cc8e393c27046ae1",
+      "reference_scope": "known-play H/A, unknown outside annotation"
+    },
+    {
+      "cohort": "skillcorner",
+      "stage": "seen_regression",
+      "match": 2007448,
+      "rows": 145203,
+      "reference_counts": {
+        "H": 35672,
+        "A": 37403,
+        "D": 0,
+        "X": 72128
+      },
+      "reference_sha256": "79895d352f3adf63e792bcb1deddf106ac0e8a414a0c4dbd6088ebbb7e3fbac0",
+      "reference_scope": "known-play H/A, unknown outside annotation"
+    },
+    {
+      "cohort": "skillcorner",
+      "stage": "seen_regression",
+      "match": 2007721,
+      "rows": 143928,
+      "reference_counts": {
+        "H": 40785,
+        "A": 42676,
+        "D": 0,
+        "X": 60467
+      },
+      "reference_sha256": "43a047e621c7868dafbf3ad02dfe63609209afd92a5f18c4f51c61aeca85d015",
+      "reference_scope": "known-play H/A, unknown outside annotation"
+    },
+    {
+      "cohort": "skillcorner",
+      "stage": "seen_regression",
+      "match": 2010085,
+      "rows": 147478,
+      "reference_counts": {
+        "H": 50230,
+        "A": 30689,
+        "D": 0,
+        "X": 66559
+      },
+      "reference_sha256": "a1f08c95b7a7b5590bcab4a2cc22ea85d31a346d6a079add791f4a76a4ff26a1",
+      "reference_scope": "known-play H/A, unknown outside annotation"
+    },
+    {
+      "cohort": "skillcorner",
+      "stage": "seen_regression",
+      "match": 2011166,
+      "rows": 179628,
+      "reference_counts": {
+        "H": 29593,
+        "A": 38224,
+        "D": 0,
+        "X": 111811
+      },
+      "reference_sha256": "69d431975094a0048eeaceaa0c695524d7cb3c1a0df91887dfde179c241edf0d",
+      "reference_scope": "known-play H/A, unknown outside annotation"
+    },
+    {
+      "cohort": "skillcorner",
+      "stage": "seen_regression",
+      "match": 2013725,
+      "rows": 175628,
+      "reference_counts": {
+        "H": 38241,
+        "A": 39614,
+        "D": 0,
+        "X": 97773
+      },
+      "reference_sha256": "991658b9e3d37b260f958603929de774be8df1e2942d7cba7d00f96bb47eef61",
+      "reference_scope": "known-play H/A, unknown outside annotation"
+    },
+    {
+      "cohort": "skillcorner",
+      "stage": "seen_regression",
+      "match": 2015213,
+      "rows": 180253,
+      "reference_counts": {
+        "H": 33003,
+        "A": 42978,
+        "D": 0,
+        "X": 104272
+      },
+      "reference_sha256": "b493f3b298fe5bac88faf2da38b31c647a4008d39e931774ab4833cb906ea7c9",
+      "reference_scope": "known-play H/A, unknown outside annotation"
+    },
+    {
+      "cohort": "skillcorner",
+      "stage": "seen_regression",
+      "match": 2016236,
+      "rows": 177753,
+      "reference_counts": {
+        "H": 38447,
+        "A": 43093,
+        "D": 0,
+        "X": 96213
+      },
+      "reference_sha256": "b57281f9b0510311722e4f85bc5b3976c2c2f9078c21f706c0f6ef12083e1270",
+      "reference_scope": "known-play H/A, unknown outside annotation"
+    },
+    {
+      "cohort": "skillcorner",
+      "stage": "seen_regression",
+      "match": 2017461,
+      "rows": 178628,
+      "reference_counts": {
+        "H": 44302,
+        "A": 27223,
+        "D": 0,
+        "X": 107103
+      },
+      "reference_sha256": "7717c4014128852911067ed68144f8ad6d29b64aa87dc71116ff1a656b64bd7e",
+      "reference_scope": "known-play H/A, unknown outside annotation"
+    }
+  ]
+}

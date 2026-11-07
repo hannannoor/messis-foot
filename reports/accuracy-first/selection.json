@@ -1,0 +1,133 @@
+{
+  "selected_id": "w0-c32",
+  "weight": 0.0,
+  "switch_cost": 32.0,
+  "score": 0.627686162578772,
+  "macro_f1": 0.7587498488214829,
+  "baseline_score": 0.5271837892836487,
+  "validation_improved": true,
+  "ranking": [
+    {
+      "id": "w0-c32",
+      "weight": 0.0,
+      "switch_cost": 32.0,
+      "score": 0.627686162578772,
+      "macro_f1": 0.7587498488214829
+    },
+    {
+      "id": "w0.5-c32",
+      "weight": 0.5,
+      "switch_cost": 32.0,
+      "score": 0.62684194220261,
+      "macro_f1": 0.7595468050411176
+    },
+    {
+      "id": "w0.25-c32",
+      "weight": 0.25,
+      "switch_cost": 32.0,
+      "score": 0.6253767652993991,
+      "macro_f1": 0.7589693429861207
+    },
+    {
+      "id": "w1-c32",
+      "weight": 1.0,
+      "switch_cost": 32.0,
+      "score": 0.6228360100236667,
+      "macro_f1": 0.7604049598965288
+    },
+    {
+      "id": "w1-c8",
+      "weight": 1.0,
+      "switch_cost": 8.0,
+      "score": 0.5429101501560303,
+      "macro_f1": 0.7546387960791539
+    },
+    {
+      "id": "w0.5-c8",
+      "weight": 0.5,
+      "switch_cost": 8.0,
+      "score": 0.537823913324852,
+      "macro_f1": 0.7530693742203047
+    },
+    {
+      "id": "w0.25-c8",
+      "weight": 0.25,
+      "switch_cost": 8.0,
+      "score": 0.5329294858179663,
+      "macro_f1": 0.7525827190193353
+    },
+    {
+      "id": "w0-c8",
+      "weight": 0.0,
+      "switch_cost": 8.0,
+      "score": 0.5312655265765491,
+      "macro_f1": 0.7523550005113706
+    },
+    {
+      "id": "w1-c2",
+      "weight": 1.0,
+      "switch_cost": 2.0,
+      "score": 0.5112732549263366,
+      "macro_f1": 0.7537542377082344
+    },
+    {
+      "id": "w0.5-c2",
+      "weight": 0.5,
+      "switch_cost": 2.0,
+      "score": 0.5079533730996126,
+      "macro_f1": 0.7523151200027705
+    },
+    {
+      "id": "w0.25-c2",
+      "weight": 0.25,
+      "switch_cost": 2.0,
+      "score": 0.5054226221369758,
+      "macro_f1": 0.7520318746219172
+    },
+    {
+      "id": "w0-c2",
+      "weight": 0.0,
+      "switch_cost": 2.0,
+      "score": 0.5033502673287444,
+      "macro_f1": 0.7519516436281355
+    },
+    {
+      "id": "w0.5-c0",
+      "weight": 0.5,
+      "switch_cost": 0.0,
+      "score": 0.4746512283695261,
+      "macro_f1": 0.7520839681142226
+    },
+    {
+      "id": "w1-c0",
+      "weight": 1.0,
+      "switch_cost": 0.0,
+      "score": 0.4712325390039124,
+      "macro_f1": 0.7533807752304948
+    },
+    {
+      "id": "w0.25-c0",
+      "weight": 0.25,
+      "switch_cost": 0.0,
+      "score": 0.46937897935746964,
+      "macro_f1": 0.7517529453837266
+    },
+    {
+      "id": "w0-c0",
+      "weight": 0.0,
+      "switch_cost": 0.0,
+      "score": 0.467433994552137,
+      "macro_f1": 0.7517425566169225
+    }
+  ],
+  "experiment_sha256": "e7031f709506cb1c0631a716dc60b290cc22c9320a49a4c12daa9bdd5bffd001",
+  "fresh_holdout": false,
+  "validation_receipt_sha256": {
+    "dfl-J03WQQ-masked.json": "b32fbbc35600e0d15cae7f5179df5cd72fa6c567609f7898078a4107dfa494c5",
+    "dfl-J03WQQ-natural.json": "a99488873794beb589f5aeb1a4faaa9003669dc58706ede384a6eb82c38d6472",
+    "skillcorner-2006229-masked.json": "ecf0669dcf61a5dddfdf49400aecbe8985a9e7c994a3035487d41303b32e2751",
+    "skillcorner-2006229-natural.json": "f683b768882a188f0ef798886ef885b47acfa2be35d81ed5c3887a8140d4dda3",
+    "skillcorner-2006363-masked.json": "55998beebc925816cba18f9e519efc753f3f5ae8e30e623cb4785ec55229131b",
+    "skillcorner-2006363-natural.json": "851d6221c0bea8cf6c11bd6db6db4769eb8d39db3751f6e559e449f709c9c339"
+  }
+}

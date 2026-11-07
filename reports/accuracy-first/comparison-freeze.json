@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "base_commit": "9bd11dc847f71973782ea268045609f6a8c6bffd",
+  "split": {
+    "validation": {
+      "dfl": [
+        "J03WQQ"
+      ],
+      "skillcorner": [
+        2006229,
+        2006363
+      ]
+    },
+    "regression": {
+      "dfl": [
+        "J03WR9",
+        "J03WN1"
+      ],
+      "skillcorner": [
+        2007448,
+        2007721,
+        2010085,
+        2011166,
+        2013725,
+        2015213,
+        2016236,
+        2017461
+      ]
+    }
+  },
+  "settings": [
+    {
+      "id": "w0-c0",
+      "weight": 0.0,
+      "switch_cost": 0.0
+    },
+    {
+      "id": "w0-c2",
+      "weight": 0.0,
+      "switch_cost": 2.0
+    },
+    {
+      "id": "w0-c8",
+      "weight": 0.0,
+      "switch_cost": 8.0
+    },
+    {
+      "id": "w0-c32",
+      "weight": 0.0,
+      "switch_cost": 32.0
+    },
+    {
+      "id": "w0.25-c0",
+      "weight": 0.25,
+      "switch_cost": 0.0
+    },
+    {
+      "id": "w0.25-c2",
+      "weight": 0.25,
+      "switch_cost": 2.0
+    },
+    {
+      "id": "w0.25-c8",
+      "weight": 0.25,
+      "switch_cost": 8.0
+    },
+    {
+      "id": "w0.25-c32",
+      "weight": 0.25,
+      "switch_cost": 32.0
+    },
+    {
+      "id": "w0.5-c0",
+      "weight": 0.5,
+      "switch_cost": 0.0
+    },
+    {
+      "id": "w0.5-c2",
+      "weight": 0.5,
+      "switch_cost": 2.0
+    },
+    {
+      "id": "w0.5-c8",
+      "weight": 0.5,
+      "switch_cost": 8.0
+    },
+    {
+      "id": "w0.5-c32",
+      "weight": 0.5,
+      "switch_cost": 32.0
+    },
+    {
+      "id": "w1-c0",
+      "weight": 1.0,
+      "switch_cost": 0.0
+    },
+    {
+      "id": "w1-c2",
+      "weight": 1.0,
+      "switch_cost": 2.0
+    },
+    {
+      "id": "w1-c8",
+      "weight": 1.0,
+      "switch_cost": 8.0
+    },
+    {
+      "id": "w1-c32",
+      "weight": 1.0,
+      "switch_cost": 32.0
+    }
+  ],
+  "mask": {
+    "rate": 0.3,
+    "seed": 1729,
+    "definition": "frozen contiguous_mask"
+  },
+  "source_sha256": {
+    "gap_solver/accuracy_protocol.py": "8edac7aa5d651bcc486acbd3378b34c89f0e8447ab263da4bfbade9822db24e7",
+    "gap_solver/acquisition.py": "9daf60b99277cf0e2bc33fb76bfa5f7f7827d220d094e4426faf6af5803c2ee8",
+    "gap_solver/anonymous_motion.py": "b22404d6592c9aba1dff9383215a570c6e307c1536181b487dc563ff76080435",
+    "gap_solver/audit.py": "089c94af1a767da59cf6e37ff6cb3e1f8e500b84961adc696a5b5598002785ae",
+    "gap_solver/automatic_sync.py": "298a27c8635fe1af36648394cbf14c6c7855fedce91664b74565efdc217ba1e9",
+    "gap_solver/benchmark.py": "a90f2267bfc8b4a15e965b21895c3f77a7f4a435d6e1c34177b86a4ab2ed92c6",
+    "gap_solver/candidate_cli.py": "9fceef50b89695cc5535edbe4dafd30586e0a22dc89d33b8593a38c9cb01b853",
+    "gap_solver/clock_discovery.py": "ac7da5e75b201cab9e40758ced89f6f684e736a9088463383588f9063880b532",
+    "gap_solver/clock_ocr.py": "cd8e5d350cd47d83f7c6c266bb5126816423a4860980b7348eef8858fa6e0607",
+    "gap_solver/clock_sync.py": "9f451cc7a5440bf2c20801592690bc282d2e176dbdcee74030f8f83bbd083313",
+    "gap_solver/confidence_ensemble.py": "c01c0dc84da4b400ec6f7dee0de94bb0f2bc9fab70ee5471205ee48d72fe33f9",
+    "gap_solver/core.py": "fc9c0f864422992314b4f26c104319c5e082030f1956ffb5d5250fa801f2974f",
+    "gap_solver/dfl_motion.py": "992aa34db2c8ff754969cf3a1c5c755ded6bc1c4beec247e38a5cc012163344a",
+    "gap_solver/external.py": "3dd225ed05ab11e6367a5c3cb637ffcf9784c7be57bc6523975ddd0ef2ce2d78",
+    "gap_solver/frozen_protocol.py": "1252ab22b921b3f085af90e9a4edd5401ee05054eec3894be80a685cb2767c61",
+    "gap_solver/fusion.py": "1b92239778125bb51706a76b1c0e6472eaed4bdb3afb07ae02a097d355181431",
+    "gap_solver/input_contract.py": "f4559f6af6de2dd8b0ec5bf6da1b2372f5743598add92dfadfa49a28af1e7bd6",
+    "gap_solver/io.py": "633b887cede248e5515818e4f2a6a8592a1d968f27e954128b028f5a0173bcdc",
+    "gap_solver/materialization_control.py": "5bc167744e6702608c503b18a268d5883d5a7a83c8d508e679464edc3491a0e0",
+    "gap_solver/motion.py": "f36699381e567e13fa60c6fc6b4177bdcab91b1fa3ac95d7da64bc63708656d4",
+    "gap_solver/multicam.py": "83ac4a7e6c0440f07806bf68f863d021c4f2fceb7347e91760ef88e4be56292a",
+    "gap_solver/official_metrics.py": "3b10408fd91228c388fdbb1cd7b08a432bc59f88989c6eaf56c2153f92f11fe2",
+    "gap_solver/roi.py": "aad4755dc47e0e4bfa3fa0f662649035c506597d55077cdb2b72ee40d9a1f8c7",
+    "gap_solver/selection.py": "e465e9e2f3b66548eb814bd02681814f2b73e6db5aebb8d189c61c02bc4a659e",
+    "gap_solver/skillcorner.py": "07bd06af0a01b069b37c5a98dd7d40ea4ee191e3218de291b85b8385da4b524f",
+    "gap_solver/soft_sequence.py": "fa829e31d96eb87bebbe93ca98554f95d372c5162c6b7365b92ac9914d3ee4fe",
+    "gap_solver/tactical.py": "b0e4550ae80d6f6d7293781f1bb2401450397591f3239a1bdff7a961aa19f93f",
+    "gap_solver/tactical_cli.py": "cc245579b382247116a7ca1874b81db4773f3aa976dd6e65662f1385d0ada63a",
+    "gap_solver/tactical_model.py": "2072a0585d85128eb8127e8b295e2f7e1757e21569356bb6b8ef9d7f09c74f45",
+    "gap_solver/temporal.py": "f62aac2d9ce5ae4e957749cd0e70588484e315d2feeb5c4e22359bb9fff51822",
+    "gap_solver/temporal_acceptance.py": "0fd01f3f510e1c4daf40bac2966773b710a2fbc3386e85535766050ddb0cacd5",
+    "gap_solver/temporal_development.py": "b5d4f327e73c85f70d6bc36ae0ee1ddd273382113525d5d2078a34a96ee2276a",
+    "gap_solver/temporal_diagnostics.py": "1c2ba3d74a5ba6bfb8ab1a94554754954964ef9f82913d332bbd649cf7f603bb",
+    "gap_solver/temporal_feasibility.py": "3b9101e5026c9c15590502ff43598c6e270de71d40cc2407bee60d7b53eeb208",
+    "gap_solver/temporal_metrics.py": "1e1928308944ef20fb061f28e8829562e22eff19b87f8aa450dabac52b8ef316",
+    "gap_solver/temporal_protocol.py": "f435f36b61edde2514a3606f7c79abeff092846fca160b305a2b8c7e5178ce9a",
+    "gap_solver/temporal_selection.py": "846a22e0c336c7b03eb4c96ff73ed998ff405ac4897602a48427f74f99b644af",
+    "gap_solver/__init__.py": "90bdeb562068ff217819802df01415d1c6226512ee6b14064e0ad8fe2ecf8e03",
+    "gap_solver/__main__.py": "0121fafa2bc0aa5a8aff26e1dd1c6bb788c7c95e414da18f99bb96b81089e7d8",
+    "accuracy_experiment.py": "cf0559d447c44cb2f059cea21cb96a9a6c70a4aad89ae9e0ced83d46580ca0f8"
+  },
+  "input_sha256": {
+    "dfl-J03WQQ": {
+      "external-reference\\cache\\J03WQQ.metadata.json": "3753a785101d5c624555c5a540b4e480808c6279db5e6a2f0dee9514642d2818",
+      "external-reference\\cache\\J03WQQ.features.npz": "7e1a69309aac82ee136881eb7722e380c8f4fed54d65d707c940298e82dc2876",
+      "external-reference\\cache\\J03WQQ.reference.npz": "b459022e5446f70393bcfc823348bb5c4db1cbd62903a255c44b47a6093df650",
+      "external-reference/raw/DFL_02_01_matchinformation_DFL-COM-000002_DFL-MAT-J03WQQ.xml": "e976aa0c5dba862cfa898ea57ec226efce9d1bc04b23b8d775908db86aa6fa41",
+      "external-reference/raw/DFL_04_03_positions_raw_observed_DFL-COM-000002_DFL-MAT-J03WQQ.xml": "cbefcb0bd7f39f3b94ee69a7bc97aac0f936425062c1cc1b144733df36804d6f"
+    },
+    "skillcorner-2006229": {
+      "independent-reference\\cache\\2006229-detected.metadata.json": "298c241cf4acacb87263f323f616dfec9b99b4edcc7510072f13dc915b4836e7",
+      "independent-reference\\cache\\2006229-detected.features.npz": "124a104849080c4e92d136085c9aa0672887faea741f5078d57e37f56fe1aed0",
+      "independent-reference\\cache\\2006229-detected.reference.npz": "3d55212006360868bf2429f7fd7caf09f6df9840f17f88364e5d2d4f5193882b"
+    },
+    "skillcorner-2006363": {
+      "independent-reference\\cache\\2006363-detected.metadata.json": "07d132010d7b67aba42e1c1f595c040b1c17c52c1e83a6c2b8b1d07fc6fe3656",
+      "independent-reference\\cache\\2006363-detected.features.npz": "fc9c28b02c3935f1c9fb4644de2f304ffbfef145aea447b1709eaff053378dd3",
+      "independent-reference\\cache\\2006363-detected.reference.npz": "f402f7ff6eca84937fc62f1e2221644120a3f98a5d1a42c9cc8e393c27046ae1"
+    },
+    "dfl-J03WR9": {
+      "external-reference\\cache\\J03WR9.metadata.json": "eca4d0c346c6250450706b20c2eda36d64765da014034545c65ac1302f88aaf9",
+      "external-reference\\cache\\J03WR9.features.npz": "a834c01bfbcf4677af7368487ab4ad0f25de282e84828427bdd462dc6ffc877a",
+      "external-reference\\cache\\J03WR9.reference.npz": "49ef3fe09fbd96514f859971f200cd9f71ed8bc3c1704c786c4e534e8697b7b7",
+      "external-reference/raw/DFL_02_01_matchinformation_DFL-COM-000002_DFL-MAT-J03WR9.xml": "429b584e89df3e3e8b81f4bd0d004b38bd0b4298bb390b8fb43efccb60963e01",
+      "external-reference/raw/DFL_04_03_positions_raw_observed_DFL-COM-000002_DFL-MAT-J03WR9.xml": "70b63069189019066fb7e3d9db891122edfe787f3a43ba522ebe45ed89ea0269"
+    },
+    "dfl-J03WN1": {
+      "external-reference\\cache\\J03WN1.metadata.json": "2d92fbba306794860398d7aa1b1cc51d5acde755b6fb00150206fa311cb964bb",
+      "external-reference\\cache\\J03WN1.features.npz": "16e451f5c7edd70cdd492cf45981c3748f64ef78bf01076888a7460b0f517fd8",
+      "external-reference\\cache\\J03WN1.reference.npz": "bc50dbc75a467694a7618cfef1c5bb4935813fd541c7c8947aca75e5c4a037db",
+      "external-reference/raw/DFL_02_01_matchinformation_DFL-COM-000001_DFL-MAT-J03WN1.xml": "5490286436c86e6f80a538d2b1b379d0efd016e0defcaf594bc59d9ef5079f4c",
+      "external-reference/raw/DFL_04_03_positions_raw_observed_DFL-COM-000001_DFL-MAT-J03WN1.xml": "56ef948961a18e150dba0b7b16869d0008ff66f3050a0c355d31fa5b8ec2fcec"
+    },
+    "skillcorner-2007448": {
+      "independent-reference\\cache\\2007448-detected.metadata.json": "88a7ea5eec55dd5fbc08d8c70ae805f8f6b30fe77093636b290892e35e4c54f3",
+      "independent-reference\\cache\\2007448-detected.features.npz": "d839e09b9f0a8e2f15e986e75fcb06df9f632a2ffe298cde444d7135614a3ffd",
+      "independent-reference\\cache\\2007448-detected.reference.npz": "79895d352f3adf63e792bcb1deddf106ac0e8a414a0c4dbd6088ebbb7e3fbac0"
+    },
+    "skillcorner-2007721": {
+      "independent-reference\\cache\\2007721-detected.metadata.json": "cc18c3f0c0be5f2fd7ec73e20fc25590561f0f4cedfd9c2fa54b176d841d1cb9",
+      "independent-reference\\cache\\2007721-detected.features.npz": "2b1f4d297794aa5810d4ef34af333183a56d4a5085d9ac2128d2dce786d7a44a",
+      "independent-reference\\cache\\2007721-detected.reference.npz": "43a047e621c7868dafbf3ad02dfe63609209afd92a5f18c4f51c61aeca85d015"
+    },
+    "skillcorner-2010085": {
+      "independent-reference\\cache\\2010085-detected.metadata.json": "24e68df8735e44fe9e1715f8956fa91daa9fdbd858a36a431dce455b7702d9ea",
+      "independent-reference\\cache\\2010085-detected.features.npz": "4b49a33427711fa90aa2bd4facb9bc699f36f3088363b07a3d09eb77dd1b37f3",
+      "independent-reference\\cache\\2010085-detected.reference.npz": "a1f08c95b7a7b5590bcab4a2cc22ea85d31a346d6a079add791f4a76a4ff26a1"
+    },
+    "skillcorner-2011166": {
+      "independent-reference\\cache\\2011166-detected.metadata.json": "df9f4c98d20b8b779d855a8c5d7ff0f298f0fb3540e13d7c21bf3eec85f20edb",
+      "independent-reference\\cache\\2011166-detected.features.npz": "91c5821cd465967b655b7cf19df4430eadcd235523d6094cfba30d5e11289f8a",
+      "independent-reference\\cache\\2011166-detected.reference.npz": "69d431975094a0048eeaceaa0c695524d7cb3c1a0df91887dfde179c241edf0d"
+    },
+    "skillcorner-2013725": {
+      "independent-reference\\cache\\2013725-detected.metadata.json": "62a87e0df54b69d9f05fc1d86854481d79dc1ad7c7b5d837550aff7c78a046ee",
+      "independent-reference\\cache\\2013725-detected.features.npz": "2e217933e408f704fa93ea512b38d671898228bb7b40584e8f449fb626881a4c",
+      "independent-reference\\cache\\2013725-detected.reference.npz": "991658b9e3d37b260f958603929de774be8df1e2942d7cba7d00f96bb47eef61"
+    },
+    "skillcorner-2015213": {
+      "independent-reference\\cache\\2015213-detected.metadata.json": "ec528234a51b40078304ee525f7f4bcd8710e734d57e70416f0cbc5d5f5ac716",
+      "independent-reference\\cache\\2015213-detected.features.npz": "95ddd48289c75ef2bb4073c0bb1b7f8367aa46e36cd7a0fb6958a61067521b46",
+      "independent-reference\\cache\\2015213-detected.reference.npz": "b493f3b298fe5bac88faf2da38b31c647a4008d39e931774ab4833cb906ea7c9"
+    },
+    "skillcorner-2016236": {
+      "independent-reference\\cache\\2016236-detected.metadata.json": "f57187568c54254f9dca613ddfe7d73f0d3b035ba2b270de99c32642bf981a42",
+      "independent-reference\\cache\\2016236-detected.features.npz": "d4b556e5b6b213b9550da57088390b6bd61413a98fd67e40f30001a2eb20d6ff",
+      "independent-reference\\cache\\2016236-detected.reference.npz": "b57281f9b0510311722e4f85bc5b3976c2c2f9078c21f706c0f6ef12083e1270"
+    },
+    "skillcorner-2017461": {
+      "independent-reference\\cache\\2017461-detected.metadata.json": "f6d5493c834c928504485d849909dc5cb3f60a59b6da23cf45acd13d68d38120",
+      "independent-reference\\cache\\2017461-detected.features.npz": "fb511bcb6be005719b026406bab773d4c6b87de93d0f03faea74b173132e27e0",
+      "independent-reference\\cache\\2017461-detected.reference.npz": "7717c4014128852911067ed68144f8ad6d29b64aa87dc71116ff1a656b64bd7e"
+    }
+  },
+  "temporal_artifact_sha256": "396a05f28d0493492af118682453dbf489d1cc867a6136420c3de3a3783bbf48",
+  "tactical_artifact_sha256": "be756fce3c52d21fda0b10d8a6026f78f9b7d599298d467d2d6ebc59efe9fd38",
+  "fresh_holdout": false,
+  "head_fitting_performed": false,
+  "selection": "natural only; equal providers then matches; spellF1, macroF1, lower weight, lower switch cost"
+}
