@@ -2,6 +2,8 @@
 
 An experimental local football-possession pipeline for More Than a Hack 2027.
 
+**7 November update:** the user-requested [ensemble comparison](ENSEMBLE_FINDINGS.md) improves seen-cohort frame and spell metrics while retaining some X. The [two-stage independent audit and response](docs/neutral-audit-response.md) records wasted effort, missing controls and next priorities. Its [carry-control experiment](docs/materialization-control.md) distinguishes zero-X output formatting from new possession evidence. Latest software verification:278 tests pass,5 skips. The selected local model/output remains unchanged; no new ensemble submission route or fresh-validation claim is delivered.
+
 Current source version: `2026.11.06-temporal-research`. The existing **opt-in tactical route** retains its frozen model and behavior. New motion adapters and an independent-provider experiment are documented in [TEMPORAL_RECOVERY.md](TEMPORAL_RECOVERY.md). The temporal candidate was rejected on validation; no new local inference policy is installed. This remains provider-reference research, with challenge accuracy unmeasured.
 
 Read [RULES.md](RULES.md) before processing competition inputs. [CHANGELOG.md](CHANGELOG.md) explains what changed and why; [FOUR_GOALS.md](FOUR_GOALS.md) records reasoning, results, regressions and limitations.
@@ -43,7 +45,7 @@ python football_pipeline.py --guide
 
 ## Development and reproducibility
 
-The modular sources in `gap_solver/` match the embedded modules in the single-file program. `build_standalone.py` uses the preserved code-only `football_pipeline.original.py` scaffold; `football_pipeline.pre_tactical.py` is the previous automatic-sync source backup.
+The frozen inference sources match the embedded modules in the single-file program. Additional confidence/ensemble/materialization diagnostics run from the checkout and do not add prediction routes to that bundle. `build_standalone.py` uses the preserved code-only `football_pipeline.original.py` scaffold; `football_pipeline.pre_tactical.py` is the previous automatic-sync source backup.
 
 The pinned external manifest, provenance and frozen model/policy are in [benchmark/](benchmark/README.md). Raw tracking, reference caches and frame-level predictions are obtained/generated locally outside the checkout. The external dataset is CC BY 4.0; preserve attribution and [the official metric's MIT license](OFFICIAL_METRIC_LICENSE.txt).
 
@@ -53,7 +55,7 @@ Training/reproduction was verified with Python 3.12, NumPy 1.26.4, SciPy 1.13.1,
 python -m unittest discover -s tests
 ```
 
-The current checkout ran **243 tests successfully, with five skips** under Python3.14: the opt-in full-index fixture, two training-only sklearn checks, and two local-delivery tests whose protected local artifacts are absent. Five temporal training/export/calibration/gate checks passed separately under Python3.12. The new40-tree motion/decoder ran from the exact31-module bundle under Python3.11 `-I -S` with no third-party runtime imports. OCR integration uses generated video and optional Pillow/FFmpeg/Tesseract; availability can change skip counts. See [VERIFICATION.md](VERIFICATION.md) and the temporal report for distinct author/reviewer checks.
+The6 November temporal-research milestone ran **243 tests successfully, with five skips** under Python3.14. The7 November additive diagnostics suite runs **278 tests, with the same five skips**: the opt-in full-index fixture, two training-only sklearn checks, and two local-delivery tests whose protected local artifacts are absent. Five temporal training/export/calibration/gate checks passed separately under Python3.12. The40-tree motion/decoder ran from the exact31-module frozen bundle under Python3.11 `-I -S` with no third-party runtime imports. OCR integration uses generated video and optional Pillow/FFmpeg/Tesseract; availability can change skip counts. See [VERIFICATION.md](VERIFICATION.md) and the separate diagnostic/audit reports for distinct author/reviewer checks.
 
 `install_four_goal_results.ps1` and the delivery-verification utilities are local handover tools, not required for inference. They expect the completed local output/report layout; their integration tests skip when those private local fixtures are absent. `.gitattributes` preserves exact Python source bytes used by the frozen-source integrity checks.
 
