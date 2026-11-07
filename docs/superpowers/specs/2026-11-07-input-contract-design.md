@@ -1,0 +1,24 @@
+# Input contract and experimental candidate
+
+User-approved goal,7 November2026: audit local inputs; freeze incumbent/carry/agreement/agreement-plus-carry; seek genuinely fresh licensed H/A/D evaluation; package one reproducible experimental command. Preserve existing outputs and frozen models. No provided GT/video checks, manual match labels, challenge-driven tuning or asset uploads.
+
+## Approach and builder decisions
+
+Retain Python and the existing standard-library inference. Use additive files in an isolated175-file verified copy of commit1d723cb; no local git exists. Preserve the34 frozen sources. Existing Desktop source/output remains unchanged.
+
+Audit first and reuse frozen predictors. The alternatives are retaining positional XML ordering/slot identity, or changing/retraining the feature model. Positional assumptions are now contradicted by the documented anonymous-slot contract; a new trained model is outside this experiment. The chosen implementation derives field membership/order from EPTS channel references and maps home/away through machine metadata plus the documented H/A team names. It never infers team roles from playing direction or labels.
+
+Raw ATD observations lack detection/extrapolation flags. Report freshness as unverified; repeated values alone are not proof of staleness. Track slots are not people. A bounded deterministic mutual-nearest spatial association supplies **estimated** adjacent-frame correspondence, resets across missing frames/periods/invalid geometry and drops ambiguous/nonphysical matches. The proposed maximum displacement is20m/s divided by25Hz, fixed before any local diagnostic/selection;20 is the existing feature speed scale, not a calibrated correctness bound. Never present these IDs as actual player identities. Test permutation invariance and compare this adapter on already-seen external data as a compatibility stress, not a fresh holdout or new selection.
+
+The existing error<=3 homography gate is retained for baseline comparability, reported as an engineering policy rather than a documented universal ATD validity criterion. Audit its effect separately. No local threshold fitting. Coordinate conversion remains documented normalized0–1 to canonical105.3x68m; metadata105x68 is recorded separately. The public documentation says source speeds are m/s; the executed metadata audit instead found kph. The implementation validates but does not use that speed field. Frame IDs1..N map to output0..N-1,25Hz; tactical published half windows are structural only. Broadcast retains its own unaligned timeline and is not fused.
+
+## Deliverables
+
+1. A streaming source audit for tactical and broadcast metadata/raw/homography, emitting aggregate schema, role, units/index, missingness/repetition, anonymous-slot and quality-gate findings. No frames, coordinates, player IDs or tag instances in public output. PASS means structural compatibility, not accurate observations. Unknown freshness/association remains a limitation.
+2. A frozen comparison manifest with four policies and source/model identities. Licensed fresh full H/A/D cohort must exclude all7 opened DFL and20 SkillCorner matches. Acquire/evaluate only when rights, labels and timing are actually verified; otherwise record the missing validation without claiming freshness or D from phase absence.
+3. A standard-library experimental CLI with audit/run commands, strict named-role/channel parsing, optional automatic association, and exactly original indices. One run writes all four comparator CSVs, one selected submission, latent uncertainty/provenance diagnostics and aggregate hashes. Default selected policy is agreement-plus-carry; periods outside published match scope stay X. Experimental status and full-state/local accuracy limitations are explicit. Invalid structural contracts fail before outputs. Do not overwrite existing unowned/input/linked directories.
+4. Reproduce two clean runs byte-identically, validate CSV format with unchanged official code, and publish only code/docs/licensed metadata and safe aggregates. New local output, if executed, is a separate experimental artifact, never the current submission. If structural mapping fails, do not guess or run new inference.
+
+## Evidence and limits
+
+Anonymous association and source quality are uncertain even after software tests. Report accepted/unmatched associations and external stress deltas; do not equate association or model agreement with calibrated probability. Neither image-homography validity nor finite coordinates proves live/dead state. All previously scored external data remain seen. Missing new cohort/access/rights is a reported limitation, not permission to recycle tests. One fresh whole-change review follows implementation; substantive fixes require reproducing tests.

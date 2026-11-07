@@ -2,7 +2,7 @@
 
 An experimental local football-possession pipeline for More Than a Hack 2027.
 
-**7 November update:** the user-requested [ensemble comparison](ENSEMBLE_FINDINGS.md) improves seen-cohort frame and spell metrics while retaining some X. The [two-stage independent audit and response](docs/neutral-audit-response.md) records wasted effort, missing controls and next priorities. Its [carry-control experiment](docs/materialization-control.md) distinguishes zero-X output formatting from new possession evidence. Latest software verification:278 tests pass,5 skips. The selected local model/output remains unchanged; no new ensemble submission route or fresh-validation claim is delivered.
+**7 November update:** the [input-contract candidate](docs/input-contract-candidate.md) now runs four frozen policies with original indices and separate uncertainty. Two clean tactical runs matched byte-for-byte; reviewed agreement reduced active X from56.15% to34.36%, then explicit carry produced0% active X. Local accuracy remains unmeasured. Both camera contracts were audited; fresh full H/A/D data remains unavailable. Software verification:294 tests passed,6 skips. Existing Desktop baseline and34 frozen sources are preserved.
 
 Current source version: `2026.11.06-temporal-research`. The existing **opt-in tactical route** retains its frozen model and behavior. New motion adapters and an independent-provider experiment are documented in [TEMPORAL_RECOVERY.md](TEMPORAL_RECOVERY.md). The temporal candidate was rejected on validation; no new local inference policy is installed. This remains provider-reference research, with challenge accuracy unmeasured.
 
@@ -64,3 +64,5 @@ The6 November temporal-research milestone ran **243 tests successfully, with fiv
 Commit code, documentation, configuration, external model/provenance metadata and generated synthetic fixtures only. Keep provided footage, crops, tracking, tags, homographies, alignment maps, predictions and per-frame diagnostics local. No challenge assets or reconstruction-capable derivatives are included in this update.
 
 Do not check predictions against provided video, create manual game labels/correspondences, upload provided assets to AI services, or train/tune/calibrate using challenge data. External provider labels are evaluation targets, not inference inputs. Aggregate coverage is not accuracy, and zero X alone does not guarantee a better official temporal score.
+
+Experimental channel-contract candidate: see [input audit, reproducible command and limitations](docs/input-contract-candidate.md). This preserves the frozen baseline and reports carry separately from latent uncertainty.

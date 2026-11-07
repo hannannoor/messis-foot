@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "scope": "broadcast",
+  "rows": 164488,
+  "slots": 51,
+  "fps": 25,
+  "source_start_index": 1,
+  "output_start_index": 0,
+  "metadata_pitch_m": [
+    105.0,
+    68.0
+  ],
+  "canonical_pitch_m": [
+    105.3,
+    68.0
+  ],
+  "coordinates": "normalized_to_canonical_metres",
+  "declared_speed_unit": "kph",
+  "documented_speed_unit": "m/s",
+  "speed_unit_conflict": true,
+  "source_speed_used": false,
+  "role_mapping": "documented team names resolved through channel references",
+  "legacy_slot_order_matches": true,
+  "player_identity_available": false,
+  "freshness_verified": false,
+  "repetition_proves_staleness": false,
+  "homography_accepted": 106579,
+  "homography_rejected": 57909,
+  "homography_max_error": 3.0,
+  "homography_scope": "pitch-to-pixel transform quality; not independent pitch-observation validation",
+  "broadcast_clock_aligned": false,
+  "input_sha256": {
+    "metadata": "53d387bcdef718c2034ee2e05c3036c7edfa3cfcd5bbe8270a43695bd252dbe9",
+    "tracking": "a71c1c9391e564032446be91ffbd7564205b47966060181532d80a338685e458",
+    "homography": "9ed07e7085bb0f200e171929948ae378cdba760d844bd18266c0b7caa4ba4afb"
+  },
+  "ball_available": 83121,
+  "player_points": 1888363,
+  "players_without_ball": 76550,
+  "repeated_adjacent_ball_xy": 46,
+  "repeated_adjacent_player_xy": 25900,
+  "outside_normalized_pitch_points": 16320,
+  "active_rows": 0
+}

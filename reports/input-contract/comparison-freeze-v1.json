@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "base_commit": "1d723cb267225a47820d0da0a4e8c45a37a63a9d",
+  "experimental": true,
+  "fresh_holdout": false,
+  "retuning": false,
+  "policies": {
+    "incumbent": "unchanged frozen tactical model on strict channel-mapped inputs",
+    "carry": "incumbent plus structural-period forward/backfill; all-X period becomes D",
+    "agreement": "preserve incumbent; fill X only if ungated temporal H/A equals raw tactical H/A",
+    "agreement-plus-carry": "agreement then structural carry"
+  },
+  "association": {
+    "max_step_m": 0.8,
+    "rule": "mutual unique nearest adjacent same-team points; resets at missing/invalid/period barriers",
+    "identity_verified": false
+  },
+  "stress_matches": {
+    "skillcorner": [
+      1874553
+    ],
+    "dfl": [
+      "J03WOH"
+    ]
+  },
+  "stress_use": "seen development matches only; compatibility, no selection or fresh-validation claim",
+  "temporal_artifact": "396a05f28d0493492af118682453dbf489d1cc867a6136420c3de3a3783bbf48",
+  "tactical_artifact": "be756fce3c52d21fda0b10d8a6026f78f9b7d599298d467d2d6ebc59efe9fd38",
+  "source_sha256": {
+    "gap_solver/__init__.py": "90bdeb562068ff217819802df01415d1c6226512ee6b14064e0ad8fe2ecf8e03",
+    "gap_solver/__main__.py": "0121fafa2bc0aa5a8aff26e1dd1c6bb788c7c95e414da18f99bb96b81089e7d8",
+    "gap_solver/acquisition.py": "9daf60b99277cf0e2bc33fb76bfa5f7f7827d220d094e4426faf6af5803c2ee8",
+    "gap_solver/anonymous_motion.py": "b22404d6592c9aba1dff9383215a570c6e307c1536181b487dc563ff76080435",
+    "gap_solver/audit.py": "089c94af1a767da59cf6e37ff6cb3e1f8e500b84961adc696a5b5598002785ae",
+    "gap_solver/automatic_sync.py": "298a27c8635fe1af36648394cbf14c6c7855fedce91664b74565efdc217ba1e9",
+    "gap_solver/benchmark.py": "a90f2267bfc8b4a15e965b21895c3f77a7f4a435d6e1c34177b86a4ab2ed92c6",
+    "gap_solver/candidate_cli.py": "0a6fbba1e7b814446d25c77f8c0f774bdb807a08ee3ac8dedb0a6a851ff75370",
+    "gap_solver/clock_discovery.py": "ac7da5e75b201cab9e40758ced89f6f684e736a9088463383588f9063880b532",
+    "gap_solver/clock_ocr.py": "cd8e5d350cd47d83f7c6c266bb5126816423a4860980b7348eef8858fa6e0607",
+    "gap_solver/clock_sync.py": "9f451cc7a5440bf2c20801592690bc282d2e176dbdcee74030f8f83bbd083313",
+    "gap_solver/confidence_ensemble.py": "c01c0dc84da4b400ec6f7dee0de94bb0f2bc9fab70ee5471205ee48d72fe33f9",
+    "gap_solver/core.py": "fc9c0f864422992314b4f26c104319c5e082030f1956ffb5d5250fa801f2974f",
+    "gap_solver/dfl_motion.py": "992aa34db2c8ff754969cf3a1c5c755ded6bc1c4beec247e38a5cc012163344a",
+    "gap_solver/external.py": "3dd225ed05ab11e6367a5c3cb637ffcf9784c7be57bc6523975ddd0ef2ce2d78",
+    "gap_solver/frozen_protocol.py": "1252ab22b921b3f085af90e9a4edd5401ee05054eec3894be80a685cb2767c61",
+    "gap_solver/fusion.py": "1b92239778125bb51706a76b1c0e6472eaed4bdb3afb07ae02a097d355181431",
+    "gap_solver/input_contract.py": "9728e590db367ec11ddae707738021e0b2be90377762568bbaf02793a720ae44",
+    "gap_solver/io.py": "633b887cede248e5515818e4f2a6a8592a1d968f27e954128b028f5a0173bcdc",
+    "gap_solver/materialization_control.py": "5bc167744e6702608c503b18a268d5883d5a7a83c8d508e679464edc3491a0e0",
+    "gap_solver/motion.py": "f36699381e567e13fa60c6fc6b4177bdcab91b1fa3ac95d7da64bc63708656d4",
+    "gap_solver/multicam.py": "83ac4a7e6c0440f07806bf68f863d021c4f2fceb7347e91760ef88e4be56292a",
+    "gap_solver/official_metrics.py": "3b10408fd91228c388fdbb1cd7b08a432bc59f88989c6eaf56c2153f92f11fe2",
+    "gap_solver/roi.py": "aad4755dc47e0e4bfa3fa0f662649035c506597d55077cdb2b72ee40d9a1f8c7",
+    "gap_solver/selection.py": "e465e9e2f3b66548eb814bd02681814f2b73e6db5aebb8d189c61c02bc4a659e",
+    "gap_solver/skillcorner.py": "07bd06af0a01b069b37c5a98dd7d40ea4ee191e3218de291b85b8385da4b524f",
+    "gap_solver/tactical.py": "b0e4550ae80d6f6d7293781f1bb2401450397591f3239a1bdff7a961aa19f93f",
+    "gap_solver/tactical_cli.py": "cc245579b382247116a7ca1874b81db4773f3aa976dd6e65662f1385d0ada63a",
+    "gap_solver/tactical_model.py": "2072a0585d85128eb8127e8b295e2f7e1757e21569356bb6b8ef9d7f09c74f45",
+    "gap_solver/temporal.py": "f62aac2d9ce5ae4e957749cd0e70588484e315d2feeb5c4e22359bb9fff51822",
+    "gap_solver/temporal_acceptance.py": "0fd01f3f510e1c4daf40bac2966773b710a2fbc3386e85535766050ddb0cacd5",
+    "gap_solver/temporal_development.py": "b5d4f327e73c85f70d6bc36ae0ee1ddd273382113525d5d2078a34a96ee2276a",
+    "gap_solver/temporal_diagnostics.py": "1c2ba3d74a5ba6bfb8ab1a94554754954964ef9f82913d332bbd649cf7f603bb",
+    "gap_solver/temporal_feasibility.py": "3b9101e5026c9c15590502ff43598c6e270de71d40cc2407bee60d7b53eeb208",
+    "gap_solver/temporal_metrics.py": "1e1928308944ef20fb061f28e8829562e22eff19b87f8aa450dabac52b8ef316",
+    "gap_solver/temporal_protocol.py": "f435f36b61edde2514a3606f7c79abeff092846fca160b305a2b8c7e5178ce9a",
+    "gap_solver/temporal_selection.py": "846a22e0c336c7b03eb4c96ff73ed998ff405ac4897602a48427f74f99b644af"
+  }
+}
