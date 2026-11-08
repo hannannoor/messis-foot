@@ -1,0 +1,154 @@
+{
+  "short_bursts": {
+    "support_ratio": 18,
+    "two_switch_penalty": 64,
+    "break_even_frames": 22.14248040071639,
+    "cases": {
+      "10": {
+        "interior": {
+          "H": 10
+        },
+        "whole": {
+          "H": 210
+        }
+      },
+      "20": {
+        "interior": {
+          "H": 20
+        },
+        "whole": {
+          "H": 220
+        }
+      },
+      "22": {
+        "interior": {
+          "H": 22
+        },
+        "whole": {
+          "H": 222
+        }
+      },
+      "23": {
+        "interior": {
+          "A": 23
+        },
+        "whole": {
+          "H": 200,
+          "A": 23
+        }
+      },
+      "30": {
+        "interior": {
+          "A": 30
+        },
+        "whole": {
+          "H": 200,
+          "A": 30
+        }
+      }
+    }
+  },
+  "neutral_gap": {
+    "missing_frames": 1000,
+    "labels": {
+      "H": 1000
+    },
+    "swapped_labels": {
+      "H": 1000
+    },
+    "latent_X": 0,
+    "diagnostics": {
+      "neutral_active_usable_rows": 1000,
+      "unsupported_segments": 0,
+      "unsupported_active_rows": 0
+    }
+  },
+  "team_swap": {
+    "rows": 180,
+    "original": {
+      "H": 180
+    },
+    "swapped": {
+      "H": 180
+    },
+    "expected_transform_holds": false,
+    "last_support": [
+      0.6878752076069831,
+      0.3107362087495104,
+      0.0013885836435066046
+    ],
+    "swapped_last_support": [
+      0.6878752076069831,
+      0.3107362087495104,
+      0.0013885836435066046
+    ]
+  },
+  "provenance_invariance": {
+    "all_supports_identical": true,
+    "frames": 180,
+    "comparison": "finite coordinates unchanged; native versus extrapolated/interpolated flags changed"
+  },
+  "seen_natural_spell_delta_bootstrap": {
+    "groups": {
+      "dfl": [
+        {
+          "match": "J03WN1",
+          "delta": 0.0
+        },
+        {
+          "match": "J03WR9",
+          "delta": 0.0
+        }
+      ],
+      "skillcorner": [
+        {
+          "match": "2007448",
+          "delta": -0.0016037048481173377
+        },
+        {
+          "match": "2007721",
+          "delta": 0.009125381660592846
+        },
+        {
+          "match": "2010085",
+          "delta": 0.011300545585634647
+        },
+        {
+          "match": "2011166",
+          "delta": 0.0027512667629880916
+        },
+        {
+          "match": "2013725",
+          "delta": 0.0014726761258918586
+        },
+        {
+          "match": "2015213",
+          "delta": 0.0034883720930232176
+        },
+        {
+          "match": "2016236",
+          "delta": 0.0006006006006005205
+        },
+        {
+          "match": "2017461",
+          "delta": 0.001445160577235316
+        }
+      ]
+    },
+    "estimate": 0.0017862686598655725,
+    "draws": 20000,
+    "seed": 1729,
+    "percentile_95_interval": [
+      0.0004895193208823316,
+      0.003285658152490295
+    ],
+    "method": "paired match bootstrap within each provider, then equal-provider mean; fixed already-selected candidate",
+    "limitations": [
+      "seen match cohort; not fresh inference or validation",
+      "conditions on these two providers",
+      "does not correct project-wide repeated selection",
+      "aggregate receipts only; does not rerun reference scoring"
+    ]
+  }
+}
+
