@@ -1,0 +1,92 @@
+{
+  "snapshot_integrity": {
+    "current-cee6741": {
+      "commit": "cee674190775e9356745f461ba1561e9f2a46f7e",
+      "tracked_blobs_equal": 309
+    },
+    "main-3a1c860": {
+      "commit": "3a1c8608e050e2f812826719e1af882d87cf2f67",
+      "tracked_blobs_equal": 38
+    },
+    "audit-f426c0e": {
+      "commit": "f426c0e542c1ffdab1296531bdcf5ff0af9d7405",
+      "tracked_blobs_equal": 318
+    }
+  },
+  "audit_manifest_checks": [
+    {
+      "declared_path": "agent-1.md",
+      "actual_path": "agent-1.md",
+      "declared_path_exists": true,
+      "exact_match": false,
+      "single_trailing_crlf_explains_difference": true,
+      "actual_sha256": "5868d747b869decd686aa1eb242b84cc1d0e4703440602d263b98cc5674a0a41"
+    },
+    {
+      "declared_path": "agent-2.md",
+      "actual_path": "agent-2.md",
+      "declared_path_exists": true,
+      "exact_match": false,
+      "single_trailing_crlf_explains_difference": true,
+      "actual_sha256": "533e2cf0cdd0f8fdcd4fab159b07c09b095f73cd91b1c5f35d04750615517b2d"
+    },
+    {
+      "declared_path": "agent-3.md",
+      "actual_path": "agent-3.md",
+      "declared_path_exists": true,
+      "exact_match": false,
+      "single_trailing_crlf_explains_difference": true,
+      "actual_sha256": "814efca6636c89456270f8b49044d3aed6d6efd4e151844a23201a6b99771976"
+    },
+    {
+      "declared_path": "agent-4.md",
+      "actual_path": "agent-4.md",
+      "declared_path_exists": true,
+      "exact_match": false,
+      "single_trailing_crlf_explains_difference": true,
+      "actual_sha256": "28758343a09eebaa85bebf8e8fba56a1dcd9c172a5b77ed4cbf623fa732b8021"
+    },
+    {
+      "declared_path": "agent-5.md",
+      "actual_path": "agent-5.md",
+      "declared_path_exists": true,
+      "exact_match": false,
+      "single_trailing_crlf_explains_difference": true,
+      "actual_sha256": "7dcf3e57d3f5a29979a297befe87939c6020d28e97d89fd9306362226f98002b"
+    },
+    {
+      "declared_path": "root-review.md",
+      "actual_path": "coordinator.md",
+      "declared_path_exists": false,
+      "exact_match": false,
+      "single_trailing_crlf_explains_difference": true,
+      "actual_sha256": "5919b492bfd2ef335dd48a95a3020f015b9f79f062fdf582bdd666edc3418670"
+    },
+    {
+      "declared_path": "FULL-COUNCIL-AUDIT.md",
+      "actual_path": "FULL-COUNCIL-AUDIT.md",
+      "declared_path_exists": true,
+      "exact_match": false,
+      "single_trailing_crlf_explains_difference": true,
+      "actual_sha256": "8490cc82a5d4fcc281806da8eb45eb8ed640b8fdb9b5038b6290447bc7e27352"
+    }
+  ],
+  "missing_declared_verification_artifacts": {
+    "log": true,
+    "probe_script": true
+  },
+  "synthetic_rebuild": {
+    "synthetic_only": true,
+    "both_generations_load": true,
+    "stable_input_identity_equal": true,
+    "generation_ids_differ": true,
+    "equal_semantic_arrays": 25,
+    "differing_arrays": [
+      ".features.npz:generation_id",
+      ".reference.npz:generation_id"
+    ],
+    "all_three_container_hashes_differ": true
+  },
+  "challenge_inputs_opened": false,
+  "predictor_source_changes": false
+}

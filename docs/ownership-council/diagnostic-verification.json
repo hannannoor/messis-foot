@@ -1,0 +1,10 @@
+{
+  "cases": 4,
+  "aggregate_invariants_passed": true,
+  "source_model_release_unchanged": true,
+  "diagnostic_script_sha256": "8d24d8cf3eb3e3958f05b82e3816283bd95d28ad8d3d04747e0cf3d0766888ca",
+  "diagnostic_report_sha256": "a3895724e6e744f47ab130df50e67dcad85011361127857a2f484a5dbb2fa3a8",
+  "head_fitting": false,
+  "target_data_used": false,
+  "fresh_holdout": false
+}

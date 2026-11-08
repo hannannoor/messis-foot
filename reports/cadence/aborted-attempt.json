@@ -1,0 +1,8 @@
+{
+  "status": "aborted formatting failure",
+  "completed_external_cases": 0,
+  "aborted_variant_scoring_invocations": 1,
+  "reason": "incorrect assumption that unscored truth-X confusion row must be zero",
+  "model_or_parameter_reselection": false,
+  "source_files_preserved": 100
+}
