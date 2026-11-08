@@ -1,8 +1,10 @@
 """Exact bounded report schema; per-frame inference objects never pass this boundary."""
 from math import isfinite
+import numpy as np
 
 from cadence_protocol import VARIANTS,CONTROL,CANDIDATE,case_keys,digest,hash_files
 from accuracy_evidence import assert_public_report
+from gap_solver import official_metrics as official
 
 
 METRICS={'spell_f1_mean','macro_f1','accuracy','alive_dead_f1','n_gt_spells','n_pred_spells','confusion'}
@@ -94,10 +96,9 @@ def validate_receipt(value,frozen,input_paths):
 
 def receipt_variant(aggregate,dead,boundary,extra,coverage):
     metrics={k:aggregate['metrics'][k] for k in METRICS}
-    confusion=metrics['confusion']
-    if len(confusion)==4:
-        if any(confusion[3]):raise ValueError('Official confusion unexpectedly scores excluded truth')
-        metrics['confusion']=confusion[:3]
+    # The official raw matrix includes a diagnostic truth-X row. Its scoring
+    # helper deliberately slices that row out even when its counts are nonzero.
+    metrics['confusion']=official.scored_confusion(np.asarray(metrics['confusion'])).tolist()
     return dict(metrics=metrics,spell_counts={str(k):v for k,v in aggregate['spell_counts'].items()},
         dead_metrics=dead,boundary_metrics=boundary,
         supplementary={k:extra[k] for k in ('spell_duration','HA_boundaries','live_team')},coverage=coverage)

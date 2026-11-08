@@ -140,3 +140,9 @@ No promised wall-clock estimate before profiling. Budget work by cases and miles
 - `../plans/2026-11-08-fresh-reference-qualification.md`: bounded independent evidence work package.
 - Existing whole-path plan remains immutable; this document explains its new position.
 - A builder check and a self-review/coverage record. Implementation checkboxes remain unchecked.
+
+## Execution correction: report revision 2
+
+The first external attempt stopped during construction of the first frozen-control report, before any complete case receipt or comparison was saved. The official evaluator keeps a diagnostic truth-X row in its 4x4 raw confusion matrix while scoring only the first three rows. The new formatter incorrectly required the diagnostic row to be zero. A synthetic unknown-reference-island regression reproduces the mistake; revision 2 uses the unchanged official `scored_confusion` helper.
+
+The failed freeze, all 100 source files and its attempt/log are preserved under this plan's local execution ledger. New output is `reports/cadence-v2`; the old `reports/cadence` stage is not overwritten. No predictor, feature rule, candidate, mask, match, metric definition or acceptance criterion is reselected. Revision 2 keeps the exact 20 cases/200 completed variant comparisons. Transparently account for **one additional aborted variant-scoring invocation**, giving 201 total external invocations across the failed formatter preflight and completed experiment. This is an implementation-correctness ruling within the authorized work, not an extra model search.

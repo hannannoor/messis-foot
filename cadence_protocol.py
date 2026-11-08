@@ -19,10 +19,10 @@ def case_keys():return tuple((c,m,r) for c,m in MATCHES for r in REGIMES)
 
 
 def protocol():
-    return dict(schema_version=1,base_commit=BASE_COMMIT,max_gap_s=.20,max_pair_rows=5,
+    return dict(schema_version=1,report_revision=2,base_commit=BASE_COMMIT,max_gap_s=.20,max_pair_rows=5,
         speed_cap_m_s=50.,recent_window_rows=12,time_bound_tolerance_s=1e-9,
         switch_cost=32.,motion_weight=0.,floor=1e-6,mask_rate=.30,mask_seed=1729,
-        max_cases=20,max_aggregate_scorings=200,
+        max_cases=20,max_aggregate_scorings=200,prior_aborted_variant_scorings=1,max_total_external_variant_scoring_invocations=201,
         cases=[dict(cohort=c,match=m,regime=r) for c,m,r in case_keys()],
         variants={name:dict(kind='fixed') for name in VARIANTS},
         duration_bins=dict(short='<=25',medium='26..75',long='76..250',very_long='>250'),

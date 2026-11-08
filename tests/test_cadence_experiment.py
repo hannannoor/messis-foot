@@ -121,6 +121,20 @@ class CadenceExperiment(unittest.TestCase):
             case=CaseInput('skillcorner','1874553',moving_fixture(10),np.zeros(10,dtype=np.uint8),np.full(10,2,dtype=np.uint8),{'fixture':p})
             with self.assertRaises(ValueError):driver.build_receipt(case,'natural',frozen)
 
+    def test_unknown_reference_confusion_is_diagnostic_not_scored(self):
+        import cadence_experiment as driver
+        from cadence_protocol import make_freeze
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/'input';p.write_text('synthetic')
+            frozen=make_freeze({'source':p},{'fixture':p})
+            truth=np.zeros(80,dtype=np.uint8);truth[10:20]=3
+            case=CaseInput('skillcorner','1874553',moving_fixture(80,2),truth,np.ones(80,dtype=np.uint8),{'fixture':p})
+            receipt=driver.build_receipt(case,'natural',frozen)
+            for result in receipt['variants'].values():
+                self.assertEqual(len(result['metrics']['confusion']),3)
+                self.assertEqual(sum(map(sum,result['metrics']['confusion'])),70)
+                self.assertEqual(result['metrics']['n_gt_spells'],2)
+
     def test_real_synthetic_cache_loader_checks_match_identity(self):
         import cadence_experiment as driver
         from test_skillcorner import write_source

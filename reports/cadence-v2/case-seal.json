@@ -1,0 +1,27 @@
+{
+  "experiment_sha256": "c31bef0c58d1805a8add9376df01bc8062021369c0481f329f232bd9bd39a597",
+  "case_file_sha256": {
+    "skillcorner-1874553-natural.json": "cb7586fcd6d910c7c15cabe3cce5f1211c0a8ce19cbd1fc577cc2a0a6950216f",
+    "skillcorner-1874553-retain-2.json": "f356eb4e978e1bc265d3191b3d47b92606e7850a28b90cb080e3b18cced99a86",
+    "skillcorner-1874553-retain-3.json": "cec10e943856d947d41f70ebba2805774230e6984e18d1fe2e7d5a8dd15d3da0",
+    "skillcorner-1874553-retain-5.json": "0db2f658615c7a620598a560b447ad5128045ff32053d11055255ad2a2b4247e",
+    "skillcorner-1874553-mask30-seed1729.json": "145662f1924a2317a6e369b95656700a8b868bcee49b3c7937944dd1a408bd6d",
+    "skillcorner-1886347-natural.json": "f735d867b4c1da10b11d9e7f8c164fc117c4ad22b34b5bca1bb54f5a8ad17cf0",
+    "skillcorner-1886347-retain-2.json": "26e679f860f224dafd2aa121179c622fa43d65ef6d0ae1b70b87da433c9613a4",
+    "skillcorner-1886347-retain-3.json": "a9aa651e3c1c63122a5d5c27f324d5204d79a1686a8968c54dcf4e65e74ce602",
+    "skillcorner-1886347-retain-5.json": "a149b1df61f695e8b4c9ddf03c3e2e53651eebe3331fefc95371191732622d21",
+    "skillcorner-1886347-mask30-seed1729.json": "7289d1c6fb0a941a9f9211cf2d45b8ee03cd605ac0b7decd108f5121cb831581",
+    "dfl-J03WOH-natural.json": "3159ae4e4a7fa9b681f593f9b9fc177ebea501464b9ca9491df25272ccc96202",
+    "dfl-J03WOH-retain-2.json": "0c0d280fa2ba00d2806f396391076a9c7355e290ead406bb6fd1f5e0ae64387e",
+    "dfl-J03WOH-retain-3.json": "037846300e3f51ef6dc4257b41221366b9eeeac2593ce98910b02568f81977a1",
+    "dfl-J03WOH-retain-5.json": "ea5a3f2cdb1de09bd590aedcf12fe2c450d8c68b0189e69a46a86b09bef2e1a9",
+    "dfl-J03WOH-mask30-seed1729.json": "524d9fe114ad06768e4712e06c756face2f4d7ee68d54cbf5130e345c154f322",
+    "dfl-J03WOY-natural.json": "63864845b9fd8346d0fd32f1ab032db345a8d171b22208d7d5221e07eb12d54b",
+    "dfl-J03WOY-retain-2.json": "abb0e686d087fc017e1ea20ae5c3240b096349ace54d518a182799e0ffd0887c",
+    "dfl-J03WOY-retain-3.json": "e7cf1c636b16b7c2fa59e68c7b549300a1222db68354c0cfefd98f9be0bd4947",
+    "dfl-J03WOY-retain-5.json": "a6a95baf31e25dede76c19f2ba327acc1627c0f17d0ccae05b76d0f21d22124b",
+    "dfl-J03WOY-mask30-seed1729.json": "244bc324bc58c18f00bb0ff8ad8c9eeed52de41b3df0d3146660f4ffff683ff0"
+  },
+  "cases_scored": 20,
+  "variant_scorings": 200
+}

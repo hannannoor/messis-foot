@@ -5,51 +5,51 @@
   "reviewer_count": 6,
   "child_model": "gpt-6.1-sol",
   "child_reasoning_effort": "high",
-  "all_reports_included_verbatim": true,
+  "all_reports_included_verbatim": false,
   "source_309_blobs_unchanged": true,
   "reports": [
     {
       "path": "agent-1.md",
       "words": 2157,
-      "bytes": 18315,
-      "sha256": "80bf92d68e4f4f0b8e4b36b06196bc6d723b82fe308ed8556192ed8f5c87d0d0"
+      "bytes": 18317,
+      "sha256": "5868d747b869decd686aa1eb242b84cc1d0e4703440602d263b98cc5674a0a41"
     },
     {
       "path": "agent-2.md",
       "words": 2239,
-      "bytes": 18930,
-      "sha256": "493a55c19c87b909bf02a80a526f4ddf674c57d28ea0f586a28d69662658bc8a"
+      "bytes": 18932,
+      "sha256": "533e2cf0cdd0f8fdcd4fab159b07c09b095f73cd91b1c5f35d04750615517b2d"
     },
     {
       "path": "agent-3.md",
       "words": 2111,
-      "bytes": 18653,
-      "sha256": "c8d39fc6acf972a2f7a8710881a5787d29f36c96496bede4b83c836dde6c4fd8"
+      "bytes": 18655,
+      "sha256": "814efca6636c89456270f8b49044d3aed6d6efd4e151844a23201a6b99771976"
     },
     {
       "path": "agent-4.md",
       "words": 2116,
-      "bytes": 17589,
-      "sha256": "64d39c5e653395c5aee270c43456caaf7dd1786fb98f9975a0e7e2e7b9d2b39a"
+      "bytes": 17591,
+      "sha256": "28758343a09eebaa85bebf8e8fba56a1dcd9c172a5b77ed4cbf623fa732b8021"
     },
     {
       "path": "agent-5.md",
       "words": 2042,
-      "bytes": 18808,
-      "sha256": "49a1ad209cfdd55f74c59caf1b2d26620845d9095f2d079a0399339cd93c0488"
+      "bytes": 18810,
+      "sha256": "7dcf3e57d3f5a29979a297befe87939c6020d28e97d89fd9306362226f98002b"
     },
     {
-      "path": "root-review.md",
+      "path": "coordinator.md",
       "words": 2530,
-      "bytes": 20461,
-      "sha256": "1b6006ce38b03415c5a49c456d788ceb43e50149c1f139863d5f57d537bdd45c"
+      "bytes": 20463,
+      "sha256": "5919b492bfd2ef335dd48a95a3020f015b9f79f062fdf582bdd666edc3418670"
     }
   ],
   "combined": {
     "path": "FULL-COUNCIL-AUDIT.md",
     "words": 14366,
-    "bytes": 121535,
-    "sha256": "529608c382b4560f7a7f61bf63f311708290d87ecc11035685f7764649aad2dd"
+    "bytes": 121537,
+    "sha256": "8490cc82a5d4fcc281806da8eb45eb8ed640b8fdb9b5038b6290447bc7e27352"
   },
   "verification": {
     "tests_run": 341,
@@ -58,9 +58,13 @@
     "failures": 0,
     "errors": 0,
     "seconds": 19.76,
-    "log": "unittest-final.log",
-    "probe_script": "root-probes.py",
-    "probe_results": "root-probes.json"
-  }
+    "log": null,
+    "probe_script": null,
+    "probe_results": "root-probes.json",
+    "log_status": "not delivered in original audit",
+    "probe_script_status": "not delivered in original audit; independent verification sources are separate artifacts"
+  },
+  "delivery_revision": 2,
+  "all_report_logical_text_included": true,
+  "byte_policy": "SHA-256 and lengths refer to exact final Git blob bytes; logical-text inclusion normalizes newlines/outer whitespace."
 }
-

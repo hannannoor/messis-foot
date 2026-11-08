@@ -16,7 +16,7 @@ from ball_gap_policy import decode_ball_gap
 
 
 ROOT=Path(__file__).resolve().parent
-REPORTS=ROOT/'reports/cadence'
+REPORTS=ROOT/'reports/cadence-v2'
 
 
 @dataclass
@@ -234,6 +234,8 @@ def summarize_receipts(receipts,frozen):
     balanced={regime:{name:{k:average(by_provider[c][regime][name][k] for c in ('dfl','skillcorner'))
               for k in by_provider['dfl'][regime][name]} for name in VARIANTS} for regime in REGIMES}
     value=dict(schema_version=1,experiment_sha256=digest(frozen),cases_scored=20,variant_scorings=200,
+        prior_aborted_variant_scorings=frozen['protocol']['prior_aborted_variant_scorings'],
+        total_external_variant_scoring_invocations=frozen['protocol']['max_total_external_variant_scoring_invocations'],
         fresh_holdout=False,target_accuracy_measured=False,head_fitting_performed=False,
         by_provider=by_provider,equal_provider=balanced,assessment=assessment,
         receipt_digest_sha256={case_filename(r['cohort'],r['match'],r['regime']):digest(r) for r in receipts},
@@ -308,7 +310,7 @@ def run_cases(cohort=None,match=None,regime=None):
         destination=REPORTS/'cases'/case_filename(c,m,r);inputs=case_input_paths(c,m)
         if destination.exists():
             read_receipt(destination,frozen,inputs);print(f'Preserved {c}-{m} {r}',flush=True);continue
-        attempt=ROOT/'.tmp/cadence-attempts'/case_filename(c,m,r)
+        attempt=ROOT/'.tmp/cadence-v2-attempts'/case_filename(c,m,r)
         if attempt.exists():raise ValueError('An unfinished attempt exists; do not silently exceed the fixed scoring budget')
         if loaded!=(c,m):case=load_case(c,m);loaded=(c,m)
         write_new(attempt,dict(experiment_sha256=digest(frozen),cohort=c,match=m,regime=r,started=True),inputs.values())
