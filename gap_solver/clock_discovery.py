@@ -4,6 +4,7 @@ import io
 import re
 import subprocess
 import threading
+import time
 from collections import defaultdict, deque
 from math import ceil, isfinite
 from pathlib import Path
@@ -180,16 +181,37 @@ def read_pgm(stream):
     return header+b''.join(chunks), width, height
 
 
-def iter_video_samples(video, n_frames, stride, ffmpeg='ffmpeg'):
+def iter_video_samples(video, n_frames, stride, ffmpeg='ffmpeg', windows=None, roi=None,
+                       stall_timeout_s=120.0):
     """One decoder, bounded image memory, no frame files and original decoded indices."""
     if (not isinstance(n_frames, int) or n_frames < 1
             or not isinstance(stride, int) or stride < 1):
         raise ValueError('invalid video frame count or discovery stride')
-    expected = (n_frames+stride-1)//stride
+    if not isfinite(stall_timeout_s) or stall_timeout_s<=0:
+        raise ValueError('invalid decoder stall timeout')
+    if windows is None:
+        indices = range(0, n_frames, stride)
+        select = "not(mod(n,{}))".format(stride)
+    else:
+        if any(not isinstance(a,int) or not isinstance(b,int) or not 0 <= a < b <= n_frames
+               for a,b in windows):
+            raise ValueError('invalid original-frame processing windows')
+        indices = sorted({i for a,b in windows for i in range(((a+stride-1)//stride)*stride,b,stride)})
+        if not indices:
+            return
+        select = "({})*not(mod(n,{}))".format(
+            '+'.join('between(n,{},{})'.format(a,b-1) for a,b in windows),stride)
+    filters = "showinfo=checksum=0,select='{}',format=gray".format(select)
+    if roi is not None:
+        if not _valid_roi(roi):
+            raise ValueError('invalid automatic clock crop')
+        x,y,w,h=roi
+        filters += ',crop=iw*{}:ih*{}:iw*{}:ih*{},scale=iw*4:ih*4'.format(w,h,x,y)
+    expected = len(indices)
     command = [ffmpeg, '-nostdin', '-hide_banner', '-nostats', '-loglevel', 'info',
                '-xerror', '-err_detect', 'explode', '-i', str(video),
                '-map', '0:v:0', '-an', '-sn', '-dn', '-vf',
-               "showinfo=checksum=0,select='not(mod(n,{}))',format=gray".format(stride),
+               filters,
                '-fps_mode', 'vfr', '-frames:v', str(expected+1), '-c:v', 'pgm',
                '-f', 'image2pipe', 'pipe:1']
     try:
@@ -197,7 +219,7 @@ def iter_video_samples(video, n_frames, stride, ffmpeg='ffmpeg'):
     except FileNotFoundError as exc:
         raise ValueError('Executable not found: {}. Install it locally or pass its path.'.format(ffmpeg)) from exc
     timed_out, recent = threading.Event(), deque(maxlen=10)
-    decoded = {'frames': 0, 'ordered': True, 'log_error': False}
+    decoded = {'frames': 0, 'ordered': True, 'log_error': False, 'progress_at': time.monotonic()}
 
     def drain_log():
         # Count before selection so dropped/extra decoded frames cannot hide
@@ -209,6 +231,7 @@ def iter_video_samples(video, n_frames, stride, ffmpeg='ffmpeg'):
                     number = int(match.group(1))
                     decoded['ordered'] &= number == decoded['frames']
                     decoded['frames'] += 1
+                    decoded['progress_at'] = time.monotonic()
                 elif b'showinfo' not in line:
                     recent.append(line[-400:].decode('utf-8', errors='replace').strip())
         except (OSError, ValueError):
@@ -216,6 +239,7 @@ def iter_video_samples(video, n_frames, stride, ffmpeg='ffmpeg'):
 
     log_reader = threading.Thread(target=drain_log, daemon=True)
     log_reader.start()
+    monitor_done = threading.Event()
 
     def stop_decoder():
         timed_out.set()
@@ -224,24 +248,29 @@ def iter_video_samples(video, n_frames, stride, ffmpeg='ffmpeg'):
         except OSError:
             pass
 
+    def monitor_progress():
+        while not monitor_done.wait(min(1.0,stall_timeout_s/4)):
+            if process.poll() is not None:
+                return
+            if time.monotonic()-decoded['progress_at']>stall_timeout_s:
+                stop_decoder()
+                return
+
+    monitor = threading.Thread(target=monitor_progress,daemon=True)
+    monitor.start()
+
     def next_image():
-        watchdog = threading.Timer(120, stop_decoder)
-        watchdog.daemon = True
-        watchdog.start()
-        try:
-            result = read_pgm(process.stdout)
-            if timed_out.is_set():
-                raise ValueError('Video decoder timed out while reading a clock sample')
-            return result
-        finally:
-            watchdog.cancel()
+        result = read_pgm(process.stdout)
+        if timed_out.is_set():
+            raise ValueError('Video decoder stalled without forward original-frame progress')
+        return result
 
     try:
         for index in range(expected):
             image = next_image()
             if image is None:
                 raise ValueError('Decoded sample count differs from original indices: '+'\n'.join(recent)[-2000:])
-            yield (index*stride, *image)
+            yield (indices[index], *image)
         if next_image() is not None:
             raise ValueError('Decoded sample count exceeds the reported video frame count')
         try:
@@ -255,9 +284,11 @@ def iter_video_samples(video, n_frames, stride, ffmpeg='ffmpeg'):
                 or decoded['frames'] != n_frames):
             raise ValueError('Decoded full frame count differs from reported original frame count')
     finally:
+        monitor_done.set()
         if process.poll() is None:
             process.kill()
         process.wait()
+        monitor.join(timeout=2)
         process.stdout.close()
         log_reader.join(timeout=5)
         process.stderr.close()

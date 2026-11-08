@@ -19,6 +19,28 @@ examples/
 *.json
 !config.example.json
 !requirements*.txt
+!OFFICIAL_METRIC_LICENSE.txt
+!benchmark/figshare-manifest.json
+!benchmark/provenance.json
+!benchmark/frozen/freeze-manifest.json
+!benchmark/frozen/tactical-selected.json
+!benchmark/skillcorner/protocol.json
+!benchmark/skillcorner/trained-draft.json
+!benchmark/skillcorner/frozen/temporal-selected.json
+!benchmark/skillcorner/frozen/freeze-manifest.json
+!benchmark/skillcorner/reports/*.json
+
+# Local benchmark caches, protected derivatives and development scratch files
+/external-reference/
+/independent-reference/
+/analysis/
+/.training-deps/
+/.tmp/
+/.superpowers/
+*.npz
+*.npy
+*.parquet
+*.log
 
 # Python and local environments
 __pycache__/

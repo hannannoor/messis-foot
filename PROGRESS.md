@@ -1,6 +1,6 @@
 # Progress record
 
-Updated on 5 November 2026. Current source: `2026.11.05-clock-discovery`; possession inference remains `2026.11.02-restart-audit`. [RULES.md](RULES.md) controls current work; earlier manual setup and video-informed OCR trials below are historical experiments.
+Updated on 5 November 2026. Current source: `2026.11.05-tactical-validated`. Automatic camera synchronization was completed as an experiment and paused after zero bounded links. An opt-in externally frozen tactical model reduces local X from 69.192% to 56.151%; local correctness remains unmeasured. [CHANGELOG.md](CHANGELOG.md) explains the transition and [FOUR_GOALS.md](FOUR_GOALS.md) gives full evidence and limitations. Earlier sections are a chronological record, not current eligibility or accuracy claims. [RULES.md](RULES.md) controls all work.
 
 ## 1. Tactical missing-observation prototype
 
@@ -96,3 +96,19 @@ Added `camera discover-clock` as the first replacement for manual camera setup. 
 Synthetic tests exercise clock detection away from old presets, a blank opening, exclusion of score text, split tokens, invalid boxes/confidence, freezes/resets, short versus long missing stretches, moved overlays, multiple clocks, original-index preservation and corrupt decoder output. This is implementation verification only. No challenge assets or possession ground truth were processed, and no parameters were selected from the controlled match report.
 
 The output explicitly remains candidate discovery: no dense timing map, half assignment, replay/live verification or new possession decisions. These later stages remain pending. The discovery feature does not resolve the earlier fixed-D exception's eligibility.
+
+## 10. Automatic dense synchronization and camera pause
+
+Added automatic window/clock-region selection from sparse discovery, local dense OCR, original-index validation and safe generation publication. The unchanged .7 confidence, stride 5 and .25-second timing settings produced 1,704 dense OCR samples per camera. Tactical 117 and broadcast 229 samples passed OCR eligibility, but neither stream produced bounded clock estimates; usable alignment links were zero. No possession changes followed. Original broadcast video versus tracking row-count disagreement was reported, not silently repaired. Detailed outputs remain local. See [AUTOMATIC_SYNC.md](AUTOMATIC_SYNC.md).
+
+## 11. Four tactical workstreams
+
+Established a strict seven-match external benchmark from licensed DFL/Sportec data, using whole-match splits and unchanged official scoring functions. Diagnosed missing dead-ball segmentation, ambiguous owner intervals and restart/boundary errors. Selected a 31-node depth-four geometry/history tree on external development/validation only, then froze its model/policy/source identity before final tests.
+
+The complete provider-target mean test spellF1 improved .37361 -> .50513, macroF1 .38871 -> .86041 and X 60.47% -> 9.86%. Both matches improved under all declared ball-mask regimes. A post-freeze audit then exposed nearly universal inactive-coordinate carry-forward; the D results cannot establish transferable stoppage detection. Active-only spellF1 slightly regressed on both tests, and per-label H/A newly resolved agreement was 86.36/88.95%. The candidate remains opt-in and was not retuned after this discovery.
+
+One frozen local run, with no provided video/GT checks or fitting, preserved 199,319 original rows. On the same 158,857-frame scope, X fell 109,917 ->89,200; unresolved intervals 1,045 ->509. The baseline excludes the disputed D interval. Of remaining X, 59,788 lack ball/recent owner, 26,572 fail model support and 2,840 have other quality/conflict limits. These are coverage and automatic diagnostic counts, not correctness measurements. Full reasoning, regressions, licence/provenance and reproduction are in [FOUR_GOALS.md](FOUR_GOALS.md).
+
+## 12. Next proposed milestone
+
+Check the frozen candidate on an independent licensed provider, then develop validated interval inference for missing-ball periods. Fewer X should accompany stronger team-spell quality and per-class correctness. No additional missing-ball model, cross-provider result or promise of zero reliable uncertainty is included in this release.

@@ -1,0 +1,145 @@
+{
+  "schema_version": 2,
+  "method": "experimental_channel_contract_anonymous_agreement_v2",
+  "two_clean_runs_csv_identical": true,
+  "csv_sha256": {
+    "agreement-plus-carry.csv": "b96922c04b03853a58f1ba7a941157b1c12483b67d458d1fd08e02bd3db86788",
+    "agreement.csv": "e62ff0ba44252248496f1ad12721c4e353ac6e9e20012a1c2cb63136efcec066",
+    "carry.csv": "c8830a2953e1030e998bea165b5d739fc31a2fdd414a30a545352acde3f3274b",
+    "incumbent.csv": "1844e79e02c9f1cc280a43c8046178addd43ba12eef76790803c9a6841e1ceea",
+    "submission.csv": "b96922c04b03853a58f1ba7a941157b1c12483b67d458d1fd08e02bd3db86788",
+    "uncertainty.csv": "24e04c25752c83913bf1117b4f03b3cc13742addec5b657bbf6007ba6ced6634"
+  },
+  "comparison_freeze_sha256": "db438aab9c4728da6c547835798e0631ab2fd32a30980407b26fd1ab4231dc1a",
+  "official_format_validation": [
+    {
+      "exit_code": 0,
+      "rows": 199319,
+      "output_sha256": "b96922c04b03853a58f1ba7a941157b1c12483b67d458d1fd08e02bd3db86788"
+    },
+    {
+      "exit_code": 0,
+      "rows": 199319,
+      "output_sha256": "b96922c04b03853a58f1ba7a941157b1c12483b67d458d1fd08e02bd3db86788"
+    }
+  ],
+  "validator_sha256": "07ac29499acbd337e1dc1de1832d63f6e1fa1d981e22f6ad08212529e2bbee14",
+  "accuracy_measured": false,
+  "source_audit": {
+    "schema_version": 1,
+    "scope": "tactical",
+    "rows": 199319,
+    "slots": 46,
+    "fps": 25,
+    "source_start_index": 1,
+    "output_start_index": 0,
+    "metadata_pitch_m": [
+      105.0,
+      68.0
+    ],
+    "canonical_pitch_m": [
+      105.3,
+      68.0
+    ],
+    "coordinates": "normalized_to_canonical_metres",
+    "declared_speed_unit": "kph",
+    "documented_speed_unit": "m/s",
+    "speed_unit_conflict": true,
+    "source_speed_used": false,
+    "role_mapping": "documented team names resolved through channel references",
+    "legacy_slot_order_matches": true,
+    "legacy_team_order_matches": true,
+    "legacy_slot_roles_match": true,
+    "player_identity_available": false,
+    "freshness_verified": false,
+    "repetition_proves_staleness": false,
+    "homography_accepted": 191496,
+    "homography_rejected": 7823,
+    "homography_max_error": 3.0,
+    "homography_scope": "pitch-to-pixel transform quality; not independent pitch-observation validation",
+    "broadcast_clock_aligned": false,
+    "input_sha256": {
+      "metadata": "327e35e32e46a647389b88f883d4f9a2ab931e3e6148aef2fcf8f22b1e93c43a",
+      "tracking": "f130e350d2bfdf734b7e32f072931fccc6d015c1e837d082064875fe0a700431",
+      "homography": "421c81abe16f0912dc45c2541f9bf19dd5660066397a3dcc043038a1b61c28c3"
+    },
+    "ball_available": 113488,
+    "player_points": 3782421,
+    "players_without_ball": 85831,
+    "repeated_adjacent_ball_xy": 78,
+    "repeated_adjacent_player_xy": 66217,
+    "outside_normalized_pitch_points": 43911,
+    "active_rows": 158857
+  },
+  "association": {
+    "method": "mutual_unique_nearest_adjacent_team_points",
+    "max_step_m": 0.8,
+    "matches": 3223458,
+    "new_correspondences": 2140,
+    "player_identity_verified": false,
+    "ambiguity_policy": "new correspondence; no tie breaking by slot",
+    "freshness_verified": false
+  },
+  "policies": {
+    "incumbent": {
+      "active_labels": {
+        "X": 89200,
+        "A": 21239,
+        "H": 46298,
+        "D": 2120
+      },
+      "active_rows": 158857,
+      "abstentions": 89200,
+      "materialized": 0
+    },
+    "carry": {
+      "active_labels": {
+        "A": 67290,
+        "H": 85616,
+        "D": 5951
+      },
+      "active_rows": 158857,
+      "abstentions": 0,
+      "materialized": 89200
+    },
+    "agreement": {
+      "active_labels": {
+        "X": 54577,
+        "A": 40837,
+        "H": 61323,
+        "D": 2120
+      },
+      "active_rows": 158857,
+      "abstentions": 54577,
+      "materialized": 0
+    },
+    "agreement-plus-carry": {
+      "active_labels": {
+        "A": 69691,
+        "H": 86890,
+        "D": 2276
+      },
+      "active_rows": 158857,
+      "abstentions": 0,
+      "materialized": 54577
+    }
+  },
+  "changed_vs_v1": {
+    "incumbent": 0,
+    "carry": 0,
+    "agreement": 187,
+    "agreement-plus-carry": 0,
+    "submission": 0
+  },
+  "frozen_source_count": 34,
+  "frozen_sources_unchanged": true,
+  "desktop_pipeline_unchanged": true,
+  "python39_syntax_check": true,
+  "python311_isolated_stdlib_two_runs_identical": true,
+  "tests": {
+    "total": 294,
+    "skipped": 6,
+    "passed": true,
+    "windows_symlink_privilege_unavailable": true
+  }
+}

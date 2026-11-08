@@ -1,0 +1,649 @@
+{
+  "schema_version": 1,
+  "identity": {
+    "experiment_sha256": "e7031f709506cb1c0631a716dc60b290cc22c9320a49a4c12daa9bdd5bffd001",
+    "cohort": "skillcorner",
+    "match": 2017461,
+    "regime": "natural",
+    "stage": "regression",
+    "score_archive_sha256": "65afbcb42d915b961e700b66364001efcb2acc72071c8bc212ce45b3ed002ef4",
+    "settings": [
+      "w0-c32"
+    ],
+    "selection_sha256": "fb7bd8efd4ea2488bc070609fdece1d598be6279dcb6e84856521e75013c8199"
+  },
+  "stage": "regression",
+  "cohort": "skillcorner",
+  "match": 2017461,
+  "regime": "natural",
+  "fresh_holdout": false,
+  "head_fitting_performed": false,
+  "target_data_used": false,
+  "variants": {
+    "incumbent": {
+      "metrics": {
+        "spell_f1_mean": 0.44332892998678997,
+        "macro_f1": 0.4819196723749955,
+        "accuracy": 0.6424047535826634,
+        "kappa": 0.4088123985536558,
+        "alive_dead_f1": 0.8406678012804927,
+        "n_gt_spells": 283,
+        "n_pred_spells": 474,
+        "spell_count_error": 191,
+        "mean_spell_duration_s": 6.0021097046413505,
+        "gt_mean_spell_duration_s": 10.109540636042404,
+        "confusion": [
+          [
+            31862,
+            2094,
+            0,
+            10346
+          ],
+          [
+            3823,
+            14086,
+            0,
+            9314
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            3114,
+            2552,
+            992,
+            100471
+          ]
+        ]
+      },
+      "coverage": {
+        "original_frames": 178628,
+        "graded_frames": 71525,
+        "undecided_frames": 19660,
+        "undecided_fraction": 0.27486892694861936,
+        "decided_correct_fraction": 0.8859153571772872
+      },
+      "spell_counts": {
+        "0.3": {
+          "precision": 0.459915611814346,
+          "recall": 0.7703180212014135,
+          "f1": 0.5759577278731836,
+          "n_matched": 218,
+          "n_spurious": 256,
+          "n_missed": 65
+        },
+        "0.4": {
+          "precision": 0.43248945147679324,
+          "recall": 0.7243816254416962,
+          "f1": 0.5416116248348746,
+          "n_matched": 205,
+          "n_spurious": 269,
+          "n_missed": 78
+        },
+        "0.5": {
+          "precision": 0.3459915611814346,
+          "recall": 0.5795053003533569,
+          "f1": 0.4332892998678996,
+          "n_matched": 164,
+          "n_spurious": 310,
+          "n_missed": 119
+        },
+        "0.6": {
+          "precision": 0.2869198312236287,
+          "recall": 0.48056537102473496,
+          "f1": 0.35931307793923384,
+          "n_matched": 136,
+          "n_spurious": 338,
+          "n_missed": 147
+        },
+        "0.7": {
+          "precision": 0.24472573839662448,
+          "recall": 0.4098939929328622,
+          "f1": 0.30647291941875826,
+          "n_matched": 116,
+          "n_spurious": 358,
+          "n_missed": 167
+        }
+      },
+      "overlap_diagnostics": {
+        "reference_spells_split": 67,
+        "predicted_spells_merging": 8
+      },
+      "changes": {
+        "newly_resolved_frames": 0,
+        "newly_resolved_intervals": 0,
+        "newly_resolved_correct_fraction": null,
+        "newly_resolved_by_label": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null
+          },
+          "D": {
+            "frames": 0,
+            "correct_fraction": null
+          }
+        },
+        "raw_label_changes": 0,
+        "changed_already_decided_frames": 0,
+        "already_decided_corrections": 0,
+        "already_decided_regressions": 0,
+        "reversions_to_undecided": 0,
+        "scorer_expanded_label_changes": 0,
+        "reference_type": "external provider reference; not challenge accuracy"
+      },
+      "unmeasured_emitted_by_label": {
+        "H": 3114,
+        "A": 2552,
+        "D": 992
+      }
+    },
+    "carry": {
+      "metrics": {
+        "spell_f1_mean": 0.4339240506329115,
+        "macro_f1": 0.5464165652589896,
+        "accuracy": 0.8233205173016428,
+        "kappa": 0.6350299771345911,
+        "alive_dead_f1": 0.9946305328704159,
+        "n_gt_spells": 283,
+        "n_pred_spells": 507,
+        "spell_count_error": 224,
+        "mean_spell_duration_s": 5.582721893491124,
+        "gt_mean_spell_duration_s": 10.109540636042404,
+        "confusion": [
+          [
+            36930,
+            7058,
+            314,
+            0
+          ],
+          [
+            4815,
+            21958,
+            450,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            34764,
+            35968,
+            3874,
+            32523
+          ]
+        ]
+      },
+      "coverage": {
+        "original_frames": 178628,
+        "graded_frames": 71525,
+        "undecided_frames": 0,
+        "undecided_fraction": 0.0,
+        "decided_correct_fraction": 0.8233205173016428
+      },
+      "spell_counts": {
+        "0.3": {
+          "precision": 0.4516765285996055,
+          "recall": 0.8091872791519434,
+          "f1": 0.579746835443038,
+          "n_matched": 229,
+          "n_spurious": 278,
+          "n_missed": 54
+        },
+        "0.4": {
+          "precision": 0.4181459566074951,
+          "recall": 0.7491166077738516,
+          "f1": 0.5367088607594938,
+          "n_matched": 212,
+          "n_spurious": 295,
+          "n_missed": 71
+        },
+        "0.5": {
+          "precision": 0.32741617357001973,
+          "recall": 0.5865724381625441,
+          "f1": 0.420253164556962,
+          "n_matched": 166,
+          "n_spurious": 341,
+          "n_missed": 117
+        },
+        "0.6": {
+          "precision": 0.27218934911242604,
+          "recall": 0.4876325088339223,
+          "f1": 0.349367088607595,
+          "n_matched": 138,
+          "n_spurious": 369,
+          "n_missed": 145
+        },
+        "0.7": {
+          "precision": 0.22090729783037474,
+          "recall": 0.3957597173144876,
+          "f1": 0.28354430379746837,
+          "n_matched": 112,
+          "n_spurious": 395,
+          "n_missed": 171
+        }
+      },
+      "overlap_diagnostics": {
+        "reference_spells_split": 75,
+        "predicted_spells_merging": 7
+      },
+      "changes": {
+        "newly_resolved_frames": 19660,
+        "newly_resolved_intervals": 421,
+        "newly_resolved_correct_fraction": 0.6581892166836215,
+        "newly_resolved_by_label": {
+          "H": {
+            "frames": 6060,
+            "correct_fraction": 0.8363036303630363
+          },
+          "A": {
+            "frames": 12836,
+            "correct_fraction": 0.6132751636023683
+          },
+          "D": {
+            "frames": 764,
+            "correct_fraction": 0.0
+          }
+        },
+        "raw_label_changes": 19660,
+        "changed_already_decided_frames": 0,
+        "already_decided_corrections": 0,
+        "already_decided_regressions": 0,
+        "reversions_to_undecided": 0,
+        "scorer_expanded_label_changes": 2348,
+        "reference_type": "external provider reference; not challenge accuracy"
+      },
+      "unmeasured_emitted_by_label": {
+        "H": 34764,
+        "A": 35968,
+        "D": 3874
+      }
+    },
+    "agreement": {
+      "metrics": {
+        "spell_f1_mean": 0.4400520156046814,
+        "macro_f1": 0.5407017120695065,
+        "accuracy": 0.7783991611324712,
+        "kappa": 0.5760987203971774,
+        "alive_dead_f1": 0.9494980649614828,
+        "n_gt_spells": 283,
+        "n_pred_spells": 486,
+        "spell_count_error": 203,
+        "mean_spell_duration_s": 5.871193415637859,
+        "gt_mean_spell_duration_s": 10.109540636042404,
+        "confusion": [
+          [
+            35332,
+            4400,
+            0,
+            4570
+          ],
+          [
+            4573,
+            20343,
+            0,
+            2307
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            8161,
+            11002,
+            992,
+            86974
+          ]
+        ]
+      },
+      "coverage": {
+        "original_frames": 178628,
+        "graded_frames": 71525,
+        "undecided_frames": 6877,
+        "undecided_fraction": 0.09614819993009437,
+        "decided_correct_fraction": 0.8612022026976859
+      },
+      "spell_counts": {
+        "0.3": {
+          "precision": 0.45267489711934156,
+          "recall": 0.7773851590106007,
+          "f1": 0.5721716514954486,
+          "n_matched": 220,
+          "n_spurious": 266,
+          "n_missed": 63
+        },
+        "0.4": {
+          "precision": 0.42592592592592593,
+          "recall": 0.7314487632508834,
+          "f1": 0.5383615084525357,
+          "n_matched": 207,
+          "n_spurious": 279,
+          "n_missed": 76
+        },
+        "0.5": {
+          "precision": 0.34156378600823045,
+          "recall": 0.5865724381625441,
+          "f1": 0.43172951885565664,
+          "n_matched": 166,
+          "n_spurious": 320,
+          "n_missed": 117
+        },
+        "0.6": {
+          "precision": 0.28189300411522633,
+          "recall": 0.4840989399293286,
+          "f1": 0.3563068920676203,
+          "n_matched": 137,
+          "n_spurious": 349,
+          "n_missed": 146
+        },
+        "0.7": {
+          "precision": 0.23868312757201646,
+          "recall": 0.4098939929328622,
+          "f1": 0.3016905071521456,
+          "n_matched": 116,
+          "n_spurious": 370,
+          "n_missed": 167
+        }
+      },
+      "overlap_diagnostics": {
+        "reference_spells_split": 73,
+        "predicted_spells_merging": 8
+      },
+      "changes": {
+        "newly_resolved_frames": 12783,
+        "newly_resolved_intervals": 416,
+        "newly_resolved_correct_fraction": 0.7609324884612376,
+        "newly_resolved_by_label": {
+          "H": {
+            "frames": 4220,
+            "correct_fraction": 0.8222748815165877
+          },
+          "A": {
+            "frames": 8563,
+            "correct_fraction": 0.7307018568258787
+          },
+          "D": {
+            "frames": 0,
+            "correct_fraction": null
+          }
+        },
+        "raw_label_changes": 12783,
+        "changed_already_decided_frames": 0,
+        "already_decided_corrections": 0,
+        "already_decided_regressions": 0,
+        "reversions_to_undecided": 0,
+        "scorer_expanded_label_changes": 754,
+        "reference_type": "external provider reference; not challenge accuracy"
+      },
+      "unmeasured_emitted_by_label": {
+        "H": 8161,
+        "A": 11002,
+        "D": 992
+      }
+    },
+    "agreement-plus-carry": {
+      "metrics": {
+        "spell_f1_mean": 0.4358585858585859,
+        "macro_f1": 0.5480712978095806,
+        "accuracy": 0.8295840615169521,
+        "kappa": 0.6443949433536719,
+        "alive_dead_f1": 0.9996643403588762,
+        "n_gt_spells": 283,
+        "n_pred_spells": 509,
+        "spell_count_error": 226,
+        "mean_spell_duration_s": 5.6170530451866405,
+        "gt_mean_spell_duration_s": 10.109540636042404,
+        "confusion": [
+          [
+            37111,
+            7191,
+            0,
+            0
+          ],
+          [
+            4950,
+            22225,
+            48,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            34987,
+            38217,
+            1402,
+            32523
+          ]
+        ]
+      },
+      "coverage": {
+        "original_frames": 178628,
+        "graded_frames": 71525,
+        "undecided_frames": 0,
+        "undecided_fraction": 0.0,
+        "decided_correct_fraction": 0.8295840615169521
+      },
+      "spell_counts": {
+        "0.3": {
+          "precision": 0.44793713163064836,
+          "recall": 0.8056537102473498,
+          "f1": 0.5757575757575758,
+          "n_matched": 228,
+          "n_spurious": 281,
+          "n_missed": 55
+        },
+        "0.4": {
+          "precision": 0.41846758349705304,
+          "recall": 0.7526501766784452,
+          "f1": 0.5378787878787878,
+          "n_matched": 213,
+          "n_spurious": 296,
+          "n_missed": 70
+        },
+        "0.5": {
+          "precision": 0.3300589390962672,
+          "recall": 0.5936395759717314,
+          "f1": 0.42424242424242425,
+          "n_matched": 168,
+          "n_spurious": 341,
+          "n_missed": 115
+        },
+        "0.6": {
+          "precision": 0.275049115913556,
+          "recall": 0.49469964664310956,
+          "f1": 0.35353535353535354,
+          "n_matched": 140,
+          "n_spurious": 369,
+          "n_missed": 143
+        },
+        "0.7": {
+          "precision": 0.22396856581532418,
+          "recall": 0.4028268551236749,
+          "f1": 0.2878787878787879,
+          "n_matched": 114,
+          "n_spurious": 395,
+          "n_missed": 169
+        }
+      },
+      "overlap_diagnostics": {
+        "reference_spells_split": 75,
+        "predicted_spells_merging": 7
+      },
+      "changes": {
+        "newly_resolved_frames": 19660,
+        "newly_resolved_intervals": 421,
+        "newly_resolved_correct_fraction": 0.6809766022380468,
+        "newly_resolved_by_label": {
+          "H": {
+            "frames": 6376,
+            "correct_fraction": 0.8232434127979925
+          },
+          "A": {
+            "frames": 13236,
+            "correct_fraction": 0.6149138712601995
+          },
+          "D": {
+            "frames": 48,
+            "correct_fraction": 0.0
+          }
+        },
+        "raw_label_changes": 19660,
+        "changed_already_decided_frames": 0,
+        "already_decided_corrections": 0,
+        "already_decided_regressions": 0,
+        "reversions_to_undecided": 0,
+        "scorer_expanded_label_changes": 1831,
+        "reference_type": "external provider reference; not challenge accuracy"
+      },
+      "unmeasured_emitted_by_label": {
+        "H": 34987,
+        "A": 38217,
+        "D": 1402
+      }
+    },
+    "w0-c32": {
+      "metrics": {
+        "spell_f1_mean": 0.5373676248108926,
+        "macro_f1": 0.5547374870994961,
+        "accuracy": 0.8381405103110801,
+        "kappa": 0.663337288466474,
+        "alive_dead_f1": 0.9987120798510492,
+        "n_gt_spells": 283,
+        "n_pred_spells": 378,
+        "spell_count_error": 95,
+        "mean_spell_duration_s": 7.549312169312169,
+        "gt_mean_spell_duration_s": 10.109540636042404,
+        "confusion": [
+          [
+            37319,
+            6898,
+            85,
+            0
+          ],
+          [
+            4495,
+            22629,
+            99,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            29824,
+            39762,
+            5020,
+            32523
+          ]
+        ]
+      },
+      "coverage": {
+        "original_frames": 178628,
+        "graded_frames": 71525,
+        "undecided_frames": 0,
+        "undecided_fraction": 0.0,
+        "decided_correct_fraction": 0.8381405103110801
+      },
+      "spell_counts": {
+        "0.3": {
+          "precision": 0.5925925925925926,
+          "recall": 0.7915194346289752,
+          "f1": 0.6777609682299547,
+          "n_matched": 224,
+          "n_spurious": 154,
+          "n_missed": 59
+        },
+        "0.4": {
+          "precision": 0.5608465608465608,
+          "recall": 0.7491166077738516,
+          "f1": 0.6414523449319213,
+          "n_matched": 212,
+          "n_spurious": 166,
+          "n_missed": 71
+        },
+        "0.5": {
+          "precision": 0.4708994708994709,
+          "recall": 0.6289752650176679,
+          "f1": 0.5385779122541603,
+          "n_matched": 178,
+          "n_spurious": 200,
+          "n_missed": 105
+        },
+        "0.6": {
+          "precision": 0.3915343915343915,
+          "recall": 0.5229681978798587,
+          "f1": 0.44780635400907715,
+          "n_matched": 148,
+          "n_spurious": 230,
+          "n_missed": 135
+        },
+        "0.7": {
+          "precision": 0.3333333333333333,
+          "recall": 0.4452296819787986,
+          "f1": 0.3812405446293495,
+          "n_matched": 126,
+          "n_spurious": 252,
+          "n_missed": 157
+        }
+      },
+      "overlap_diagnostics": {
+        "reference_spells_split": 40,
+        "predicted_spells_merging": 12
+      },
+      "changes": {
+        "newly_resolved_frames": 19660,
+        "newly_resolved_intervals": 421,
+        "newly_resolved_correct_fraction": 0.6850966429298068,
+        "newly_resolved_by_label": {
+          "H": {
+            "frames": 6436,
+            "correct_fraction": 0.8304847731510255
+          },
+          "A": {
+            "frames": 13040,
+            "correct_fraction": 0.6230061349693251
+          },
+          "D": {
+            "frames": 184,
+            "correct_fraction": 0.0
+          }
+        },
+        "raw_label_changes": 21859,
+        "changed_already_decided_frames": 2199,
+        "already_decided_corrections": 1365,
+        "already_decided_regressions": 834,
+        "reversions_to_undecided": 0,
+        "scorer_expanded_label_changes": 4639,
+        "reference_type": "external provider reference; not challenge accuracy"
+      },
+      "unmeasured_emitted_by_label": {
+        "H": 29824,
+        "A": 39762,
+        "D": 5020
+      }
+    }
+  },
+  "latent_diagnostics": {
+    "w0-c32": {
+      "unknown_active": 63042
+    }
+  }
+}

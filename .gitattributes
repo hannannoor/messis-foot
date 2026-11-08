@@ -1,0 +1,2 @@
+# Frozen-source integrity checks use exact bytes; avoid checkout newline conversion.
+*.py -text

@@ -300,6 +300,15 @@ def main():
     discovery.add_argument('--ffprobe', default='ffprobe')
     discovery.add_argument('--tesseract', default='tesseract')
     discovery.add_argument('--out', required=True, help='one overwritten local discovery JSON; not an alignment CSV')
+    automatic = sub.add_parser('auto-sync', help='automatic crops and bounded dense clock candidates from discovery; no fusion')
+    automatic.add_argument('--tactical-video', required=True)
+    automatic.add_argument('--broadcast-video', required=True)
+    automatic.add_argument('--tactical-discovery', required=True)
+    automatic.add_argument('--broadcast-discovery', required=True)
+    automatic.add_argument('--ffmpeg', default='ffmpeg')
+    automatic.add_argument('--ffprobe', default='ffprobe')
+    automatic.add_argument('--tesseract', default='tesseract')
+    automatic.add_argument('--out', default='outputs/automatic-sync')
     check = sub.add_parser('ocr-check', help='test one local clock image without rescanning video')
     check.add_argument('--image', required=True)
     check.add_argument('--source', choices=('tactical', 'broadcast'), required=True)
@@ -340,6 +349,12 @@ def main():
     try:
         if args.command == 'demo':
             _demo(args.out)
+        elif args.command == 'auto-sync':
+            from .automatic_sync import automatic_sync
+            report = automatic_sync(args.tactical_video,args.broadcast_video,
+                args.tactical_discovery,args.broadcast_discovery,args.out,
+                args.ffmpeg,args.ffprobe,args.tesseract)
+            print(json.dumps(report,indent=2))
         elif args.command == 'discover-clock':
             from .clock_discovery import scan_video
             video, output = Path(args.video), Path(args.out)

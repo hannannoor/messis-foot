@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "original_experiment_sha256": "e7031f709506cb1c0631a716dc60b290cc22c9320a49a4c12daa9bdd5bffd001",
+  "core_freeze_file_sha256": "76e824cbba35187f7c8244037c1603f38eb8038edaa20e1bfa95eae6d28ebb2c",
+  "logical_source_alias": {
+    "accuracy_experiment.py": "accuracy_experiment_frozen.py"
+  },
+  "source_sha256": {
+    "accuracy_experiment.py": "2eb9963993e4cc51aeb7841d624bacc20da50ee7610847c4b9c5941d0b2f150a",
+    "accuracy_experiment_frozen.py": "cf0559d447c44cb2f059cea21cb96a9a6c70a4aad89ae9e0ced83d46580ca0f8",
+    "accuracy_evidence.py": "2d3195ff0b42e973998c6a32d81e0f590e45ee97d69132fafb87881c096980c4",
+    "soft_candidate.py": "e1cce016abe233b56c12c171be6c7d4cf5f70c757de498d3d0fc16967553704e",
+    "benchmark/accuracy-first/selected.json": "528745d96d4b87236bf78644fea90d8b5b27ba317803a18b6f97fd1fe1239185",
+    "gap_solver/accuracy_protocol.py": "8edac7aa5d651bcc486acbd3378b34c89f0e8447ab263da4bfbade9822db24e7",
+    "gap_solver/soft_sequence.py": "fa829e31d96eb87bebbe93ca98554f95d372c5162c6b7365b92ac9914d3ee4fe"
+  },
+  "original_scored_receipt_sha256": {
+    "reports/accuracy-first/validation/dfl-J03WQQ-masked.json": "b32fbbc35600e0d15cae7f5179df5cd72fa6c567609f7898078a4107dfa494c5",
+    "reports/accuracy-first/validation/dfl-J03WQQ-natural.json": "a99488873794beb589f5aeb1a4faaa9003669dc58706ede384a6eb82c38d6472",
+    "reports/accuracy-first/validation/skillcorner-2006229-masked.json": "ecf0669dcf61a5dddfdf49400aecbe8985a9e7c994a3035487d41303b32e2751",
+    "reports/accuracy-first/validation/skillcorner-2006229-natural.json": "f683b768882a188f0ef798886ef885b47acfa2be35d81ed5c3887a8140d4dda3",
+    "reports/accuracy-first/validation/skillcorner-2006363-masked.json": "55998beebc925816cba18f9e519efc753f3f5ae8e30e623cb4785ec55229131b",
+    "reports/accuracy-first/validation/skillcorner-2006363-natural.json": "851d6221c0bea8cf6c11bd6db6db4769eb8d39db3751f6e559e449f709c9c339",
+    "reports/accuracy-first/regression/dfl-J03WN1-masked.json": "3fecc02b31e950f950d6f1bde0fa2f6ebc1090e588cc6fbfd7bca3e6c57a5cdc",
+    "reports/accuracy-first/regression/dfl-J03WN1-natural.json": "7fdb35f202136cd1e10525369e441b0b8ce223fd97f9f85dd4c83bb59d311c33",
+    "reports/accuracy-first/regression/dfl-J03WR9-masked.json": "7896f5e3bd52f3c5ad4153fdff3ebde6aa74ce1d6efce874987353082a27a1ef",
+    "reports/accuracy-first/regression/dfl-J03WR9-natural.json": "921644129a38795ede29aa02231c655e09b8bf8fb2425686a867e785d3731e7a",
+    "reports/accuracy-first/regression/skillcorner-2007448-masked.json": "3d4f43e39773e1e26aad9b0faca1c34fae62abc82a07a588fd2c7a1d5e624e3c",
+    "reports/accuracy-first/regression/skillcorner-2007448-natural.json": "9ac36aafc700c06f87d9ee55b6a736695a682258f4b0b2b95cac54c4b0b16d5c",
+    "reports/accuracy-first/regression/skillcorner-2007721-masked.json": "68878284b2feae661ea167c06fe391f0b5b9155e64ff1f7d3cbdbe507c8e78e4",
+    "reports/accuracy-first/regression/skillcorner-2007721-natural.json": "dd0c569e5b63aecedef0b912ea85cf2db38b332bc14260da3c137a9700edfa26",
+    "reports/accuracy-first/regression/skillcorner-2010085-masked.json": "a53e0c2caf666a455ebca4c6d96d16af1005b56a871157b65fc7132e3f10f77b",
+    "reports/accuracy-first/regression/skillcorner-2010085-natural.json": "ab8b2dd6e6a8fd99722f62c575f60aa2b257abbc46a3b2a5c911dfe4fbe238cc",
+    "reports/accuracy-first/regression/skillcorner-2011166-masked.json": "0e3763ae2c6c79ab4abf52d109738914c8b3df8193cc0d581f260cb9165ae06b",
+    "reports/accuracy-first/regression/skillcorner-2011166-natural.json": "3bca1283ce095079775029c5fbe0a0ef0411e4066233bb3ff4421072c0d5c454",
+    "reports/accuracy-first/regression/skillcorner-2013725-masked.json": "b8c874e0e3bb6c18856956279a44b48a20d32be9431830a6dbb027002e729a09",
+    "reports/accuracy-first/regression/skillcorner-2013725-natural.json": "363fb70d3ef20eeaa60674e306f9d7938963d35ebd9d2172623bbd255bb8ccea",
+    "reports/accuracy-first/regression/skillcorner-2015213-masked.json": "c2f650439573a4a21ff47b478bb0c1c533988ddcbd59a558f5c233c139a2f886",
+    "reports/accuracy-first/regression/skillcorner-2015213-natural.json": "c8056792af0f9047bf3e431865aa1bc7f85d9a873d2a4761d9470ac3744439a8",
+    "reports/accuracy-first/regression/skillcorner-2016236-masked.json": "4119dd8b41da8a4da9c6ec0d6f53027d453d23863e5d9ddc4dfa5df4196c4a2a",
+    "reports/accuracy-first/regression/skillcorner-2016236-natural.json": "8c271255a20b49f5eaf0b333eab5977d3d9a4e7980cdd83f29218c382f46d96f",
+    "reports/accuracy-first/regression/skillcorner-2017461-masked.json": "7e0087690864dd9324539c0c9a012a948e30f2e7e95fca96210d340bbb9dc37a",
+    "reports/accuracy-first/regression/skillcorner-2017461-natural.json": "9e9dcea03a049486770e3b755761e923700965b3bf84306174d7c90db30fefe7"
+  },
+  "original_selection_file_sha256": "d352b4bd8fbfa43a97f5c83cbf396a0cf0c8880d4bb69a9e05bd2f921885dc93",
+  "original_summary_file_sha256": "a60668a9226591bbfa631d4785f82399685fbe5a55a300aa4fff93ad98025321",
+  "prediction_engine_bytes_unchanged": true,
+  "parameters_or_ranking_changed": false
+}

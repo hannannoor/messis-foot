@@ -1,0 +1,10 @@
+{
+  "report_sha256": {
+    "dfl-J03WQQ-masked.json": "b8990330218160e5b2cfcbb0255afbf3749f68d34b804267b3303d0f6cea504b",
+    "dfl-J03WQQ-natural.json": "3195988efe202ae63f636d8d6dac22d3f32a5d43bb96374d0fc9eb0256cf672b",
+    "skillcorner-2006229-masked.json": "55d345123c8af3122c41d4677b006121eacd9a771b75c474796dae9561ef6c49",
+    "skillcorner-2006229-natural.json": "643a3276036e2ffedecd34a50608938f627e14944b7a30311cd3ad9821b9cdc5",
+    "skillcorner-2006363-masked.json": "4a673245277e20e9e11083a53a2f210c4cf1779afba1ab92b35f645614de19b9",
+    "skillcorner-2006363-natural.json": "69a323085591a8f077143557e833814bff3d257308a3323fed8854861d55e5f2"
+  }
+}

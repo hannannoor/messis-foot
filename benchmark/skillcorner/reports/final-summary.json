@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "artifact_sha256": "396a05f28d0493492af118682453dbf489d1cc867a6136420c3de3a3783bbf48",
+  "validation_eligibility": "rejected_before_final_test",
+  "acceptance": {
+    "passes": false,
+    "checks": {
+      "source_quality": true,
+      "coverage_gain": false,
+      "mean_spell_advantage_over_endpoint": false,
+      "natural_hidden_nonregression": true,
+      "H_new_agreement": false,
+      "H_missing_gap_agreement": false,
+      "A_new_agreement": false,
+      "A_missing_gap_agreement": false,
+      "hidden_support": false,
+      "positive_hidden_recovery": false,
+      "hidden_nonregression_against_baseline": true,
+      "bounded_false_opposing_spells": true,
+      "validation_eligibility": false,
+      "seen_data_regression": true,
+      "team_spell_mean_nonnegative": true,
+      "team_spell_match_tolerance": true,
+      "paired_bootstrap_lower_bound": true
+    },
+    "paired_spell_changes": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "paired_match_bootstrap": {
+      "draws": 10000,
+      "seed": 1729,
+      "lower_95_percent_bound": 0.0,
+      "mean_change": 0.0
+    },
+    "recovery_gate": {
+      "passes": false,
+      "checks": {
+        "source_quality": true,
+        "coverage_gain": false,
+        "team_spell_no_match_decline": true,
+        "mean_spell_advantage_over_endpoint": false,
+        "natural_hidden_nonregression": true,
+        "H_new_agreement": false,
+        "H_missing_gap_agreement": false,
+        "A_new_agreement": false,
+        "A_missing_gap_agreement": false,
+        "hidden_support": false,
+        "positive_hidden_recovery": false,
+        "hidden_nonregression_against_baseline": true,
+        "bounded_false_opposing_spells": true
+      },
+      "labels": {
+        "H": {
+          "frames": 0,
+          "correct_fraction": null,
+          "missing_frames": 0,
+          "missing_correct_fraction": null,
+          "gaps": 0
+        },
+        "A": {
+          "frames": 0,
+          "correct_fraction": null,
+          "missing_frames": 0,
+          "missing_correct_fraction": null,
+          "gaps": 0
+        }
+      },
+      "hidden_scope": "masked",
+      "hidden_reference_spells": 2,
+      "hidden_hits": 0,
+      "endpoint_hits": 0,
+      "natural_hidden_claim_supported": false
+    },
+    "reference_scope": "known in-play H/A only; no independent full-state validation"
+  },
+  "local_inference_authorized": false,
+  "matches": [
+    2007448,
+    2007721,
+    2010085,
+    2011166,
+    2013725,
+    2015213,
+    2016236,
+    2017461
+  ],
+  "seen_regression_passed": true,
+  "summary": {
+    "baseline": {
+      "mean_spell_f1": 0.46899934455771586,
+      "mean_unknown_fraction": 0.2567356892920396
+    },
+    "selected": {
+      "mean_spell_f1": 0.46899934455771586,
+      "mean_unknown_fraction": 0.2567356892920396
+    }
+  },
+  "completion": {
+    "test_match_regimes": 16,
+    "seen_dfl_matches": 7,
+    "stress_matches": 2,
+    "available_ablation_matches": 2
+  },
+  "stress_results": [
+    {
+      "match": 2006229,
+      "cases": {
+        "opponent_loss": {
+          "spell_f1": 0.0,
+          "newly_assigned": 0
+        },
+        "identity_discontinuity": {
+          "spell_f1": 0.46126126126126127,
+          "newly_assigned": 0
+        },
+        "false_ball": {
+          "spell_f1": 0.4657534246575342,
+          "newly_assigned": 0
+        },
+        "ball_time_shift": {
+          "spell_f1": 0.4415362731152205,
+          "newly_assigned": 0
+        }
+      }
+    },
+    {
+      "match": 2006363,
+      "cases": {
+        "opponent_loss": {
+          "spell_f1": 0.0,
+          "newly_assigned": 0
+        },
+        "identity_discontinuity": {
+          "spell_f1": 0.5209302325581395,
+          "newly_assigned": 0
+        },
+        "false_ball": {
+          "spell_f1": 0.5314465408805031,
+          "newly_assigned": 0
+        },
+        "ball_time_shift": {
+          "spell_f1": 0.43485477178423243,
+          "newly_assigned": 0
+        }
+      }
+    }
+  ],
+  "available_ablation": [
+    {
+      "match": 2006229,
+      "unknown_fraction": 0.1867641636966941,
+      "spell_f1": 0.46268656716417905,
+      "newly_assigned": 0
+    },
+    {
+      "match": 2006363,
+      "unknown_fraction": 0.18315909006751668,
+      "spell_f1": 0.5249617151607964,
+      "newly_assigned": 0
+    }
+  ],
+  "local_accuracy_measured": false,
+  "independent_live_dead_validation": false,
+  "default_promoted": false
+}

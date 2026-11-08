@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "cohort": "dfl",
+  "match": "J03WOH",
+  "fresh_holdout": false,
+  "previously_seen_development": true,
+  "fitting_or_selection_performed": false,
+  "full_dead_reference": true,
+  "association": {
+    "method": "mutual_unique_nearest_adjacent_team_points",
+    "max_step_m": 0.8,
+    "matches": 3018440,
+    "new_correspondences": 268,
+    "player_identity_verified": false,
+    "ambiguity_policy": "new correspondence; no tie breaking by slot",
+    "freshness_verified": false
+  },
+  "comparison_freeze_sha256": "3dda432fe78cc1da130011a26a54e72a961e2c9d8c942c31f05e29ffae504bdd",
+  "input_sha256": {
+    "metadata": "f23b3ee13b988b1ff9a0bce438c416dac47e71355bbc7ee1dab21aaf3e33c18c",
+    "tracking": "ec4dcf30200aad694dea263d5289485fcd0ca42badddaeb7c81f5cd5a4229d4f",
+    ".metadata.json": "a85e2c1a546fcf2e2eaeb12f4cb49b5e8f31f0b39defa75d67a347ee46f6f391",
+    ".features.npz": "39967c61a966441692a30fee66ad2e4622824f18bf472e7ea5030473e4c5b219",
+    ".reference.npz": "5a3ddbab87943a1c949138609b658f658ec5382be3d2a0f38351792ce3274375"
+  },
+  "driver_sha256": "65efcca674e53bd0764163d8a5da476773290c6b7bb5d3edf0f054a832f1327d",
+  "baseline_predictions_identical": true,
+  "features": {
+    "home_vx": {
+      "mean_absolute_change": 9.318425327364821e-06
+    },
+    "home_vy": {
+      "mean_absolute_change": 5.526771928998642e-06
+    },
+    "away_vx": {
+      "mean_absolute_change": 2.9845077733625658e-06
+    },
+    "away_vy": {
+      "mean_absolute_change": 2.733083192651975e-06
+    },
+    "home_speed": {
+      "mean_absolute_change": 7.1928966463019606e-06
+    },
+    "away_speed": {
+      "mean_absolute_change": 3.740654392458964e-06
+    },
+    "home_continuity": {
+      "mean_absolute_change": 0.00011263092892477289
+    },
+    "away_continuity": {
+      "mean_absolute_change": 3.312674380140379e-05
+    }
+  },
+  "policies": {
+    "incumbent": {
+      "original_ids": {
+        "metrics": {
+          "macro_f1": 0.856078571084319,
+          "spell_f1_mean": 0.5054151624548736,
+          "spell_f1_at_headline": 0.5222623345367028,
+          "spell_iou_headline": 0.5,
+          "n_gt_spells": 402,
+          "n_pred_spells": 429,
+          "spell_count_error": 27,
+          "mean_spell_duration_s": 6.44951048951049,
+          "gt_mean_spell_duration_s": 7.158706467661691,
+          "accuracy": 0.8477123325608175,
+          "kappa": 0.770263546938134
+        },
+        "coverage": {
+          "graded_frames": 137214,
+          "undecided_frames": 14643,
+          "undecided_fraction": 0.1067165158074249,
+          "decided_correct_fraction": 0.9489846701095691
+        }
+      },
+      "estimated_correspondence": {
+        "metrics": {
+          "macro_f1": 0.856078571084319,
+          "spell_f1_mean": 0.5054151624548736,
+          "spell_f1_at_headline": 0.5222623345367028,
+          "spell_iou_headline": 0.5,
+          "n_gt_spells": 402,
+          "n_pred_spells": 429,
+          "spell_count_error": 27,
+          "mean_spell_duration_s": 6.44951048951049,
+          "gt_mean_spell_duration_s": 7.158706467661691,
+          "accuracy": 0.8477123325608175,
+          "kappa": 0.770263546938134
+        },
+        "coverage": {
+          "graded_frames": 137214,
+          "undecided_frames": 14643,
+          "undecided_fraction": 0.1067165158074249,
+          "decided_correct_fraction": 0.9489846701095691
+        }
+      },
+      "changed_frames": 0
+    },
+    "carry": {
+      "original_ids": {
+        "metrics": {
+          "macro_f1": 0.8858646479372762,
+          "spell_f1_mean": 0.5054151624548736,
+          "spell_f1_at_headline": 0.5222623345367028,
+          "spell_iou_headline": 0.5,
+          "n_gt_spells": 402,
+          "n_pred_spells": 429,
+          "spell_count_error": 27,
+          "mean_spell_duration_s": 6.44951048951049,
+          "gt_mean_spell_duration_s": 7.158706467661691,
+          "accuracy": 0.905745769382133,
+          "kappa": 0.8505904326763603
+        },
+        "coverage": {
+          "graded_frames": 137214,
+          "undecided_frames": 0,
+          "undecided_fraction": 0.0,
+          "decided_correct_fraction": 0.905745769382133
+        }
+      },
+      "estimated_correspondence": {
+        "metrics": {
+          "macro_f1": 0.8858646479372762,
+          "spell_f1_mean": 0.5054151624548736,
+          "spell_f1_at_headline": 0.5222623345367028,
+          "spell_iou_headline": 0.5,
+          "n_gt_spells": 402,
+          "n_pred_spells": 429,
+          "spell_count_error": 27,
+          "mean_spell_duration_s": 6.44951048951049,
+          "gt_mean_spell_duration_s": 7.158706467661691,
+          "accuracy": 0.905745769382133,
+          "kappa": 0.8505904326763603
+        },
+        "coverage": {
+          "graded_frames": 137214,
+          "undecided_frames": 0,
+          "undecided_fraction": 0.0,
+          "decided_correct_fraction": 0.905745769382133
+        }
+      },
+      "changed_frames": 0
+    },
+    "agreement": {
+      "original_ids": {
+        "metrics": {
+          "macro_f1": 0.8986649944553354,
+          "spell_f1_mean": 0.5229681978798586,
+          "spell_f1_at_headline": 0.5394581861012956,
+          "spell_iou_headline": 0.5,
+          "n_gt_spells": 402,
+          "n_pred_spells": 447,
+          "spell_count_error": 45,
+          "mean_spell_duration_s": 6.437046979865772,
+          "gt_mean_spell_duration_s": 7.158706467661691,
+          "accuracy": 0.9141559899135657,
+          "kappa": 0.8657268832265104
+        },
+        "coverage": {
+          "graded_frames": 137214,
+          "undecided_frames": 1806,
+          "undecided_fraction": 0.013161922252831344,
+          "decided_correct_fraction": 0.9263485170743235
+        }
+      },
+      "estimated_correspondence": {
+        "metrics": {
+          "macro_f1": 0.8986649944553354,
+          "spell_f1_mean": 0.5229681978798586,
+          "spell_f1_at_headline": 0.5394581861012956,
+          "spell_iou_headline": 0.5,
+          "n_gt_spells": 402,
+          "n_pred_spells": 447,
+          "spell_count_error": 45,
+          "mean_spell_duration_s": 6.437046979865772,
+          "gt_mean_spell_duration_s": 7.158706467661691,
+          "accuracy": 0.9141559899135657,
+          "kappa": 0.8657268832265104
+        },
+        "coverage": {
+          "graded_frames": 137214,
+          "undecided_frames": 1806,
+          "undecided_fraction": 0.013161922252831344,
+          "decided_correct_fraction": 0.9263485170743235
+        }
+      },
+      "changed_frames": 0
+    },
+    "agreement-plus-carry": {
+      "original_ids": {
+        "metrics": {
+          "macro_f1": 0.9001522259180587,
+          "spell_f1_mean": 0.5229681978798586,
+          "spell_f1_at_headline": 0.5394581861012956,
+          "spell_iou_headline": 0.5,
+          "n_gt_spells": 402,
+          "n_pred_spells": 447,
+          "spell_count_error": 45,
+          "mean_spell_duration_s": 6.437046979865772,
+          "gt_mean_spell_duration_s": 7.158706467661691,
+          "accuracy": 0.9199935866602533,
+          "kappa": 0.8740256760059958
+        },
+        "coverage": {
+          "graded_frames": 137214,
+          "undecided_frames": 0,
+          "undecided_fraction": 0.0,
+          "decided_correct_fraction": 0.9199935866602533
+        }
+      },
+      "estimated_correspondence": {
+        "metrics": {
+          "macro_f1": 0.9001522259180587,
+          "spell_f1_mean": 0.5229681978798586,
+          "spell_f1_at_headline": 0.5394581861012956,
+          "spell_iou_headline": 0.5,
+          "n_gt_spells": 402,
+          "n_pred_spells": 447,
+          "spell_count_error": 45,
+          "mean_spell_duration_s": 6.437046979865772,
+          "gt_mean_spell_duration_s": 7.158706467661691,
+          "accuracy": 0.9199935866602533,
+          "kappa": 0.8740256760059958
+        },
+        "coverage": {
+          "graded_frames": 137214,
+          "undecided_frames": 0,
+          "undecided_fraction": 0.0,
+          "decided_correct_fraction": 0.9199935866602533
+        }
+      },
+      "changed_frames": 0
+    }
+  }
+}

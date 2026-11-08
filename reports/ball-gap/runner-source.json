@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "source_sha256": {
+    "ball_gap_run.py": "fd5346a9d02dc77963b03a1cbbd4d096e5b413de27f6f161df550a4ab436a5f0"
+  },
+  "original_freeze_file_sha256": "a044e1383902816c8851765d67a86b4778b10789e9256fd320f0c1b8e73dc816",
+  "purpose": "Only normalize numeric IoU dict keys for JSON comparator equality; frozen math and policy unchanged"
+}

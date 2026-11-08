@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "selected_id": "w0-c32",
+  "experimental": true,
+  "fresh_holdout": false,
+  "target_accuracy_measured": false,
+  "validation_improved": true,
+  "seen_regression_improved": true,
+  "disposition": "experimental_opt_in_eligible",
+  "regimes": {
+    "natural": {
+      "cohorts": {
+        "dfl": {
+          "incumbent": {
+            "spell_f1_mean": 0.5051315308124646,
+            "macro_f1": 0.8604085467573892,
+            "accuracy": 0.85762275930622,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "carry": {
+            "spell_f1_mean": 0.5051315308124646,
+            "macro_f1": 0.8925403796323277,
+            "accuracy": 0.9136698508603778,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "agreement": {
+            "spell_f1_mean": 0.5247277289836888,
+            "macro_f1": 0.9033836905486641,
+            "accuracy": 0.9202088065967966,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "agreement-plus-carry": {
+            "spell_f1_mean": 0.5247277289836888,
+            "macro_f1": 0.9037663514393744,
+            "accuracy": 0.9246723238456238,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "w0-c32": {
+            "spell_f1_mean": 0.5536652409632008,
+            "macro_f1": 0.9070128226343883,
+            "accuracy": 0.9282788361788594,
+            "corrections": 2332,
+            "regressions": 1572
+          }
+        },
+        "skillcorner": {
+          "incumbent": {
+            "spell_f1_mean": 0.46899934455771586,
+            "macro_f1": 0.50370099395536,
+            "accuracy": 0.6639737979387212,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "carry": {
+            "spell_f1_mean": 0.46570169435017306,
+            "macro_f1": 0.5640277662057337,
+            "accuracy": 0.8453916072745286,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "agreement": {
+            "spell_f1_mean": 0.47853239458736935,
+            "macro_f1": 0.5591784219779249,
+            "accuracy": 0.8104492223080715,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "agreement-plus-carry": {
+            "spell_f1_mean": 0.4706797193369414,
+            "macro_f1": 0.5656034007483044,
+            "accuracy": 0.8502576304600138,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "w0-c32": {
+            "spell_f1_mean": 0.5756191918985818,
+            "macro_f1": 0.5716681314463724,
+            "accuracy": 0.8581605629794707,
+            "corrections": 10428,
+            "regressions": 6475
+          }
+        }
+      },
+      "provider_balanced_spell_f1": {
+        "incumbent": 0.48706543768509025,
+        "carry": 0.48541661258131885,
+        "agreement": 0.501630061785529,
+        "agreement-plus-carry": 0.4977037241603151,
+        "w0-c32": 0.5646422164308913
+      },
+      "primary_change": 0.06693849227057619
+    },
+    "masked": {
+      "cohorts": {
+        "dfl": {
+          "incumbent": {
+            "spell_f1_mean": 0.40955885231142597,
+            "macro_f1": 0.7006211437029989,
+            "accuracy": 0.6016532848354248,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "carry": {
+            "spell_f1_mean": 0.40955885231142597,
+            "macro_f1": 0.8325850817518896,
+            "accuracy": 0.8585996690483485,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "agreement": {
+            "spell_f1_mean": 0.4041600035536602,
+            "macro_f1": 0.7795125469078825,
+            "accuracy": 0.72009146425406,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "agreement-plus-carry": {
+            "spell_f1_mean": 0.4041600035536602,
+            "macro_f1": 0.8113357883303915,
+            "accuracy": 0.8307827468103837,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "w0-c32": {
+            "spell_f1_mean": 0.4326835269993165,
+            "macro_f1": 0.8207702502491108,
+            "accuracy": 0.8440427648477771,
+            "corrections": 1895,
+            "regressions": 1229
+          }
+        },
+        "skillcorner": {
+          "incumbent": {
+            "spell_f1_mean": 0.4564960959861872,
+            "macro_f1": 0.40074720062115,
+            "accuracy": 0.4587933098925348,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "carry": {
+            "spell_f1_mean": 0.45622074516066,
+            "macro_f1": 0.5369350320151778,
+            "accuracy": 0.8049256183609059,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "agreement": {
+            "spell_f1_mean": 0.47168042871081783,
+            "macro_f1": 0.5149079380980321,
+            "accuracy": 0.7017216872061345,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "agreement-plus-carry": {
+            "spell_f1_mean": 0.46053945160743415,
+            "macro_f1": 0.5381816178402478,
+            "accuracy": 0.8095429123975662,
+            "corrections": 0,
+            "regressions": 0
+          },
+          "w0-c32": {
+            "spell_f1_mean": 0.4874708918766482,
+            "macro_f1": 0.5280510008976419,
+            "accuracy": 0.7577827284723123,
+            "corrections": 6833,
+            "regressions": 4846
+          }
+        }
+      },
+      "provider_balanced_spell_f1": {
+        "incumbent": 0.4330274741488066,
+        "carry": 0.432889798736043,
+        "agreement": 0.437920216132239,
+        "agreement-plus-carry": 0.4323497275805472,
+        "w0-c32": 0.46007720943798236
+      },
+      "primary_change": 0.027727481857435177
+    }
+  },
+  "experiment_sha256": "e7031f709506cb1c0631a716dc60b290cc22c9320a49a4c12daa9bdd5bffd001",
+  "selection_sha256": "fb7bd8efd4ea2488bc070609fdece1d598be6279dcb6e84856521e75013c8199",
+  "regression_receipt_sha256": {
+    "dfl-J03WN1-masked.json": "3fecc02b31e950f950d6f1bde0fa2f6ebc1090e588cc6fbfd7bca3e6c57a5cdc",
+    "dfl-J03WN1-natural.json": "7fdb35f202136cd1e10525369e441b0b8ce223fd97f9f85dd4c83bb59d311c33",
+    "dfl-J03WR9-masked.json": "7896f5e3bd52f3c5ad4153fdff3ebde6aa74ce1d6efce874987353082a27a1ef",
+    "dfl-J03WR9-natural.json": "921644129a38795ede29aa02231c655e09b8bf8fb2425686a867e785d3731e7a",
+    "skillcorner-2007448-masked.json": "3d4f43e39773e1e26aad9b0faca1c34fae62abc82a07a588fd2c7a1d5e624e3c",
+    "skillcorner-2007448-natural.json": "9ac36aafc700c06f87d9ee55b6a736695a682258f4b0b2b95cac54c4b0b16d5c",
+    "skillcorner-2007721-masked.json": "68878284b2feae661ea167c06fe391f0b5b9155e64ff1f7d3cbdbe507c8e78e4",
+    "skillcorner-2007721-natural.json": "dd0c569e5b63aecedef0b912ea85cf2db38b332bc14260da3c137a9700edfa26",
+    "skillcorner-2010085-masked.json": "a53e0c2caf666a455ebca4c6d96d16af1005b56a871157b65fc7132e3f10f77b",
+    "skillcorner-2010085-natural.json": "ab8b2dd6e6a8fd99722f62c575f60aa2b257abbc46a3b2a5c911dfe4fbe238cc",
+    "skillcorner-2011166-masked.json": "0e3763ae2c6c79ab4abf52d109738914c8b3df8193cc0d581f260cb9165ae06b",
+    "skillcorner-2011166-natural.json": "3bca1283ce095079775029c5fbe0a0ef0411e4066233bb3ff4421072c0d5c454",
+    "skillcorner-2013725-masked.json": "b8c874e0e3bb6c18856956279a44b48a20d32be9431830a6dbb027002e729a09",
+    "skillcorner-2013725-natural.json": "363fb70d3ef20eeaa60674e306f9d7938963d35ebd9d2172623bbd255bb8ccea",
+    "skillcorner-2015213-masked.json": "c2f650439573a4a21ff47b478bb0c1c533988ddcbd59a558f5c233c139a2f886",
+    "skillcorner-2015213-natural.json": "c8056792af0f9047bf3e431865aa1bc7f85d9a873d2a4761d9470ac3744439a8",
+    "skillcorner-2016236-masked.json": "4119dd8b41da8a4da9c6ec0d6f53027d453d23863e5d9ddc4dfa5df4196c4a2a",
+    "skillcorner-2016236-natural.json": "8c271255a20b49f5eaf0b333eab5977d3d9a4e7980cdd83f29218c382f46d96f",
+    "skillcorner-2017461-masked.json": "7e0087690864dd9324539c0c9a012a948e30f2e7e95fca96210d340bbb9dc37a",
+    "skillcorner-2017461-natural.json": "9e9dcea03a049486770e3b755761e923700965b3bf84306174d7c90db30fefe7"
+  }
+}

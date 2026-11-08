@@ -1,0 +1,24 @@
+{
+  "report_sha256": {
+    "dfl-J03WN1-masked.json": "2ae4839fa5854e33fbeea2c560c0bc48967a96cec6463ff65f595b9310d711ff",
+    "dfl-J03WN1-natural.json": "0ed808a0c24be20d6240678905b8d1b75338a825ed55b5182b664dc4875400b9",
+    "dfl-J03WR9-masked.json": "e9fbe4b0489660d5c01349a62fbcedee13f9cf2c219eeacf75c7f4fa386c30aa",
+    "dfl-J03WR9-natural.json": "325f3fcc701dd36003c30f87427346cea2d34acd82551a07522251109d43af8f",
+    "skillcorner-2007448-masked.json": "18fae71e2b215180dcfde439cee168d3c950622dd4f5ac8e6396d3acace0bfc3",
+    "skillcorner-2007448-natural.json": "78db6632611e9c1697284b73747b8a1c0c6178c89757acc359e57396b1b96881",
+    "skillcorner-2007721-masked.json": "843c02c6e473ee4ea5c25c3d5686e4b800122113f896c7bdf5c8bdab7aa28916",
+    "skillcorner-2007721-natural.json": "fec1a1eb032cb195f34e5c0661a51754ffce572c77dd09424e008436a334b162",
+    "skillcorner-2010085-masked.json": "964fac598f368c882793e37bb3756a371a816ac55371c68adc20e2133a522afe",
+    "skillcorner-2010085-natural.json": "2080f1d000b457c1ce2624028b3b4e47d670dd3b7d7224775b3ddf09adadc6ee",
+    "skillcorner-2011166-masked.json": "0b1d93f47c7d5a4a221273afdfc83d14b9479a84b850ad8a6e7f0e76dcc13321",
+    "skillcorner-2011166-natural.json": "bb52d411ba7acf23f3032410af6a44b3d6af782abf0aee3797a729a1cc015208",
+    "skillcorner-2013725-masked.json": "19d8f22139c537beed44d65e7494c69ad1d88cad374b72bf2b356c1a335e73c8",
+    "skillcorner-2013725-natural.json": "135111e1bdd1a80353ef367a08ce86e70fb3d347d33da3bb556ce66eb194f284",
+    "skillcorner-2015213-masked.json": "63b53cc1cc3317f2ba24e5a8587679543c7fe5ace8d2fb031cb5b1e165577211",
+    "skillcorner-2015213-natural.json": "d58577a30e6148a3a7bcc5d57c87c8f3b8ad7f7db2c1421b90a726f920cb0a3e",
+    "skillcorner-2016236-masked.json": "d93bf58304be9f8697591e25b8f2fa39445bdf854a34f619ca0ef19f89569f8a",
+    "skillcorner-2016236-natural.json": "c9118233f2ba2f24ce24adc52cf60728e0331fa72aaa87bf46fc4329a63d3b8b",
+    "skillcorner-2017461-masked.json": "11a2971efa8c3bfc4ce6533221ba4d3cde8a07734f32df40f99d979cabca76fa",
+    "skillcorner-2017461-natural.json": "75fc71205d2ecef1281bd522983057a6afacf089217e8382bcc1b0009cc0ae53"
+  }
+}

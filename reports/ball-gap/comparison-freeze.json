@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "base_commit": "b43327c101a8e33cadd5cf4f8a892910bad24c42",
+  "protocol": {
+    "policy_id": "w0-c32-neutral-missing",
+    "baseline": "w0-c32",
+    "motion_weight": 0.0,
+    "switch_cost": 32.0,
+    "floor": 1e-06,
+    "missing_emission": "equal H/A/D log scores, zero triple",
+    "unsupported_segment": "latent X then separate unchanged carry",
+    "splits": {
+      "validation": {
+        "dfl": [
+          "J03WQQ"
+        ],
+        "skillcorner": [
+          2006229,
+          2006363
+        ]
+      },
+      "regression": {
+        "dfl": [
+          "J03WR9",
+          "J03WN1"
+        ],
+        "skillcorner": [
+          2007448,
+          2007721,
+          2010085,
+          2011166,
+          2013725,
+          2015213,
+          2016236,
+          2017461
+        ]
+      }
+    },
+    "mask": {
+      "rate": 0.3,
+      "seed": 1729,
+      "definition": "unchanged contiguous_mask"
+    },
+    "acceptance": "all seven assess checks, separately validation and regression; no tolerances or reselection",
+    "fresh_holdout": false,
+    "head_fitting_performed": false,
+    "target_data_used": false
+  },
+  "approved_design_sha256": "35990be277f4d7a64c5509355b066674e6f92c1287ad3c2cfaf8204f8434abb0",
+  "original_experiment_sha256": "e7031f709506cb1c0631a716dc60b290cc22c9320a49a4c12daa9bdd5bffd001",
+  "original_selection_sha256": "fb7bd8efd4ea2488bc070609fdece1d598be6279dcb6e84856521e75013c8199",
+  "source_sha256": {
+    "ball_gap_policy.py": "15fe607774c5aa1a07555cee4eca5466a95da69491a0ec13707fc3e8447a8b9b",
+    "ball_gap_experiment.py": "5cef445c157bf9f9b9d0c7dea514dd36ebbbd2db8eeb1c030027aca371c6aa8a"
+  },
+  "original_archive_sha256": {
+    "dfl-J03WQQ-natural.npz": "7aab1660731196551d2fd30d64c829132ec5f1cf532c5833ba9d49818dd57b75",
+    "dfl-J03WQQ-natural.json": "fcee0d2123ba4c32090b861b17ae7a21b4879b791e843a9702e7b40c15398dec",
+    "dfl-J03WQQ-masked.npz": "a3da55a641eee2d9595560278fa531b1549348ab955049d1389ffd1818ba7b7c",
+    "dfl-J03WQQ-masked.json": "cf2de4a5b0c13f72700c396099133c09613282fcc47c9726a48c47e736c0c698",
+    "skillcorner-2006229-natural.npz": "865f4147a8dd40643de9de2d2a0300597b3fb2161b37c85799e235146ec66918",
+    "skillcorner-2006229-natural.json": "3842367b38f97efc92a8fa9878e53522c765d1d906b6870718bb8e39d7749526",
+    "skillcorner-2006229-masked.npz": "0d687d3a2e0d6fa4b9b3fdf207e09fbccb10e184c4e322ac95bdb9db614e0ec5",
+    "skillcorner-2006229-masked.json": "11602643de18ed8ed9953b77842b131db22a263086d90d06c939423371d3cd20",
+    "skillcorner-2006363-natural.npz": "f326f08e81bc969d5b0fd86e65944c3d7caa52713dbd6c51805a974aaf29eefc",
+    "skillcorner-2006363-natural.json": "27d1a51a4fdac03cb9d19dcf71061622563516f8a7ea53d0199c7266642d2738",
+    "skillcorner-2006363-masked.npz": "8c9e704ba2b094ab931c60f0a42555f81f2bba8e33172831495ef3a5ab06c129",
+    "skillcorner-2006363-masked.json": "ab14568e2d33a555b341b6424ab06cd0643107d7614a4b7e31e54118317e1114",
+    "dfl-J03WR9-natural.npz": "544fcfd675868d26a58ade215efcc36f32abdd411a1e0eb8e4c16a78262bdf56",
+    "dfl-J03WR9-natural.json": "345207b3d060c145ef1f771662c7da55646406430e884bd82a10d9ac78804728",
+    "dfl-J03WR9-masked.npz": "119a7a0b18984707134252636ead97414da354340715166213dc2a27b467be9b",
+    "dfl-J03WR9-masked.json": "d359024f2df33e4435b7f1aaacd28976d9208a0ed0447e3aeccbc990727b5ef2",
+    "dfl-J03WN1-natural.npz": "0f32d5e2f200e05a0f2ea0cb60b9ea880859c7cdd827f93d2f862a2818cfa8a8",
+    "dfl-J03WN1-natural.json": "acac817eb88d2fdbc15b26db903e5ee55fb09467ed7b47d70f6ba84a8307b3e7",
+    "dfl-J03WN1-masked.npz": "d841427ec720ac61362f008620304dd04049002a212995db2e2cad2e4d3c3cff",
+    "dfl-J03WN1-masked.json": "17a6d8cd917889ab92d5d2d4d3b43792e19f9ffce7fea9ff96e005afdce24d58",
+    "skillcorner-2007448-natural.npz": "0e310638072dc724ee46064dea4113848f11cb516efddfbe7f9f2da483065f64",
+    "skillcorner-2007448-natural.json": "15198d6668777948e4a2e5056e58daaf95cbadaf63e1ff6e820cd15700dd8cb2",
+    "skillcorner-2007448-masked.npz": "a61342db49c0e488f71dfccd35f0c7e28b9de4a41f13c04c66ab1234f65eaadc",
+    "skillcorner-2007448-masked.json": "75a18590b36c548ce2b0efb51ce9273b7c46fb6e33873fe0aae0e0190e84539d",
+    "skillcorner-2007721-natural.npz": "a42dc5cf03e94f94f48170e986ec327dc3927ed74436ac174788f4fc58b7c86a",
+    "skillcorner-2007721-natural.json": "ce939bc6335a2a32477d978a5d54f4049ee3b4b2692a3860309f3772dffc9541",
+    "skillcorner-2007721-masked.npz": "1100a39b461f86a4bebddf49d2c6d9b5130f3542a985e4c32c7c54a48e7b3b23",
+    "skillcorner-2007721-masked.json": "11d68de323945a7d2cdd94f344bd4a01cc779508da457d7ab9d736b8f7f81cdd",
+    "skillcorner-2010085-natural.npz": "8e6d769c074f931e10f966446a9535a223117ba75c064b65b99ed36d3aa04c6b",
+    "skillcorner-2010085-natural.json": "4939aaa25a1566b169939c43f8c4c74548e992e572d66d4333fac962797799a5",
+    "skillcorner-2010085-masked.npz": "eaff2e41ccc6ee01df2d291c97723e40d4362db425ee8e9f29e461c2adc2c1bd",
+    "skillcorner-2010085-masked.json": "38eba1354b9f97f33e86bf9cd00ab47f47f5d1b98e058633523ab5f162f564c7",
+    "skillcorner-2011166-natural.npz": "51475c0c5bfbb3037daaf02b6200390d8a52ce23487825f24e74cfea5d7c12df",
+    "skillcorner-2011166-natural.json": "c0ebb3e722ecc853599fac5a2451b975c6dea709cf41fbdfa1e9e4f20db70ed0",
+    "skillcorner-2011166-masked.npz": "86d772b76d7ebac6333d2591b77297ae579998e4ce18c7a2d46c26dea171e82a",
+    "skillcorner-2011166-masked.json": "186ac19f514b670c6dae6258c2fcb42e7472a39be1fd82644675b39fe6ca2247",
+    "skillcorner-2013725-natural.npz": "6caf113ad35753d5a1a45a95993b8f4a53d1e5a55a9dbe6c05f01f19ac2a8f76",
+    "skillcorner-2013725-natural.json": "8f6ad02be1c618c3f44c195f855f588707f5d5ff8d079bfda11805226b58a002",
+    "skillcorner-2013725-masked.npz": "3214ea0ebeb7afcf7510e34bc051c64a2b4b7f2db8cd47286a36dd19c364fa0e",
+    "skillcorner-2013725-masked.json": "551da840d5881b510656cbd383847edc7794902b13b0b2f4868e8a5947eef064",
+    "skillcorner-2015213-natural.npz": "b1a8200278f344424e1891a1165c520f503147fce884b2e1b96f0c3d73a683c6",
+    "skillcorner-2015213-natural.json": "3aa527b1be23285de4b5c6bb619045cf79ebd2df95df5add22d12377b42bcf29",
+    "skillcorner-2015213-masked.npz": "36345476421249a8d75e3fbe843151ad200bde5816124008d1145ffaa7a0acdf",
+    "skillcorner-2015213-masked.json": "34c6f489bf7522e3a1cc8fc8482516f8e0e9d82322411fae5478b1ecedcddcf0",
+    "skillcorner-2016236-natural.npz": "7ea57847ff416823014eaac693247cfe84f38f00aa8645ef09aeffb8d180bdc5",
+    "skillcorner-2016236-natural.json": "411004de22814685735f5da4b971709a9783e68078b176f5d9edc59c7215ead4",
+    "skillcorner-2016236-masked.npz": "4646f2fd85c726a62d30d7b2e67709000948fec0eb19d913f50e53ef30829f09",
+    "skillcorner-2016236-masked.json": "8438a3fcebab0dcc7d3b9ba06d2a2ff3dc74e00dbc171fbe8c2413eaa98dd546",
+    "skillcorner-2017461-natural.npz": "65afbcb42d915b961e700b66364001efcb2acc72071c8bc212ce45b3ed002ef4",
+    "skillcorner-2017461-natural.json": "9b5b18edee7c072fa00bcf918e2e62583bd7341531280dc05fbf51d473c25614",
+    "skillcorner-2017461-masked.npz": "1094a3ffbe99368ea7ddaef9741b3d7c170a4035aa3a4a29c5142d6604a08d7e",
+    "skillcorner-2017461-masked.json": "884db3d48036510185722c340f9f5dfa61e66e05a7e04f02712e660b6096fc92"
+  },
+  "input_sha256": {
+    "dfl-J03WQQ": {
+      "external-reference\\cache\\J03WQQ.metadata.json": "3753a785101d5c624555c5a540b4e480808c6279db5e6a2f0dee9514642d2818",
+      "external-reference\\cache\\J03WQQ.features.npz": "7e1a69309aac82ee136881eb7722e380c8f4fed54d65d707c940298e82dc2876",
+      "external-reference\\cache\\J03WQQ.reference.npz": "b459022e5446f70393bcfc823348bb5c4db1cbd62903a255c44b47a6093df650",
+      "external-reference/raw/DFL_02_01_matchinformation_DFL-COM-000002_DFL-MAT-J03WQQ.xml": "e976aa0c5dba862cfa898ea57ec226efce9d1bc04b23b8d775908db86aa6fa41",
+      "external-reference/raw/DFL_04_03_positions_raw_observed_DFL-COM-000002_DFL-MAT-J03WQQ.xml": "cbefcb0bd7f39f3b94ee69a7bc97aac0f936425062c1cc1b144733df36804d6f"
+    },
+    "skillcorner-2006229": {
+      "independent-reference\\cache\\2006229-detected.metadata.json": "298c241cf4acacb87263f323f616dfec9b99b4edcc7510072f13dc915b4836e7",
+      "independent-reference\\cache\\2006229-detected.features.npz": "124a104849080c4e92d136085c9aa0672887faea741f5078d57e37f56fe1aed0",
+      "independent-reference\\cache\\2006229-detected.reference.npz": "3d55212006360868bf2429f7fd7caf09f6df9840f17f88364e5d2d4f5193882b"
+    },
+    "skillcorner-2006363": {
+      "independent-reference\\cache\\2006363-detected.metadata.json": "07d132010d7b67aba42e1c1f595c040b1c17c52c1e83a6c2b8b1d07fc6fe3656",
+      "independent-reference\\cache\\2006363-detected.features.npz": "fc9c28b02c3935f1c9fb4644de2f304ffbfef145aea447b1709eaff053378dd3",
+      "independent-reference\\cache\\2006363-detected.reference.npz": "f402f7ff6eca84937fc62f1e2221644120a3f98a5d1a42c9cc8e393c27046ae1"
+    },
+    "dfl-J03WR9": {
+      "external-reference\\cache\\J03WR9.metadata.json": "eca4d0c346c6250450706b20c2eda36d64765da014034545c65ac1302f88aaf9",
+      "external-reference\\cache\\J03WR9.features.npz": "a834c01bfbcf4677af7368487ab4ad0f25de282e84828427bdd462dc6ffc877a",
+      "external-reference\\cache\\J03WR9.reference.npz": "49ef3fe09fbd96514f859971f200cd9f71ed8bc3c1704c786c4e534e8697b7b7",
+      "external-reference/raw/DFL_02_01_matchinformation_DFL-COM-000002_DFL-MAT-J03WR9.xml": "429b584e89df3e3e8b81f4bd0d004b38bd0b4298bb390b8fb43efccb60963e01",
+      "external-reference/raw/DFL_04_03_positions_raw_observed_DFL-COM-000002_DFL-MAT-J03WR9.xml": "70b63069189019066fb7e3d9db891122edfe787f3a43ba522ebe45ed89ea0269"
+    },
+    "dfl-J03WN1": {
+      "external-reference\\cache\\J03WN1.metadata.json": "2d92fbba306794860398d7aa1b1cc51d5acde755b6fb00150206fa311cb964bb",
+      "external-reference\\cache\\J03WN1.features.npz": "16e451f5c7edd70cdd492cf45981c3748f64ef78bf01076888a7460b0f517fd8",
+      "external-reference\\cache\\J03WN1.reference.npz": "bc50dbc75a467694a7618cfef1c5bb4935813fd541c7c8947aca75e5c4a037db",
+      "external-reference/raw/DFL_02_01_matchinformation_DFL-COM-000001_DFL-MAT-J03WN1.xml": "5490286436c86e6f80a538d2b1b379d0efd016e0defcaf594bc59d9ef5079f4c",
+      "external-reference/raw/DFL_04_03_positions_raw_observed_DFL-COM-000001_DFL-MAT-J03WN1.xml": "56ef948961a18e150dba0b7b16869d0008ff66f3050a0c355d31fa5b8ec2fcec"
+    },
+    "skillcorner-2007448": {
+      "independent-reference\\cache\\2007448-detected.metadata.json": "88a7ea5eec55dd5fbc08d8c70ae805f8f6b30fe77093636b290892e35e4c54f3",
+      "independent-reference\\cache\\2007448-detected.features.npz": "d839e09b9f0a8e2f15e986e75fcb06df9f632a2ffe298cde444d7135614a3ffd",
+      "independent-reference\\cache\\2007448-detected.reference.npz": "79895d352f3adf63e792bcb1deddf106ac0e8a414a0c4dbd6088ebbb7e3fbac0"
+    },
+    "skillcorner-2007721": {
+      "independent-reference\\cache\\2007721-detected.metadata.json": "cc18c3f0c0be5f2fd7ec73e20fc25590561f0f4cedfd9c2fa54b176d841d1cb9",
+      "independent-reference\\cache\\2007721-detected.features.npz": "2b1f4d297794aa5810d4ef34af333183a56d4a5085d9ac2128d2dce786d7a44a",
+      "independent-reference\\cache\\2007721-detected.reference.npz": "43a047e621c7868dafbf3ad02dfe63609209afd92a5f18c4f51c61aeca85d015"
+    },
+    "skillcorner-2010085": {
+      "independent-reference\\cache\\2010085-detected.metadata.json": "24e68df8735e44fe9e1715f8956fa91daa9fdbd858a36a431dce455b7702d9ea",
+      "independent-reference\\cache\\2010085-detected.features.npz": "4b49a33427711fa90aa2bd4facb9bc699f36f3088363b07a3d09eb77dd1b37f3",
+      "independent-reference\\cache\\2010085-detected.reference.npz": "a1f08c95b7a7b5590bcab4a2cc22ea85d31a346d6a079add791f4a76a4ff26a1"
+    },
+    "skillcorner-2011166": {
+      "independent-reference\\cache\\2011166-detected.metadata.json": "df9f4c98d20b8b779d855a8c5d7ff0f298f0fb3540e13d7c21bf3eec85f20edb",
+      "independent-reference\\cache\\2011166-detected.features.npz": "91c5821cd465967b655b7cf19df4430eadcd235523d6094cfba30d5e11289f8a",
+      "independent-reference\\cache\\2011166-detected.reference.npz": "69d431975094a0048eeaceaa0c695524d7cb3c1a0df91887dfde179c241edf0d"
+    },
+    "skillcorner-2013725": {
+      "independent-reference\\cache\\2013725-detected.metadata.json": "62a87e0df54b69d9f05fc1d86854481d79dc1ad7c7b5d837550aff7c78a046ee",
+      "independent-reference\\cache\\2013725-detected.features.npz": "2e217933e408f704fa93ea512b38d671898228bb7b40584e8f449fb626881a4c",
+      "independent-reference\\cache\\2013725-detected.reference.npz": "991658b9e3d37b260f958603929de774be8df1e2942d7cba7d00f96bb47eef61"
+    },
+    "skillcorner-2015213": {
+      "independent-reference\\cache\\2015213-detected.metadata.json": "ec528234a51b40078304ee525f7f4bcd8710e734d57e70416f0cbc5d5f5ac716",
+      "independent-reference\\cache\\2015213-detected.features.npz": "95ddd48289c75ef2bb4073c0bb1b7f8367aa46e36cd7a0fb6958a61067521b46",
+      "independent-reference\\cache\\2015213-detected.reference.npz": "b493f3b298fe5bac88faf2da38b31c647a4008d39e931774ab4833cb906ea7c9"
+    },
+    "skillcorner-2016236": {
+      "independent-reference\\cache\\2016236-detected.metadata.json": "f57187568c54254f9dca613ddfe7d73f0d3b035ba2b270de99c32642bf981a42",
+      "independent-reference\\cache\\2016236-detected.features.npz": "d4b556e5b6b213b9550da57088390b6bd61413a98fd67e40f30001a2eb20d6ff",
+      "independent-reference\\cache\\2016236-detected.reference.npz": "b57281f9b0510311722e4f85bc5b3976c2c2f9078c21f706c0f6ef12083e1270"
+    },
+    "skillcorner-2017461": {
+      "independent-reference\\cache\\2017461-detected.metadata.json": "f6d5493c834c928504485d849909dc5cb3f60a59b6da23cf45acd13d68d38120",
+      "independent-reference\\cache\\2017461-detected.features.npz": "fb511bcb6be005719b026406bab773d4c6b87de93d0f03faea74b173132e27e0",
+      "independent-reference\\cache\\2017461-detected.reference.npz": "7717c4014128852911067ed68144f8ad6d29b64aa87dc71116ff1a656b64bd7e"
+    }
+  },
+  "original_verification_sha256": "8b001d00946a026d55d37d884ddc1aac4166d213c48f37ebee9a3a7fdfd44e8f"
+}

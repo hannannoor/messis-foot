@@ -1,99 +1,74 @@
 # MESSI's FOOT
 
-An experimental local football possession pipeline for More Than a Hack 2027. It combines tactical tracking, short-gap handling, clock OCR, candidate camera alignment and quality-gated broadcast evidence.
+An experimental local football-possession pipeline for More Than a Hack 2027.
 
-Current source version: `2026.11.05-clock-discovery`. Automatic clock-region discovery is now implemented. Possession inference remains the restart-audit version: restart repair raised resolved coverage from 22.00% to 30.81%; the earlier published D context raised it to 32.25%. Fusion added 13 raw labels but changed no scorer-expanded labels. Accuracy improvement has not been established.
+**Ball-gap follow-up, 7 November:** [one fixed missing-evidence correction](docs/ball-gap-results.md) passed all predeclared checks on previously examined external validation/regression data. Masked SkillCorner frame accuracy improves75.78%→82.27%, while masked DFL stoppage recall improves92.64%→95.72%. Use the separate experimental `ball_gap_candidate.py`; the previous candidate remains preserved. These are seen-provider results, with target accuracy unmeasured. After one fresh review and fix pass:341tests OK,6skipped. The [review response](docs/ball-gap-code-review.md) records fixes, remaining limits and deferred minors.
 
-Read [RULES.md](RULES.md) first. The latest organiser clarification supersedes earlier experiment guidance. Manual clock setup, the historical OCR-cutoff trial and the fixed D context must not be assumed eligible for a final entry. External training is required only if training is undertaken; it is not a mandatory project stage. The discovery addition changes no possession or fusion thresholds.
+**7 November update:** the [accuracy-first experiment](docs/accuracy-first-results.md) selected a finite H/A/D sequence decoder using the frozen tactical head (motion weight 0, switch cost 32). Natural seen-regression possession-spell F1 improves from 0.4977 to 0.5646; frame accuracy improves modestly on observed tracking but declines under the SkillCorner ball-gap stress. This is an experimental opt-in route, not fresh or target accuracy validation. The original pipeline, four-policy candidate and Desktop output are preserved. Software verification: 317 tests OK, 6 skipped.
+
+Existing standalone source version: `2026.11.06-temporal-research`. The existing **opt-in tactical route** retains its frozen model and behavior. New motion adapters and an independent-provider experiment are documented in [TEMPORAL_RECOVERY.md](TEMPORAL_RECOVERY.md). The temporal candidate was rejected on validation; no new local inference policy is installed. This remains provider-reference research, with challenge accuracy unmeasured.
+
+Read [RULES.md](RULES.md) before processing competition inputs. [CHANGELOG.md](CHANGELOG.md) explains what changed and why; [FOUR_GOALS.md](FOUR_GOALS.md) records reasoning, results, regressions and limitations.
+
+## What happened
+
+- Full automatic camera processing produced no bounded clock alignment, so camera fusion was paused.
+- Seven licensed external matches supplied a fixed split of four training, one validation and two test matches using the exact official spell metric.
+- A frozen 31-node geometry/history tree improved complete provider-reference test spellF1 from **.37361 to .50513**, averaged over two matches.
+- Local undecided coverage fell from **69.192% to 56.151%**, or 20,717 fewer X frames; unresolved intervals fell from 1,045 to 509. Local correctness was not measured.
+- External inactive ball coordinates are almost always frozen. This can inflate D performance. Active-only spellF1 slightly declined on both held-out matches; the pooled 96.32% newly resolved agreement is dominated by D. H/A agreement was 86.36%/88.95%.
+
+The independent-provider follow-up compared the old model on eight SkillCorner development matches: mean known-play spellF1 changed from.524729 to.527643 while unknown output fell from48.98% to23.01%. A new player-motion/temporal candidate was trained externally and rejected across the fixed27-policy validation grid. [The experiment report](TEMPORAL_RECOVERY.md) records the frozen diagnostic evaluation, simpler alternatives, review fixes and limitations. More assignments alone do not establish better possessions.
 
 ## Run one file
 
-End users only need `football_pipeline.py`. Its modules load in memory; it does not extract a package or call a hosted model.
+End users need only `football_pipeline.py`, Python 3.9+ and their local inputs. Tactical inference uses the standard library; it does not need sklearn, NumPy, a GPU or a hosted model.
 
 ```powershell
 python football_pipeline.py --version
-python football_pipeline.py demo
+python football_pipeline.py tactical run --data-dir "C:\football-data" --out outputs/tactical-validated
+```
+
+The data directory may contain `tactical/` or `tactical cam/`, with tactical `_atd.xml`, `_atd.txt` and `_homography.csv` exports. Optional Smart Tagging is used only for baseline comparison, never the selected model's features. This route does not open videos, use challenge GT or apply the disputed fixed pre-kickoff D interval. It writes a separate protected output directory and reports remaining uncertainty.
+
+The model uses a .8 leaf-support gate, 12-frame stable runs and bounded two-second owner continuity. Leaf support is not a calibrated correctness probability. Invalid, degenerate or excessive-error homographies mask the geometry. Missing ball/opponent observations cannot independently establish D. Offline confirmation can use later frames.
+
+## Camera work and historical commands
+
+```powershell
 python football_pipeline.py camera demo
+python football_pipeline.py camera auto-sync --help
 python football_pipeline.py --guide
 ```
 
-Python 3.9+ is required. Core inference and fusion use the standard library. Local video OCR additionally requires FFmpeg/ffprobe and Tesseract with English language data. This project does not require a GPU, TensorFlow or PyTorch.
+[AUTOMATIC_SYNC.md](AUTOMATIC_SYNC.md) documents automatic window/region selection, dense local OCR, half ambiguity and atomic output publication. Video OCR additionally requires FFmpeg/ffprobe and pretrained Tesseract English. The measured automatic run produced zero bounded links; it did not improve possession or verify replay/live status. Detailed camera exports remain local.
 
-For the previously used conda environment:
+[TWO_CAMERA.md](TWO_CAMERA.md), [PROGRESS.md](PROGRESS.md) and older design notes preserve previous experiments, including manual setup and the disputed D shortcut. They are historical records. The explicit tactical route above excludes that shortcut; the legacy default has not been promoted or certified as a final entry.
 
-```powershell
-conda activate football
-```
+## Development and reproducibility
 
-## Automatic clock discovery
+The frozen inference sources match the embedded modules in the single-file program. Additional confidence/ensemble/materialization diagnostics run from the checkout and do not add prediction routes to that bundle. `build_standalone.py` uses the preserved code-only `football_pipeline.original.py` scaffold; `football_pipeline.pre_tactical.py` is the previous automatic-sync source backup.
 
-Scan each complete recording locally without drawing a clock box, choosing a half or finding a playback anchor:
+The pinned external manifest, provenance and frozen model/policy are in [benchmark/](benchmark/README.md). Raw tracking, reference caches and frame-level predictions are obtained/generated locally outside the checkout. The external dataset is CC BY 4.0; preserve attribution and [the official metric's MIT license](OFFICIAL_METRIC_LICENSE.txt).
 
-```powershell
-python football_pipeline.py camera discover-clock --video "C:\football-data\tactical cam\BAR-ATH_tactical.mp4" --out "outputs/tactical-discovery.json"
-python football_pipeline.py camera discover-clock --video "C:\football-data\broadcast cam\BAR-ATH_broadcast.mp4" --out "outputs/broadcast-discovery.json"
-```
-
-The default samples every 30 seconds, searches the whole image using existing pretrained Tesseract and groups spatially stable progressing-clock observations. Images stream through memory and are discarded. Each command overwrites one small JSON report; it does not save a frame collection. Runtime depends on video decoding and OCR; no real-match runtime has been measured.
-
-Blank prefixes/halftime, unreadable samples and multiple clocks remain automatic diagnostic states. Keep the detailed reports local. Discovery is the first automatic setup stage: **it does not yet create a dense alignment CSV, assign halves, verify live footage or change possession predictions**. Do not pass its JSON to `camera fuse`. Later dense synchronization and temporal replay checks are separate work. Defaults are engineering settings, not calibrated accuracy claims; any parameter tuning requires external data.
-
-## Historical controlled comparison with existing alignment
-
-This reproduces an engineering experiment, not a certified challenge-entry workflow. Existing alignment may depend on earlier manual setup, and the executable still applies the earlier organiser-answer D interval. See [RULES.md](RULES.md) before reusing these results.
-
-Put the organiser-provided files on your own computer. Under `C:\football-data`, either `tactical/` and `broadcast/` or `tactical cam/` and `broadcast cam/` are supported by fusion. Each camera needs its `BAR-ATH_<source>_atd.xml`, `_atd.txt` and `_homography.csv`. Tactical Smart Tagging XML is optional.
-
-From the folder containing the Python file and your existing `outputs/alignment.csv`:
-
-```powershell
-python football_pipeline.py camera fuse --data-dir "C:\football-data" --alignment "outputs/alignment.csv" --audit-baseline --out "outputs/ensemble"
-```
-
-This reuses cached alignment and opens no crop-selection window. It compares legacy tactical inference, repaired restart handling, the earlier organiser-answer pre-kickoff dead interval, and final broadcast fusion. The output folder is reused. [TWO_CAMERA.md](TWO_CAMERA.md) records the historical implementation; its manual setup is not the route for a final run under the new clarification.
-
-## What is implemented
-
-- Metre-scaled tracking adapters with original frame-index checks.
-- Sustained team-control candidates and bounded same-team gap bridging.
-- Soft restart-phase handling, explicit uncertainty and dead-evidence precedence.
-- The published 2934-frame pre-second-kickoff D interval with separate provenance.
-- Local clock OCR, saved clock crops, retries for weak readings and uncertainty-bounded timing.
-- Candidate cross-camera matching, distinct-player geometry checks and heuristic weighted fusion.
-- Shared mapped restart/dead context, detailed rejection reasons and missing-ball opportunity counts.
-- Controlled baseline comparisons, including changes after the scorer expands X labels.
-
-The modules in `gap_solver/` and tests are retained for development; their code matches the modules embedded in the standalone file.
-
-## Verification
-
-From a repository checkout:
+Training/reproduction was verified with Python 3.12, NumPy 1.26.4, SciPy 1.13.1, scikit-learn 1.5.1 and pandas 2.2.2. Use a separate environment and [requirements-training.txt](requirements-training.txt). The frozen artifact is retained; do not reselect or tune using held-out results or challenge coverage.
 
 ```powershell
 python -m unittest discover -s tests
 ```
 
-The current suite ran 124 tests: 123 passed and the opt-in full-index test was skipped. The 27 discovery tests include real local FFmpeg/Tesseract execution on generated video and regressions from independent review. The earlier restart version also passed the opt-in full-index synthetic integration. Optional OCR integration uses Pillow, FFmpeg/ffprobe and Tesseract and is skipped when dependencies are unavailable. The full-index test generates complete synthetic camera exports and needs no match assets:
+The6 November temporal-research milestone ran **243 tests successfully, with five skips** under Python3.14. The7 November additive diagnostics suite runs **278 tests, with the same five skips**: the opt-in full-index fixture, two training-only sklearn checks, and two local-delivery tests whose protected local artifacts are absent. Five temporal training/export/calibration/gate checks passed separately under Python3.12. The40-tree motion/decoder ran from the exact31-module frozen bundle under Python3.11 `-I -S` with no third-party runtime imports. OCR integration uses generated video and optional Pillow/FFmpeg/Tesseract; availability can change skip counts. See [VERIFICATION.md](VERIFICATION.md) and the separate diagnostic/audit reports for distinct author/reviewer checks.
 
-```powershell
-$env:FOOTBALL_SLOW_TESTS = "1"
-python -m unittest discover -s tests -p test_controlled_cli.py
-Remove-Item Env:FOOTBALL_SLOW_TESTS
-```
-
-To exercise the standalone entry point in that integration as well, set `FOOTBALL_STANDALONE` to the absolute path of `football_pipeline.py`. See [VERIFICATION.md](VERIFICATION.md) for the development record.
-
-## Status and evidence
-
-- [PROGRESS.md](PROGRESS.md): development history, measured pilot coverage and pending work.
-- [COUNCIL_AUDIT.md](COUNCIL_AUDIT.md): audit conclusions and implementation priorities.
-- [DESIGN.md](DESIGN.md): tactical inference design.
-- [TWO_CAMERA_DESIGN.md](TWO_CAMERA_DESIGN.md): alignment and fusion design.
-
-The current system is a heuristic prototype. A nearest-player control candidate is not verified possession, OCR scores are not calibrated correctness probabilities, and a matching clock does not prove the pictures are live. Dedicated replay detection, general stoppage detection and validated longer-gap inference remain unfinished.
+`install_four_goal_results.ps1` and the delivery-verification utilities are local handover tools, not required for inference. They expect the completed local output/report layout; their integration tests skip when those private local fixtures are absent. `.gitattributes` preserves exact Python source bytes used by the frozen-source integrity checks.
 
 ## Data boundaries
 
-Only code, documentation, configuration and generated synthetic test fixtures belong in this repository. Obtain competition assets separately and keep videos, crops, tracking, tagging, homography, alignment maps, predictions and frame-level diagnostics local. Do not commit match data or reconstruction-capable derivatives.
+Commit code, documentation, configuration, external model/provenance metadata and generated synthetic fixtures only. Keep provided footage, crops, tracking, tags, homographies, alignment maps, predictions and per-frame diagnostics local. No challenge assets or reconstruction-capable derivatives are included in this update.
 
-Do not check predictions against the provided video, create manual game data or upload provided data to AI services. Training, fitting, calibration and tuning require permitted external data, never provided ground truth or video. Earlier manual clock setup and video-informed OCR experiments are historical, not a compliance claim. See [RULES.md](RULES.md). Coverage and synthetic test success are not accuracy measurements.
+Do not check predictions against provided video, create manual game labels/correspondences, upload provided assets to AI services, or train/tune/calibrate using challenge data. External provider labels are evaluation targets, not inference inputs. Aggregate coverage is not accuracy, and zero X alone does not guarantee a better official temporal score.
+
+Experimental channel-contract candidate: see [input audit, reproducible command and limitations](docs/input-contract-candidate.md). This preserves the frozen baseline and reports carry separately from latent uncertainty.
+
+The new opt-in sequence route uses `python soft_candidate.py --prefix "C:/football-data/tactical cam/BAR-ATH_tactical" --out "../soft-sequence-new-run"`. Use a fresh/empty output folder. See [results, commands and tradeoffs](docs/accuracy-first-results.md), [method](docs/accuracy-first-method.md) and [fresh review/fixes](docs/accuracy-first-code-review.md).
+
+The separate missing-ball-neutral route uses `python ball_gap_candidate.py --prefix "C:/football-data/tactical cam/BAR-ATH_tactical" --out "../ball-gap-new-run"`. Preserve the earlier generation and use a fresh/empty output folder. Reproduce its fixed external comparison through `ball_gap_run.py`; the [results](docs/ball-gap-results.md) explain the serialization-only runner, remaining missed transitions and reference limitations.

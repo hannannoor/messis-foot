@@ -1,0 +1,64 @@
+{
+  "baseline": {
+    "schema_version": 1,
+    "source_variant": "baseline",
+    "post_hoc": true,
+    "fresh_holdout": false,
+    "local_inference_performed": false,
+    "cohorts": {
+      "skillcorner": {
+        "matches": 8,
+        "source_spell_f1": 0.46899934455771586,
+        "original_baseline_spell_f1": 0.46899934455771586,
+        "materialized_spell_f1": 0.46570169435017306,
+        "materialized_accuracy": 0.8453916072745286,
+        "materialized_unknown_fraction": 0.0,
+        "equal_spell_matches": 0,
+        "added_outside_reference": 478964,
+        "total_new_outside_reference": 478964
+      },
+      "dfl": {
+        "matches": 7,
+        "source_spell_f1": 0.509096836532928,
+        "original_baseline_spell_f1": 0.509096836532928,
+        "materialized_spell_f1": 0.509096836532928,
+        "materialized_accuracy": 0.9087022975367197,
+        "materialized_unknown_fraction": 0.0,
+        "equal_spell_matches": 7,
+        "added_outside_reference": 0,
+        "total_new_outside_reference": 0
+      }
+    }
+  },
+  "head_agreement_on_X": {
+    "schema_version": 1,
+    "source_variant": "head_agreement_on_X",
+    "post_hoc": true,
+    "fresh_holdout": false,
+    "local_inference_performed": false,
+    "cohorts": {
+      "skillcorner": {
+        "matches": 8,
+        "source_spell_f1": 0.47853239458736935,
+        "original_baseline_spell_f1": 0.46899934455771586,
+        "materialized_spell_f1": 0.4706797193369414,
+        "materialized_accuracy": 0.8502576304600138,
+        "materialized_unknown_fraction": 0.0,
+        "equal_spell_matches": 0,
+        "added_outside_reference": 368831,
+        "total_new_outside_reference": 478964
+      },
+      "dfl": {
+        "matches": 7,
+        "source_spell_f1": 0.5259605847175954,
+        "original_baseline_spell_f1": 0.509096836532928,
+        "materialized_spell_f1": 0.5259605847175954,
+        "materialized_accuracy": 0.9213757621650744,
+        "materialized_unknown_fraction": 0.0,
+        "equal_spell_matches": 7,
+        "added_outside_reference": 0,
+        "total_new_outside_reference": 0
+      }
+    }
+  }
+}

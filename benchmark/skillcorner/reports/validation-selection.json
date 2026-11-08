@@ -1,0 +1,1674 @@
+{
+  "schema_version": 1,
+  "draft_sha256": "4d35192c8229cb7dacae0b32f545a553d337a59318d17bc6789c5915eca1968c",
+  "validation_matches": [
+    2006229,
+    2006363
+  ],
+  "simple_alternatives": [
+    {
+      "method": "last_owner_full_g2.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "hidden_nonregression_against_baseline": true
+        },
+        "labels": {
+          "H": {
+            "frames": 206,
+            "correct_fraction": 0.6067961165048543,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 5936,
+            "correct_fraction": 0.6088274932614556,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false,
+        "claim": "simple rule, no motion mechanism claim; unchanged support thresholds"
+      },
+      "mean_coverage_gain": 0.037821797093037776,
+      "mean_spell_f1": 0.4906925501352746
+    },
+    {
+      "method": "last_owner_full_g5.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": true,
+          "team_spell_no_match_decline": true,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "hidden_nonregression_against_baseline": true
+        },
+        "labels": {
+          "H": {
+            "frames": 2780,
+            "correct_fraction": 0.7503597122302158,
+            "missing_frames": 19,
+            "missing_correct_fraction": 1.0,
+            "gaps": 1
+          },
+          "A": {
+            "frames": 14081,
+            "correct_fraction": 0.6802073716355372,
+            "missing_frames": 223,
+            "missing_correct_fraction": 0.6412556053811659,
+            "gaps": 7
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false,
+        "claim": "simple rule, no motion mechanism claim; unchanged support thresholds"
+      },
+      "mean_coverage_gain": 0.10383565244271065,
+      "mean_spell_f1": 0.49183619477282536
+    },
+    {
+      "method": "last_owner_full_g10.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": true,
+          "team_spell_no_match_decline": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "hidden_nonregression_against_baseline": true
+        },
+        "labels": {
+          "H": {
+            "frames": 4325,
+            "correct_fraction": 0.7477456647398844,
+            "missing_frames": 147,
+            "missing_correct_fraction": 0.7006802721088435,
+            "gaps": 5
+          },
+          "A": {
+            "frames": 17016,
+            "correct_fraction": 0.6989891866478608,
+            "missing_frames": 472,
+            "missing_correct_fraction": 0.8114406779661016,
+            "gaps": 15
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false,
+        "claim": "simple rule, no motion mechanism claim; unchanged support thresholds"
+      },
+      "mean_coverage_gain": 0.13141854894430272,
+      "mean_spell_f1": 0.48860437922732997
+    },
+    {
+      "method": "two_sided_full_g2.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "hidden_nonregression_against_baseline": true
+        },
+        "labels": {
+          "H": {
+            "frames": 2117,
+            "correct_fraction": 0.5257439773264053,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 4025,
+            "correct_fraction": 0.6685714285714286,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false,
+        "claim": "simple rule, no motion mechanism claim; unchanged support thresholds"
+      },
+      "mean_coverage_gain": 0.037821797093037776,
+      "mean_spell_f1": 0.48596840322446294
+    },
+    {
+      "method": "two_sided_full_g5.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": true,
+          "team_spell_no_match_decline": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "hidden_nonregression_against_baseline": true
+        },
+        "labels": {
+          "H": {
+            "frames": 5382,
+            "correct_fraction": 0.6482720178372352,
+            "missing_frames": 72,
+            "missing_correct_fraction": 1.0,
+            "gaps": 2
+          },
+          "A": {
+            "frames": 11479,
+            "correct_fraction": 0.7299416325463891,
+            "missing_frames": 170,
+            "missing_correct_fraction": 0.8411764705882353,
+            "gaps": 7
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false,
+        "claim": "simple rule, no motion mechanism claim; unchanged support thresholds"
+      },
+      "mean_coverage_gain": 0.10383565244271065,
+      "mean_spell_f1": 0.48331870809639293
+    },
+    {
+      "method": "two_sided_full_g10.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": true,
+          "team_spell_no_match_decline": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "hidden_nonregression_against_baseline": true
+        },
+        "labels": {
+          "H": {
+            "frames": 7045,
+            "correct_fraction": 0.6611781405251952,
+            "missing_frames": 126,
+            "missing_correct_fraction": 0.6190476190476191,
+            "gaps": 5
+          },
+          "A": {
+            "frames": 14296,
+            "correct_fraction": 0.7413262451035255,
+            "missing_frames": 493,
+            "missing_correct_fraction": 0.768762677484787,
+            "gaps": 19
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false,
+        "claim": "simple rule, no motion mechanism claim; unchanged support thresholds"
+      },
+      "mean_coverage_gain": 0.13141854894430272,
+      "mean_spell_f1": 0.4852537656663216
+    }
+  ],
+  "validation_receipts": {
+    "2006229-natural.json": "d0a4fa8d9761634399d0627a54e7de5dc0f8dd5f4ee3f8c6fc4cd6fcedc0c6f3",
+    "2006229-masked.json": "6c144d92694db2c0ee6d39281259503c87148fcd54c092a806ea493eb9848074",
+    "2006363-natural.json": "138df3b7428e82e12dac2d04d709c5c1045bf500e8956eeed758b4309815162e",
+    "2006363-masked.json": "710ba4ff428ae43d430ed0036e90de8f78e394efb325d0d6e96ecf69ad3b98cb"
+  },
+  "candidates": [
+    {
+      "policy": {
+        "confidence": 0.975,
+        "max_gap_s": 2.0,
+        "minimum_players": 3,
+        "switch_multiplier": 0.5
+      },
+      "id": "c0.975-g2.0-m0.5",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.975,
+        "max_gap_s": 2.0,
+        "minimum_players": 3,
+        "switch_multiplier": 1.0
+      },
+      "id": "c0.975-g2.0-m1.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.975,
+        "max_gap_s": 2.0,
+        "minimum_players": 3,
+        "switch_multiplier": 2.0
+      },
+      "id": "c0.975-g2.0-m2.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.975,
+        "max_gap_s": 5.0,
+        "minimum_players": 3,
+        "switch_multiplier": 0.5
+      },
+      "id": "c0.975-g5.0-m0.5",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.975,
+        "max_gap_s": 5.0,
+        "minimum_players": 3,
+        "switch_multiplier": 1.0
+      },
+      "id": "c0.975-g5.0-m1.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.975,
+        "max_gap_s": 5.0,
+        "minimum_players": 3,
+        "switch_multiplier": 2.0
+      },
+      "id": "c0.975-g5.0-m2.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.975,
+        "max_gap_s": 10.0,
+        "minimum_players": 3,
+        "switch_multiplier": 0.5
+      },
+      "id": "c0.975-g10.0-m0.5",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.975,
+        "max_gap_s": 10.0,
+        "minimum_players": 3,
+        "switch_multiplier": 1.0
+      },
+      "id": "c0.975-g10.0-m1.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.975,
+        "max_gap_s": 10.0,
+        "minimum_players": 3,
+        "switch_multiplier": 2.0
+      },
+      "id": "c0.975-g10.0-m2.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.95,
+        "max_gap_s": 2.0,
+        "minimum_players": 3,
+        "switch_multiplier": 0.5
+      },
+      "id": "c0.95-g2.0-m0.5",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.95,
+        "max_gap_s": 2.0,
+        "minimum_players": 3,
+        "switch_multiplier": 1.0
+      },
+      "id": "c0.95-g2.0-m1.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.95,
+        "max_gap_s": 2.0,
+        "minimum_players": 3,
+        "switch_multiplier": 2.0
+      },
+      "id": "c0.95-g2.0-m2.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.95,
+        "max_gap_s": 5.0,
+        "minimum_players": 3,
+        "switch_multiplier": 0.5
+      },
+      "id": "c0.95-g5.0-m0.5",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.95,
+        "max_gap_s": 5.0,
+        "minimum_players": 3,
+        "switch_multiplier": 1.0
+      },
+      "id": "c0.95-g5.0-m1.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.95,
+        "max_gap_s": 5.0,
+        "minimum_players": 3,
+        "switch_multiplier": 2.0
+      },
+      "id": "c0.95-g5.0-m2.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.95,
+        "max_gap_s": 10.0,
+        "minimum_players": 3,
+        "switch_multiplier": 0.5
+      },
+      "id": "c0.95-g10.0-m0.5",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.95,
+        "max_gap_s": 10.0,
+        "minimum_players": 3,
+        "switch_multiplier": 1.0
+      },
+      "id": "c0.95-g10.0-m1.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.95,
+        "max_gap_s": 10.0,
+        "minimum_players": 3,
+        "switch_multiplier": 2.0
+      },
+      "id": "c0.95-g10.0-m2.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.9,
+        "max_gap_s": 2.0,
+        "minimum_players": 3,
+        "switch_multiplier": 0.5
+      },
+      "id": "c0.9-g2.0-m0.5",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.9,
+        "max_gap_s": 2.0,
+        "minimum_players": 3,
+        "switch_multiplier": 1.0
+      },
+      "id": "c0.9-g2.0-m1.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.9,
+        "max_gap_s": 2.0,
+        "minimum_players": 3,
+        "switch_multiplier": 2.0
+      },
+      "id": "c0.9-g2.0-m2.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.9,
+        "max_gap_s": 5.0,
+        "minimum_players": 3,
+        "switch_multiplier": 0.5
+      },
+      "id": "c0.9-g5.0-m0.5",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.9,
+        "max_gap_s": 5.0,
+        "minimum_players": 3,
+        "switch_multiplier": 1.0
+      },
+      "id": "c0.9-g5.0-m1.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.9,
+        "max_gap_s": 5.0,
+        "minimum_players": 3,
+        "switch_multiplier": 2.0
+      },
+      "id": "c0.9-g5.0-m2.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.9,
+        "max_gap_s": 10.0,
+        "minimum_players": 3,
+        "switch_multiplier": 0.5
+      },
+      "id": "c0.9-g10.0-m0.5",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.9,
+        "max_gap_s": 10.0,
+        "minimum_players": 3,
+        "switch_multiplier": 1.0
+      },
+      "id": "c0.9-g10.0-m1.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    },
+    {
+      "policy": {
+        "confidence": 0.9,
+        "max_gap_s": 10.0,
+        "minimum_players": 3,
+        "switch_multiplier": 2.0
+      },
+      "id": "c0.9-g10.0-m2.0",
+      "gate": {
+        "passes": false,
+        "checks": {
+          "source_quality": true,
+          "coverage_gain": false,
+          "team_spell_no_match_decline": true,
+          "mean_spell_advantage_over_endpoint": false,
+          "natural_hidden_nonregression": true,
+          "H_new_agreement": false,
+          "H_missing_gap_agreement": false,
+          "A_new_agreement": false,
+          "A_missing_gap_agreement": false,
+          "hidden_support": false,
+          "positive_hidden_recovery": false,
+          "hidden_nonregression_against_baseline": true,
+          "bounded_false_opposing_spells": true
+        },
+        "labels": {
+          "H": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          },
+          "A": {
+            "frames": 0,
+            "correct_fraction": null,
+            "missing_frames": 0,
+            "missing_correct_fraction": null,
+            "gaps": 0
+          }
+        },
+        "hidden_scope": "masked",
+        "hidden_reference_spells": 0,
+        "hidden_hits": 0,
+        "endpoint_hits": 0,
+        "natural_hidden_claim_supported": false
+      },
+      "mean_spell_f1": 0.49109574690970037,
+      "mean_coverage_gain": 0.0
+    }
+  ],
+  "selected": {
+    "policy": {
+      "confidence": 0.975,
+      "max_gap_s": 2.0,
+      "minimum_players": 3,
+      "switch_multiplier": 0.5
+    },
+    "id": "c0.975-g2.0-m0.5",
+    "gate": {
+      "passes": false,
+      "checks": {
+        "source_quality": true,
+        "coverage_gain": false,
+        "team_spell_no_match_decline": true,
+        "mean_spell_advantage_over_endpoint": false,
+        "natural_hidden_nonregression": true,
+        "H_new_agreement": false,
+        "H_missing_gap_agreement": false,
+        "A_new_agreement": false,
+        "A_missing_gap_agreement": false,
+        "hidden_support": false,
+        "positive_hidden_recovery": false,
+        "hidden_nonregression_against_baseline": true,
+        "bounded_false_opposing_spells": true
+      },
+      "labels": {
+        "H": {
+          "frames": 0,
+          "correct_fraction": null,
+          "missing_frames": 0,
+          "missing_correct_fraction": null,
+          "gaps": 0
+        },
+        "A": {
+          "frames": 0,
+          "correct_fraction": null,
+          "missing_frames": 0,
+          "missing_correct_fraction": null,
+          "gaps": 0
+        }
+      },
+      "hidden_scope": "masked",
+      "hidden_reference_spells": 0,
+      "hidden_hits": 0,
+      "endpoint_hits": 0,
+      "natural_hidden_claim_supported": false
+    },
+    "mean_spell_f1": 0.49109574690970037,
+    "mean_coverage_gain": 0.0
+  },
+  "eligibility": "rejected_before_final_test",
+  "final_test_scored": false,
+  "selection_order": "eligible; mean team-spell F1; coverage; confidence; shorter cap",
+  "warning": "No gate relaxed. Rejected candidate can receive diagnostic final evaluation only, never local deployment."
+}

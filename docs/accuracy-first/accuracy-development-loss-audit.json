@@ -1,0 +1,449 @@
+{
+  "schema_version": 1,
+  "analysis": "Read-only external development baseline loss audit",
+  "target_data_used": false,
+  "new_model_or_predictions_created": false,
+  "fresh_holdout": false,
+  "classes": "H,A,D,X",
+  "interpretation": "If incumbent non-X labels cannot change, even perfect X filling cannot exceed this raw-frame accuracy ceiling on these known external frames; this is an oracle bound, not an implemented improvement or held-out validation.",
+  "cohorts": {
+    "dfl": {
+      "matches": [
+        {
+          "match": "J03WOH",
+          "known_frames": 137214,
+          "already_decided": 122571,
+          "protected_wrong": 6253,
+          "unknown": 14643,
+          "confusion_reference_rows_HAD_prediction_columns_HADX": [
+            [
+              31785,
+              1887,
+              48,
+              5406
+            ],
+            [
+              3685,
+              19912,
+              7,
+              9215
+            ],
+            [
+              331,
+              295,
+              64621,
+              22
+            ]
+          ],
+          "fill_only_accuracy_ceiling": 0.9544288483682423,
+          "input_sha256": {
+            "reference": "5a3ddbab87943a1c949138609b658f658ec5382be3d2a0f38351792ce3274375",
+            "saved_predictions": "815e3294b65d697a50f24ec30450fead5d55d4333942b30930c10034aa8dbecd"
+          }
+        },
+        {
+          "match": "J03WOY",
+          "known_frames": 142536,
+          "already_decided": 126204,
+          "protected_wrong": 7262,
+          "unknown": 16332,
+          "confusion_reference_rows_HAD_prediction_columns_HADX": [
+            [
+              29397,
+              2239,
+              28,
+              6148
+            ],
+            [
+              4287,
+              23990,
+              54,
+              10143
+            ],
+            [
+              448,
+              206,
+              65555,
+              41
+            ]
+          ],
+          "fill_only_accuracy_ceiling": 0.9490514676993882,
+          "input_sha256": {
+            "reference": "24b336a1cc4ac062d1d04de54a86fd6858790ecd93b28b21083ee4af95e44f71",
+            "saved_predictions": "228bfb9ad4a6c2b40ec61ebcc79f01871f92980f3a4686ee5a5b31e8ab0e340d"
+          }
+        },
+        {
+          "match": "J03WPY",
+          "known_frames": 146211,
+          "already_decided": 132576,
+          "protected_wrong": 6649,
+          "unknown": 13635,
+          "confusion_reference_rows_HAD_prediction_columns_HADX": [
+            [
+              43831,
+              1753,
+              46,
+              5562
+            ],
+            [
+              4363,
+              17771,
+              77,
+              8057
+            ],
+            [
+              327,
+              83,
+              64325,
+              16
+            ]
+          ],
+          "fill_only_accuracy_ceiling": 0.9545246253701842,
+          "input_sha256": {
+            "reference": "6903aeb91e3249850b89177db20a55cd56bcd005c5ca2fd0763b3e46db383a97",
+            "saved_predictions": "8a5d29fd097164d0a627d38efb3c7bf4350a36d909179bd4294578de01aed34a"
+          }
+        },
+        {
+          "match": "J03WMX",
+          "known_frames": 145967,
+          "already_decided": 131545,
+          "protected_wrong": 6823,
+          "unknown": 14422,
+          "confusion_reference_rows_HAD_prediction_columns_HADX": [
+            [
+              31386,
+              2375,
+              35,
+              5315
+            ],
+            [
+              3908,
+              33241,
+              7,
+              9102
+            ],
+            [
+              377,
+              121,
+              60095,
+              5
+            ]
+          ],
+          "fill_only_accuracy_ceiling": 0.9532565579891346,
+          "input_sha256": {
+            "reference": "bee136d9993a767429788e18f7b953dfd17d4f2a29479d7c8ed8196e539c0943",
+            "saved_predictions": "a1974cff3319554240ad903b78056f71307d7300c15efcfc57420d605134e419"
+          }
+        }
+      ],
+      "pooled_known_frames": 571928,
+      "pooled_protected_wrong": 26987,
+      "fill_only_accuracy_ceiling": 0.9528139905722398,
+      "confusion_reference_rows_HAD_prediction_columns_HADX": [
+        [
+          136399,
+          8254,
+          157,
+          22431
+        ],
+        [
+          16243,
+          94914,
+          145,
+          36517
+        ],
+        [
+          1483,
+          705,
+          254596,
+          84
+        ]
+      ]
+    },
+    "skillcorner": {
+      "matches": [
+        {
+          "match": 1874553,
+          "known_frames": 81805,
+          "already_decided": 63672,
+          "protected_wrong": 4668,
+          "unknown": 18133,
+          "confusion_reference_rows_HAD_prediction_columns_HADX": [
+            [
+              22754,
+              1729,
+              69,
+              7261
+            ],
+            [
+              2870,
+              36250,
+              0,
+              10872
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "fill_only_accuracy_ceiling": 0.9429374732595807,
+          "input_sha256": {
+            "reference": "789872886854a14d318a5f7f13c6a8f69fce36ffcb40794612d71a91c0539a74",
+            "saved_predictions": "5888cc84784e4b6c4dedb9cac3483fb6fb4767dffe0a9241833d138934e92f84"
+          }
+        },
+        {
+          "match": 1886347,
+          "known_frames": 79980,
+          "already_decided": 62197,
+          "protected_wrong": 4476,
+          "unknown": 17783,
+          "confusion_reference_rows_HAD_prediction_columns_HADX": [
+            [
+              37594,
+              1568,
+              0,
+              6700
+            ],
+            [
+              2908,
+              20127,
+              0,
+              11083
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "fill_only_accuracy_ceiling": 0.9440360090022506,
+          "input_sha256": {
+            "reference": "d836794d43ae5b0652399d8abe6b1f28ed4fc9163fcda93fdd94fe61e399d586",
+            "saved_predictions": "fbd31224d5d6e271d571b60e2593f9a8c58660a61ad4f00fecb65ed1fa643b1f"
+          }
+        },
+        {
+          "match": 1899585,
+          "known_frames": 74206,
+          "already_decided": 53665,
+          "protected_wrong": 4911,
+          "unknown": 20541,
+          "confusion_reference_rows_HAD_prediction_columns_HADX": [
+            [
+              27372,
+              1763,
+              0,
+              8239
+            ],
+            [
+              3148,
+              21382,
+              0,
+              12302
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "fill_only_accuracy_ceiling": 0.9338193677061154,
+          "input_sha256": {
+            "reference": "00fb5ee9786773d3b5d78875a6c2d0cf0c253daf4fba3e04fdd56ab168afb344",
+            "saved_predictions": "d5b5aa72c78c329596fc1da97f5ebbc27e2d57e6c570775bf3b93f11b00b9c65"
+          }
+        },
+        {
+          "match": 1925299,
+          "known_frames": 89108,
+          "already_decided": 68483,
+          "protected_wrong": 5354,
+          "unknown": 20625,
+          "confusion_reference_rows_HAD_prediction_columns_HADX": [
+            [
+              42919,
+              2041,
+              75,
+              8879
+            ],
+            [
+              3238,
+              20210,
+              0,
+              11746
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "fill_only_accuracy_ceiling": 0.9399156080262154,
+          "input_sha256": {
+            "reference": "fbd364009ca9fc9ec30abe144126a88fd8342163ea9f10c012a4cced1bbbd96e",
+            "saved_predictions": "d28eb931209d83fd9a5a74cc7674821baafa891a51e92c9a0b4b862479b58a48"
+          }
+        },
+        {
+          "match": 1927964,
+          "known_frames": 92812,
+          "already_decided": 76420,
+          "protected_wrong": 3475,
+          "unknown": 16392,
+          "confusion_reference_rows_HAD_prediction_columns_HADX": [
+            [
+              40577,
+              1281,
+              0,
+              6504
+            ],
+            [
+              2194,
+              32368,
+              0,
+              9888
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "fill_only_accuracy_ceiling": 0.9625587208550619,
+          "input_sha256": {
+            "reference": "2e6836abb1213c1807c7f96353a7f8f0b247c23b6f9f619b16a989f5f74ebd1f",
+            "saved_predictions": "01dcb2067f4bffb0c8b8a7b56fcf91f9bc293947dd26cfbdf0de73ed287a7058"
+          }
+        },
+        {
+          "match": 1953632,
+          "known_frames": 81853,
+          "already_decided": 61171,
+          "protected_wrong": 3397,
+          "unknown": 20682,
+          "confusion_reference_rows_HAD_prediction_columns_HADX": [
+            [
+              19782,
+              710,
+              0,
+              6659
+            ],
+            [
+              2646,
+              37992,
+              41,
+              14023
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "fill_only_accuracy_ceiling": 0.9584987721891683,
+          "input_sha256": {
+            "reference": "4de749dd0741ed5f5f5b0e1f3eb81f14238ae772badeab6d3664538aeecdac42",
+            "saved_predictions": "406c4f5897359a2865bd4cf31d66053a797faebbc6bf466ac96dd9a1c837670c"
+          }
+        },
+        {
+          "match": 1959846,
+          "known_frames": 74499,
+          "already_decided": 58288,
+          "protected_wrong": 4859,
+          "unknown": 16211,
+          "confusion_reference_rows_HAD_prediction_columns_HADX": [
+            [
+              28491,
+              1684,
+              0,
+              7039
+            ],
+            [
+              3175,
+              24938,
+              0,
+              9172
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "fill_only_accuracy_ceiling": 0.934777648022121,
+          "input_sha256": {
+            "reference": "73424304869b44c0dd30350c2a5d45cae916ee82d8de34056698398d76389ae7",
+            "saved_predictions": "91a1e73e7ce99f9fcc06a370cb8ccbe28f89a7ca185bce9d95906e41fce9b3a6"
+          }
+        },
+        {
+          "match": 1986691,
+          "known_frames": 78919,
+          "already_decided": 59866,
+          "protected_wrong": 4889,
+          "unknown": 19053,
+          "confusion_reference_rows_HAD_prediction_columns_HADX": [
+            [
+              28099,
+              1063,
+              0,
+              7225
+            ],
+            [
+              3802,
+              26878,
+              24,
+              11828
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "fill_only_accuracy_ceiling": 0.9380504061125965,
+          "input_sha256": {
+            "reference": "1dbf6d1ebb4a03e2506164b75e1f26d7699e37658754f5d4bc040ab873859726",
+            "saved_predictions": "22e3b5e69b864ea7f56855952aaf63d4e066b84242e8c514a425f7e7e090064b"
+          }
+        }
+      ],
+      "pooled_known_frames": 653182,
+      "pooled_protected_wrong": 36029,
+      "fill_only_accuracy_ceiling": 0.9448407947555199,
+      "confusion_reference_rows_HAD_prediction_columns_HADX": [
+        [
+          247588,
+          11839,
+          144,
+          58506
+        ],
+        [
+          23981,
+          220145,
+          65,
+          90914
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    }
+  }
+}
