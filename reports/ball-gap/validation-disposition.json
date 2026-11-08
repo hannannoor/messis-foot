@@ -1,0 +1,19 @@
+{
+  "experiment_sha256": "e4b8448eb772a73d48a7629b9899053e8163babc02ef50b72c39e8e168c7a679",
+  "assessment": {
+    "stage": "validation",
+    "checks": {
+      "natural_spell_f1_mean_preserved": true,
+      "natural_accuracy_preserved": true,
+      "masked_skillcorner_accuracy_improved": true,
+      "masked_skillcorner_false_D_reduced": true,
+      "masked_spell_f1_mean_preserved": true,
+      "natural_dfl_D_recall_preserved": true,
+      "masked_dfl_D_recall_preserved": true
+    },
+    "eligible": true,
+    "fresh_holdout": false,
+    "target_accuracy_measured": false
+  },
+  "validation_seal_sha256": "3a410cd870b1a716711dfaa361fd8932c85f67756ba66922987e8b4e16a27448"
+}

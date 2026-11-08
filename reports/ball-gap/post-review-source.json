@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "source_sha256": {
+    "ball_gap_post_review.py": "fcf0e12858f37c39c9b0383d222dafdf2dccffb76b68ffb9e4197608fe48569e",
+    "ball_gap_runtime.py": "d392ee38f4dd16a6e75aaf9873a60ae2d65d13bb4d7d3689304aaa60611ca5db"
+  },
+  "original_evidence_file_sha256": {
+    "comparison-freeze.json": "a044e1383902816c8851765d67a86b4778b10789e9256fd320f0c1b8e73dc816",
+    "runner-source.json": "96683179b995f8768976f6316ef56630bece70c71ad84b0f4af3adc9851822d4",
+    "validation-seal.json": "3a410cd870b1a716711dfaa361fd8932c85f67756ba66922987e8b4e16a27448",
+    "validation-disposition.json": "ec9a130aa2fdb84e80e6415a57fcf6efb0421a483d0e947ac418dc530af095d7",
+    "regression-seal.json": "ab775e136978ff50504e5fabc2ce3d9e7e564e2f41222ae6d55500561efef8a0",
+    "summary.json": "6e5e437cf044afd5c8c462871243dd956b9b7a21432f77e9d3d3af9d5ff90667"
+  },
+  "inference_or_parameter_change": false,
+  "scope": "additive carry counts and paired deltas only"
+}

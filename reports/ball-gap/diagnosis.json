@@ -1,0 +1,392 @@
+{
+  "purpose": "Read-only development diagnosis of frozen w0-c32; no candidate change or selection",
+  "fresh_holdout": false,
+  "target_data_used": false,
+  "cases": [
+    {
+      "match": 1874553,
+      "regime": "natural",
+      "all_known_live": {
+        "known_live_frames": 81805,
+        "raw_D_winner_frames": 1981,
+        "decoded_false_D_frames": 413,
+        "decoded_false_D_fraction": 0.005048591161909419,
+        "wrong_team_frames": 7767,
+        "low_recent_speed_frames": 4600
+      },
+      "ball_missing": {
+        "known_live_frames": 5014,
+        "raw_D_winner_frames": 1768,
+        "decoded_false_D_frames": 339,
+        "decoded_false_D_fraction": 0.06761069006781013,
+        "wrong_team_frames": 642,
+        "low_recent_speed_frames": 4516
+      },
+      "ball_observed": {
+        "known_live_frames": 76791,
+        "raw_D_winner_frames": 213,
+        "decoded_false_D_frames": 74,
+        "decoded_false_D_fraction": 0.0009636545949395112,
+        "wrong_team_frames": 7125,
+        "low_recent_speed_frames": 84
+      },
+      "leaf_counts": {
+        "4": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "5": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "7": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "8": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "11": {
+          "known_missing_frames": 1216,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "12": {
+          "known_missing_frames": 1532,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "14": {
+          "known_missing_frames": 257,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "15": {
+          "known_missing_frames": 1511,
+          "decoded_false_D_frames_in_known_missing": 339
+        },
+        "19": {
+          "known_missing_frames": 236,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "20": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "22": {
+          "known_missing_frames": 16,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "23": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "26": {
+          "known_missing_frames": 31,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "27": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "29": {
+          "known_missing_frames": 215,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "30": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        }
+      }
+    },
+    {
+      "match": 1874553,
+      "regime": "masked",
+      "all_known_live": {
+        "known_live_frames": 81805,
+        "raw_D_winner_frames": 11937,
+        "decoded_false_D_frames": 7760,
+        "decoded_false_D_fraction": 0.09485972740052565,
+        "wrong_team_frames": 9070,
+        "low_recent_speed_frames": 27947
+      },
+      "ball_missing": {
+        "known_live_frames": 30232,
+        "raw_D_winner_frames": 11568,
+        "decoded_false_D_frames": 7638,
+        "decoded_false_D_fraction": 0.25264620269912674,
+        "wrong_team_frames": 3913,
+        "low_recent_speed_frames": 27703
+      },
+      "ball_observed": {
+        "known_live_frames": 51573,
+        "raw_D_winner_frames": 369,
+        "decoded_false_D_frames": 122,
+        "decoded_false_D_fraction": 0.0023655788881779224,
+        "wrong_team_frames": 5157,
+        "low_recent_speed_frames": 244
+      },
+      "leaf_counts": {
+        "4": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "5": {
+          "known_missing_frames": 11,
+          "decoded_false_D_frames_in_known_missing": 11
+        },
+        "7": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "8": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "11": {
+          "known_missing_frames": 9621,
+          "decoded_false_D_frames_in_known_missing": 4
+        },
+        "12": {
+          "known_missing_frames": 6514,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "14": {
+          "known_missing_frames": 4608,
+          "decoded_false_D_frames_in_known_missing": 2135
+        },
+        "15": {
+          "known_missing_frames": 6949,
+          "decoded_false_D_frames_in_known_missing": 5488
+        },
+        "19": {
+          "known_missing_frames": 751,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "20": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "22": {
+          "known_missing_frames": 197,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "23": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "26": {
+          "known_missing_frames": 236,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "27": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "29": {
+          "known_missing_frames": 1345,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "30": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        }
+      }
+    },
+    {
+      "match": 1886347,
+      "regime": "natural",
+      "all_known_live": {
+        "known_live_frames": 79980,
+        "raw_D_winner_frames": 1899,
+        "decoded_false_D_frames": 62,
+        "decoded_false_D_fraction": 0.0007751937984496124,
+        "wrong_team_frames": 9000,
+        "low_recent_speed_frames": 4759
+      },
+      "ball_missing": {
+        "known_live_frames": 5243,
+        "raw_D_winner_frames": 1779,
+        "decoded_false_D_frames": 60,
+        "decoded_false_D_fraction": 0.011443829868395957,
+        "wrong_team_frames": 2650,
+        "low_recent_speed_frames": 4682
+      },
+      "ball_observed": {
+        "known_live_frames": 74737,
+        "raw_D_winner_frames": 120,
+        "decoded_false_D_frames": 2,
+        "decoded_false_D_fraction": 2.6760506843999626e-05,
+        "wrong_team_frames": 6350,
+        "low_recent_speed_frames": 77
+      },
+      "leaf_counts": {
+        "4": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "5": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "7": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "11": {
+          "known_missing_frames": 1293,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "12": {
+          "known_missing_frames": 1610,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "14": {
+          "known_missing_frames": 961,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "15": {
+          "known_missing_frames": 818,
+          "decoded_false_D_frames_in_known_missing": 60
+        },
+        "19": {
+          "known_missing_frames": 214,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "20": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "22": {
+          "known_missing_frames": 94,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "23": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "26": {
+          "known_missing_frames": 24,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "27": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "29": {
+          "known_missing_frames": 229,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "30": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        }
+      }
+    },
+    {
+      "match": 1886347,
+      "regime": "masked",
+      "all_known_live": {
+        "known_live_frames": 79980,
+        "raw_D_winner_frames": 10648,
+        "decoded_false_D_frames": 7642,
+        "decoded_false_D_fraction": 0.09554888722180545,
+        "wrong_team_frames": 8985,
+        "low_recent_speed_frames": 25416
+      },
+      "ball_missing": {
+        "known_live_frames": 27773,
+        "raw_D_winner_frames": 10357,
+        "decoded_false_D_frames": 7583,
+        "decoded_false_D_fraction": 0.27303496201346633,
+        "wrong_team_frames": 4067,
+        "low_recent_speed_frames": 25172
+      },
+      "ball_observed": {
+        "known_live_frames": 52207,
+        "raw_D_winner_frames": 291,
+        "decoded_false_D_frames": 59,
+        "decoded_false_D_fraction": 0.001130116651023809,
+        "wrong_team_frames": 4918,
+        "low_recent_speed_frames": 244
+      },
+      "leaf_counts": {
+        "4": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "5": {
+          "known_missing_frames": 6,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "7": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "11": {
+          "known_missing_frames": 6668,
+          "decoded_false_D_frames_in_known_missing": 19
+        },
+        "12": {
+          "known_missing_frames": 8147,
+          "decoded_false_D_frames_in_known_missing": 4
+        },
+        "14": {
+          "known_missing_frames": 4845,
+          "decoded_false_D_frames_in_known_missing": 2894
+        },
+        "15": {
+          "known_missing_frames": 5506,
+          "decoded_false_D_frames_in_known_missing": 4666
+        },
+        "19": {
+          "known_missing_frames": 1199,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "20": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "22": {
+          "known_missing_frames": 269,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "23": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "26": {
+          "known_missing_frames": 116,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "27": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "29": {
+          "known_missing_frames": 1017,
+          "decoded_false_D_frames_in_known_missing": 0
+        },
+        "30": {
+          "known_missing_frames": 0,
+          "decoded_false_D_frames_in_known_missing": 0
+        }
+      }
+    }
+  ],
+  "input_sha256": {
+    "1874553": {
+      ".metadata.json": "d4c00d1e4fd1b33f54ced2fcc5e05aa9f1ae0c4d3f1da3f6fd5ce6c4f1736c2f",
+      ".features.npz": "0f6127851ae56149c9ba768246f407878244fe7146b9a9cba81e50c3100fe618",
+      ".reference.npz": "789872886854a14d318a5f7f13c6a8f69fce36ffcb40794612d71a91c0539a74"
+    },
+    "1886347": {
+      ".metadata.json": "0db8029988b4d52dbced15ac9ffba7f71a73b96c42ff7463c6abdd795048e39c",
+      ".features.npz": "250ebfaf04c97c4a710116eaa65bafd13817eb4a00ebfd2e3ae0fdbf61381fa2",
+      ".reference.npz": "d836794d43ae5b0652399d8abe6b1f28ed4fc9163fcda93fdd94fe61e399d586"
+    }
+  },
+  "source_sha256": {
+    "accuracy-work\\gap_solver\\tactical.py": "b0e4550ae80d6f6d7293781f1bb2401450397591f3239a1bdff7a961aa19f93f",
+    "accuracy-work\\gap_solver\\tactical_model.py": "2072a0585d85128eb8127e8b295e2f7e1757e21569356bb6b8ef9d7f09c74f45",
+    "accuracy-work\\gap_solver\\soft_sequence.py": "fa829e31d96eb87bebbe93ca98554f95d372c5162c6b7365b92ac9914d3ee4fe"
+  }
+}

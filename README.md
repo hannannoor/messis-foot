@@ -2,6 +2,8 @@
 
 An experimental local football-possession pipeline for More Than a Hack 2027.
 
+**Ball-gap follow-up, 7 November:** [one fixed missing-evidence correction](docs/ball-gap-results.md) passed all predeclared checks on previously examined external validation/regression data. Masked SkillCorner frame accuracy improves75.78%→82.27%, while masked DFL stoppage recall improves92.64%→95.72%. Use the separate experimental `ball_gap_candidate.py`; the previous candidate remains preserved. These are seen-provider results, with target accuracy unmeasured. After one fresh review and fix pass:341tests OK,6skipped. The [review response](docs/ball-gap-code-review.md) records fixes, remaining limits and deferred minors.
+
 **7 November update:** the [accuracy-first experiment](docs/accuracy-first-results.md) selected a finite H/A/D sequence decoder using the frozen tactical head (motion weight 0, switch cost 32). Natural seen-regression possession-spell F1 improves from 0.4977 to 0.5646; frame accuracy improves modestly on observed tracking but declines under the SkillCorner ball-gap stress. This is an experimental opt-in route, not fresh or target accuracy validation. The original pipeline, four-policy candidate and Desktop output are preserved. Software verification: 317 tests OK, 6 skipped.
 
 Existing standalone source version: `2026.11.06-temporal-research`. The existing **opt-in tactical route** retains its frozen model and behavior. New motion adapters and an independent-provider experiment are documented in [TEMPORAL_RECOVERY.md](TEMPORAL_RECOVERY.md). The temporal candidate was rejected on validation; no new local inference policy is installed. This remains provider-reference research, with challenge accuracy unmeasured.
@@ -68,3 +70,5 @@ Do not check predictions against provided video, create manual game labels/corre
 Experimental channel-contract candidate: see [input audit, reproducible command and limitations](docs/input-contract-candidate.md). This preserves the frozen baseline and reports carry separately from latent uncertainty.
 
 The new opt-in sequence route uses `python soft_candidate.py --prefix "C:/football-data/tactical cam/BAR-ATH_tactical" --out "../soft-sequence-new-run"`. Use a fresh/empty output folder. See [results, commands and tradeoffs](docs/accuracy-first-results.md), [method](docs/accuracy-first-method.md) and [fresh review/fixes](docs/accuracy-first-code-review.md).
+
+The separate missing-ball-neutral route uses `python ball_gap_candidate.py --prefix "C:/football-data/tactical cam/BAR-ATH_tactical" --out "../ball-gap-new-run"`. Preserve the earlier generation and use a fresh/empty output folder. Reproduce its fixed external comparison through `ball_gap_run.py`; the [results](docs/ball-gap-results.md) explain the serialization-only runner, remaining missed transitions and reference limitations.
