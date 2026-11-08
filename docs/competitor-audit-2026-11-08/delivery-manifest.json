@@ -1,0 +1,66 @@
+{
+  "repository": "hannannoor/messis-foot",
+  "audited_commit": "cee674190775e9356745f461ba1561e9f2a46f7e",
+  "default_main_commit": "3a1c8608e050e2f812826719e1af882d87cf2f67",
+  "reviewer_count": 6,
+  "child_model": "gpt-6.1-sol",
+  "child_reasoning_effort": "high",
+  "all_reports_included_verbatim": true,
+  "source_309_blobs_unchanged": true,
+  "reports": [
+    {
+      "path": "agent-1.md",
+      "words": 2157,
+      "bytes": 18315,
+      "sha256": "80bf92d68e4f4f0b8e4b36b06196bc6d723b82fe308ed8556192ed8f5c87d0d0"
+    },
+    {
+      "path": "agent-2.md",
+      "words": 2239,
+      "bytes": 18930,
+      "sha256": "493a55c19c87b909bf02a80a526f4ddf674c57d28ea0f586a28d69662658bc8a"
+    },
+    {
+      "path": "agent-3.md",
+      "words": 2111,
+      "bytes": 18653,
+      "sha256": "c8d39fc6acf972a2f7a8710881a5787d29f36c96496bede4b83c836dde6c4fd8"
+    },
+    {
+      "path": "agent-4.md",
+      "words": 2116,
+      "bytes": 17589,
+      "sha256": "64d39c5e653395c5aee270c43456caaf7dd1786fb98f9975a0e7e2e7b9d2b39a"
+    },
+    {
+      "path": "agent-5.md",
+      "words": 2042,
+      "bytes": 18808,
+      "sha256": "49a1ad209cfdd55f74c59caf1b2d26620845d9095f2d079a0399339cd93c0488"
+    },
+    {
+      "path": "root-review.md",
+      "words": 2530,
+      "bytes": 20461,
+      "sha256": "1b6006ce38b03415c5a49c456d788ceb43e50149c1f139863d5f57d537bdd45c"
+    }
+  ],
+  "combined": {
+    "path": "FULL-COUNCIL-AUDIT.md",
+    "words": 14366,
+    "bytes": 121535,
+    "sha256": "529608c382b4560f7a7f61bf63f311708290d87ecc11035685f7764649aad2dd"
+  },
+  "verification": {
+    "tests_run": 341,
+    "successful_executed": 322,
+    "skipped": 19,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 19.76,
+    "log": "unittest-final.log",
+    "probe_script": "root-probes.py",
+    "probe_results": "root-probes.json"
+  }
+}
+
