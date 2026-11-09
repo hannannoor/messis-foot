@@ -25,7 +25,9 @@ These are natural-input results on already-used external evidence. SkillCorner h
 
 Both repairs use reference labels, leave GT-X and latent-X/materialized rows unchanged, and are diagnostic arrays rather than feasible models. Deltas can be negative and cannot be added or interpreted as independent causal loss fractions or guaranteed upper bounds. The small negative SkillCorner liveness delta is an observed example of this non-monotonic spell metric.
 
-The [five case receipts and summary](../reports/ownership-path/2026-11-09-natural-v1/summary.json) contain all five IoU thresholds, baseline/repair TP/FP/FN, confusion, support, error episodes and strata. The [verification receipt](../reports/ownership-path/verification.json) also records signed TP/FP/FN/F1 changes derived arithmetically from those receipts, without rescoring.
+For the original four only, the arithmetic equal-provider/equal-case mean is .613914 baseline, .618807 under the liveness repair and .951179 under the ownership repair. The verification receipt keeps each provider's two-case mean visible and WCSF separate. These summaries do not replace per-match F1 or turn the repairs into achievable gains.
+
+The [five case receipts and summary](../reports/ownership-path/2026-11-09-natural-v2/summary.json) contain all five IoU thresholds, baseline/repair TP/FP/FN, confusion, support, error episodes and strata. The [verification receipt](../reports/ownership-path/verification.json) also records signed TP/FP/FN/F1 changes derived arithmetically from those receipts, without rescoring.
 
 ## What the objective explains
 
@@ -41,28 +43,42 @@ Complete source/period/usable segments retain H/A/D and include unknown-referenc
 
 The classifications apply to complete constant-reference/prediction error episodes, not to every local frame. In SkillCorner 1886347 another 100 supported swap frames belong to the residual mixed/nonlocal category. Some individual frames favor the reference locally or reverse under future evidence; those counts and complete margins remain in the receipts. This does not prove every decoder intervention would fail. It argues against choosing a blanket cost reduction from this evidence.
 
+The corrected v2 directly measures the original decision criterion on ball-observed, supported ownership errors more than 2s from known boundaries/annotation edges:
+
+| Case | Supported interior swap frames | Local emissions favor wrong owner | Local emissions favor reference |
+|---|---:|---:|---:|
+| SkillCorner 1874553 | 2,922 | 2,862 | 60 |
+| SkillCorner 1886347 | 2,673 | 2,651 | 22 |
+| DFL J03WOH | 1,360 | 1,312 | 48 |
+| DFL J03WOY | 1,523 | 1,456 | 67 |
+| WCSF | 1,396 | 1,345 | 51 |
+
+There are zero absolute local near-ties in these five rows. Reference-team and usable/unusable support are explicit in each stratum. Memory association uses only final H/A swaps with an evaluable H/A memory, including carried swaps when present; it is a separate denominator from supported emission queries. In particular, reference D is excluded from that memory comparison. Agreement and every supported known-live row also retain the full legacy reference-owner versus opposite-owner decomposition, including false-D predictions. Numerical ties use the declared absolute-plus-relative predicate and remain separate from fixed absolute margin bins.
+
 WCSF has 33,725 missed-D frames. Of these, 33,701 belong to 265 episodes with emissions preferring the selected H/A path; only 24 belong to two episodes blocked by additional switches. Its 154 false-D frames also favor the wrong state in episode emissions. Thus, lowering cost alone does not address the observed episode emission preference. Provider labels are supplied annotations rather than adjudicated physical-control truth.
 
 ## Spell objects
 
 WCSF retains exactly 411 reference and 490 predicted spells. At IoU .5: 233 matched, 178 missed and 257 spurious. The missed spells partition into 75 with no same-team overlap, 103 with overlap below threshold and zero qualifying overlaps consumed by greedy matching. Spurious spells partition into 175/82/0 respectively. At IoU .3 there are four consumed reference and two consumed prediction objects; matching collisions are present at lower thresholds.
 
-Twelve WCSF reference spells overlap multiple predicted spells and 31 predictions overlap multiple reference spells. These are overlapping split/merge flags, not additive error categories. Each IoU's missed/spurious partitions reconcile to official greedy matching, with counts pooled over periods before F1. H/A boundary counts and conditional latency at 12 and 25 frames are reported separately; no boundary lag was fitted.
+Twelve WCSF reference spells overlap multiple predicted spells and 31 predictions overlap multiple reference spells. These are overlapping split/merge flags, not additive error categories. Each IoU's missed/spurious partitions reconcile to official greedy matching, with counts pooled over periods before F1. Both destination-matched all-state and pair-matched H/A boundaries report counts and conditional latency at 12 and 25 frames, matching within each valid period/run before pooling; no boundary lag was fitted.
 
 ## Execution and reproduction
 
-Code checkpoint `f7c802b53e47e1d9df2cbc78a51d2acf6809b5e6` precedes the real diagnostic. The prospective [freeze](../reports/ownership-path/2026-11-09-natural-v1/freeze.json), committed at `d0d2811`, binds source closure, model, original approved documents, selection metadata, input hashes, retained pilot and WCSF evidence, and runtime. Its SHA-256 is `0b92239b00e23d3a105cd81922a2a67eef19e8c1b23434510eec6df6e7641a49`.
+Corrected code checkpoint `e93d86e` precedes the real diagnostic. The prospective [freeze](../reports/ownership-path/2026-11-09-natural-v2/freeze.json), committed at `986fc94`, binds source closure, model, original approved documents, selection metadata, input hashes, retained pilot and WCSF evidence, and runtime. Its SHA-256 is `136899f8d6c10207e2914784b6568c12f592422038c2ff76a1096f572122b017`.
 
-Exactly five input-only head/decoder reconstructions, five baseline metric reconciliations and ten reference-only repair evaluations completed in this new lineage. The four-case pilot's known-live/swap/raw-final counts match exactly; WCSF's canonical index and final prediction arrays equal its sealed control, and its baseline spell counts/F1 match. No comparator was rerun. Private traces and reference arrays are excluded from Git.
+In corrected v2, exactly five input-only head/decoder reconstructions, five baseline metric reconciliations and ten reference-only repair evaluations completed in this new lineage. The four-case pilot's known-live/swap/raw-final counts match exactly; WCSF's canonical index and final prediction arrays equal its sealed control, and its baseline spell counts/F1 match. No comparator was rerun. Private traces and reference arrays are excluded from Git.
 
 The original cache adapters physically parse reference containers during loading; the private access log records this. Pure inference and path-table functions accept no reference, and reference-mask perturbation tests leave input paths unchanged. This is not a claim of reference-first-access-after-inference or fresh validation. WCSF's reference codes are loaded after geometry preparation/inference through the retained read-only adapter.
 
 With the retained local stores in their original sibling directories:
 
 ```powershell
-python ownership_run.py verify --run-id 2026-11-09-natural-v1
+python ownership_run.py verify --run-id 2026-11-09-natural-v2
 ```
 
 Verification checks hashes, private trace semantics, receipts, exact inventory and access/evaluation chronology, with no inference or scoring. Missing private stores fail rather than silently rebuilding data. To deliberately reproduce computation, use a new run ID with `freeze`, `run`, `summarize`, then `verify`; doing so is another used-data diagnostic generation and must be logged. Existing/incomplete generations are preserved.
+
+The preserved superseded v1 adds another five reconstructions/five baselines/ten repairs; it was repeated to fill review-identified measurement gaps, with no new variant or tuning. Current verification of v2 also checks canonical summary bytes, trusted hash-key inventory, all five historical WCSF IoUs/mean, pinned release components and actual runtime.
 
 The [review record](ownership-path-review.md) and verification receipt provide final test and preservation evidence. The original release artifact, selected predictor sources, original approved documents, historical results/logs and selected CSV generations remain unchanged.
