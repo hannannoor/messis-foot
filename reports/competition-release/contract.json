@@ -1,0 +1,19 @@
+{
+  "artifact_sha256": "e8d35e15be9524270bed82352791dc2849087b49b4c2b59c191023954b19eddb",
+  "challenge_data_used": false,
+  "csv_sha256": "03995fc322bfc31d00537be456f23e0cb1109f43a18fa279b72b4150fe4e70bb",
+  "official_code_sha256": {
+    "evaluation/possession_metrics.py": "341bad48904b489d6e875397b27687f5d6a4d22a397f3dc8af3a00d48f16874d",
+    "evaluation/run_evaluation.py": "1c61564fe52499ba4af3006fb5eb4147b825e92bf516651add80de49d267b19f",
+    "evaluation/validate_submission.py": "07ac29499acbd337e1dc1de1832d63f6e1fa1d981e22f6ad08212529e2bbee14",
+    "games.py": "3b2122794e9e0476e2b3a871d14880e5fa47c4feaeacf99caef054c2309076ce"
+  },
+  "official_format_validator_passed": true,
+  "official_revision": "f8f2629ff1e0985f81d7e59d8413678514ee1530",
+  "original_index": true,
+  "reference_labels_used": false,
+  "rows": 199319,
+  "schema_version": 1,
+  "scope": "fully_synthetic_199319_row_contract",
+  "structural_boundaries_checked": true
+}

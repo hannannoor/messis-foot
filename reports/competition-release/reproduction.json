@@ -1,0 +1,16 @@
+{
+  "artifact_sha256": "e8d35e15be9524270bed82352791dc2849087b49b4c2b59c191023954b19eddb",
+  "code_commit": "0a6b92f8829622a71912c9f353a1cbc772da3f56",
+  "csv_sha256": "4074cc046500e3d54668a81baf5e46f6d90aeb40a0a247fcefbfa8ee1bd226a5",
+  "hidden_full_match_accuracy_measured": false,
+  "inference_calls": 2,
+  "labels_sha256": "8d233ff132826d1c4eb96f9e43aa0c39f9a1c514cacf3f18edc673810d18a847",
+  "official_exact_file_format_passed": true,
+  "public_reference_accessed_during_reproduction": false,
+  "rows": 199319,
+  "schema_version": 1,
+  "scope": "frozen_target_raw_to_identical_file_reproduction",
+  "source_semantic_sha256": "e520d56269ad14d063e2135f4db683af9760951da97b2d15b94a1c91bd7d65cb",
+  "two_clean_raw_runs_byte_identical": true,
+  "two_historical_selected_files_byte_identical": true
+}

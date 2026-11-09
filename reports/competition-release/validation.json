@@ -1,0 +1,25 @@
+{
+  "additional_coherent_snapshot_fix": true,
+  "artifact_sha256": "e8d35e15be9524270bed82352791dc2849087b49b4c2b59c191023954b19eddb",
+  "challenge_inputs_used": false,
+  "fix_passes": 1,
+  "fresh_review_context": true,
+  "full_suite_log_sha256": "018c009fb011c7864334ae14108dc0e2b3a4bb54b0837e1712d2d1732715acce",
+  "important_findings": 5,
+  "public_reference_used": false,
+  "reference_runtime": "CPython 3.14.5 Windows x64",
+  "rereviews": 0,
+  "reviewer_model": "gpt-6-astra",
+  "schema_version": 1,
+  "scientific_comparisons_rerun": 0,
+  "scope": "pre_target_code_and_synthetic_verification",
+  "tests": {
+    "all_new_tests_execute": true,
+    "errors": 0,
+    "executed": 470,
+    "failures": 0,
+    "new_release_tests": 27,
+    "skipped": 19,
+    "total": 489
+  }
+}

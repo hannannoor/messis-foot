@@ -1,0 +1,28 @@
+{
+  "builder_version": 1,
+  "csv_schema": "frame,label; UTF-8 without BOM; CRLF including final row",
+  "model_sha256": "363c45c70838b398cd87aee7474d7e281fd392f059a31b85712e312058aaab4d",
+  "motion_weight": 0.0,
+  "policy_id": "w0-c32-neutral-missing",
+  "reference_runtime": "CPython 3.14.5 Windows x64",
+  "schema_version": 1,
+  "semantic_schema": "release-input-v1; sorted compact JSON MotionFrame records; LF",
+  "source_base_commit": "aaa5ba8f938545f77d8e2cb084bea561ef09c680",
+  "sources": {
+    "ball_gap_policy.py": "15fe607774c5aa1a07555cee4eca5466a95da69491a0ec13707fc3e8447a8b9b",
+    "gap_solver/__init__.py": "90bdeb562068ff217819802df01415d1c6226512ee6b14064e0ad8fe2ecf8e03",
+    "gap_solver/anonymous_motion.py": "b22404d6592c9aba1dff9383215a570c6e307c1536181b487dc563ff76080435",
+    "gap_solver/core.py": "fc9c0f864422992314b4f26c104319c5e082030f1956ffb5d5250fa801f2974f",
+    "gap_solver/input_contract.py": "f4559f6af6de2dd8b0ec5bf6da1b2372f5743598add92dfadfa49a28af1e7bd6",
+    "gap_solver/io.py": "633b887cede248e5515818e4f2a6a8592a1d968f27e954128b028f5a0173bcdc",
+    "gap_solver/materialization_control.py": "5bc167744e6702608c503b18a268d5883d5a7a83c8d508e679464edc3491a0e0",
+    "gap_solver/motion.py": "f36699381e567e13fa60c6fc6b4177bdcab91b1fa3ac95d7da64bc63708656d4",
+    "gap_solver/soft_sequence.py": "fa829e31d96eb87bebbe93ca98554f95d372c5162c6b7365b92ac9914d3ee4fe",
+    "gap_solver/tactical.py": "b0e4550ae80d6f6d7293781f1bb2401450397591f3239a1bdff7a961aa19f93f",
+    "gap_solver/tactical_model.py": "2072a0585d85128eb8127e8b295e2f7e1757e21569356bb6b8ef9d7f09c74f45",
+    "gap_solver/temporal.py": "f62aac2d9ce5ae4e957749cd0e70588484e315d2feeb5c4e22359bb9fff51822",
+    "release_runtime.py": "a10bac2fc9b95b263b450ab0f1a7c5704501c7f2d71a6fcd0caa5fe4ccbe9d60"
+  },
+  "switch_cost": 32.0,
+  "version": "2026.11.09-frozen-control-release"
+}
