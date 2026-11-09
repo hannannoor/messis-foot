@@ -47,6 +47,22 @@ class SourceTests(unittest.TestCase):
         with self.assertRaises((ValueError,FileExistsError)):self.api.acquire(p)
         self.assertEqual((p/'keep').read_text(),'original')
 
+    def test_small_matching_appledouble_sidecar_and_impostors(self):
+        cases=[('valid','__MACOSX/._positions.csv',b'\x00\x05\x16\x07'+b'\x00'*159,True),
+               ('bad_magic','__MACOSX/._positions.csv',b'fake metadata',False),
+               ('wrong_name','__MACOSX/._other.csv',b'\x00\x05\x16\x07',False),
+               ('too_large','__MACOSX/._positions.csv',b'\x00\x05\x16\x07'+bytes(range(256))*20,False)]
+        for name,member,metadata,allowed in cases:
+            p=self.root/(name+'.zip')
+            with zipfile.ZipFile(p,'w') as z:z.writestr('positions.csv','x,y\n1,2\n');z.writestr(member,metadata)
+            b=p.read_bytes();h=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+            if allowed:
+                try:member_name=self.api.validate_archive(p,h,len(b))
+                except ValueError:self.fail('A matching bounded AppleDouble sidecar must not become a second data CSV')
+                self.assertEqual(member_name,'positions.csv')
+            else:
+                with self.subTest(name=name),self.assertRaises(ValueError):self.api.validate_archive(p,h,len(b))
+
     def test_encrypted_and_declared_oversize_members_rejected(self):
         for kind in ('encrypted','oversize'):
             p=csv_zip(self.root/(kind+'.zip'),rows(1));b=bytearray(p.read_bytes());central=b.index(b'PK\x01\x02')

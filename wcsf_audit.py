@@ -117,6 +117,7 @@ def source_paths(root):
         paths.update({p.relative_to(root).as_posix():p for p in (root/directory).glob('*.json')})
     for name in ('docs/superpowers/specs/2026-11-09-wcsf-transfer-design.md',
                  'docs/superpowers/plans/2026-11-09-wcsf-transfer.md',
+                 'docs/superpowers/specs/2026-11-09-wcsf-container-amendment.md',
                  'docs/reference-qualification/source-qualification.json',
                  'docs/reference-qualification/evaluation-protocol.md'):
         paths[name]=root/name
@@ -153,12 +154,12 @@ class AuditSession:
     def _expected_freeze(self):
         import pandas as pd
         import wcsf_source as source
-        return dict(schema_version=1,base_commit='571ecc77acab885e186a425e599baa7800dfa778',
+        return dict(schema_version=1,base_commit='61a90e331d1e025a00ab3e84e5b5827be654d9a8',
             methods=list(METHODS),generation=self.private.name,
             assets={str(i):dict(name=n,git_blob=b,bytes=s) for i,(n,b,s) in enumerate(source.ASSETS,1)},
             source_sha256={n:sha256(p) for n,p in source_paths(self.root).items()},
             environment=dict(python=sys.version,numpy=np.__version__,pandas=pd.__version__,sqlite=sqlite3.sqlite_version,system=platform.system()),
-            contract='2026-11-09-wcsf-transfer-design; fixed descriptive three-method audit')
+            contract='2026-11-09-wcsf-transfer-design + container-amendment v2; fixed descriptive three-method audit')
 
     def freeze(self):
         value=self._expected_freeze();write_new(self.public/'freeze.json',value);return value
@@ -329,7 +330,7 @@ def main():
     import argparse
     root=Path(__file__).resolve().parent
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('stage',choices=('freeze','acquire','qualify','infer','score','verify'))
-    args=parser.parse_args();session=AuditSession(root,root/'reports/wcsf-transfer',root.parent/'wcsf-reference/wcsf-2026-11-09-1')
+    args=parser.parse_args();session=AuditSession(root,root/'reports/wcsf-transfer-v2',root.parent/'wcsf-reference/wcsf-2026-11-09-2')
     try:
         result=getattr(session,args.stage)()
         summary=dict(stage=args.stage,status='ok')

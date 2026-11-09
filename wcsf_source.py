@@ -40,7 +40,7 @@ def _csv_member(path):
         infos=z.infolist();names=[i.filename for i in infos]
         if len(names)!=len(set(names)):raise ValueError('Duplicate ZIP member')
         if sum(i.file_size for i in infos)>2000000000:raise ValueError('ZIP size limit exceeded')
-        files=[]
+        files=[];metadata=[]
         for info in infos:
             p=PurePosixPath(info.filename.replace('\\','/'))
             if p.is_absolute() or PureWindowsPath(info.filename).drive or '..' in p.parts:
@@ -49,9 +49,18 @@ def _csv_member(path):
                 raise ValueError('Encrypted/linked ZIP member')
             if info.file_size/max(1,info.compress_size)>200:raise ValueError('ZIP ratio limit exceeded')
             if info.is_dir():continue
+            if p.parts[0]=='__MACOSX' and p.name.startswith('._'):
+                metadata.append(info);continue
             if p.suffix.lower()!='.csv':raise ValueError('Unexpected ZIP member type')
             files.append(info.filename)
         if len(files)!=1:raise ValueError('Expected one CSV member')
+        if len(metadata)>1:raise ValueError('Unexpected metadata sidecar count')
+        basename=PurePosixPath(files[0].replace('\\','/')).name
+        for info in metadata:
+            if info.filename!=f'__MACOSX/._{basename}' or not 4<=info.file_size<=4096:
+                raise ValueError('Unexpected metadata sidecar identity/size')
+            with z.open(info) as f:
+                if f.read(4)!=b'\x00\x05\x16\x07':raise ValueError('Unexpected metadata header')
         return files[0]
 
 
