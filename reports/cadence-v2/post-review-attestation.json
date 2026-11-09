@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "experiment_sha256": "c31bef0c58d1805a8add9376df01bc8062021369c0481f329f232bd9bd39a597",
+  "timing": "post-run independent-review hardening",
+  "original_v2_explicit_source_inventory_complete": false,
+  "listed_historical_sources_verified": true,
+  "omitted_current_wrapper_sha256": {
+    "accuracy_experiment.py": "2eb9963993e4cc51aeb7841d624bacc20da50ee7610847c4b9c5941d0b2f150a",
+    "accuracy_experiment_frozen.py": "cf0559d447c44cb2f059cea21cb96a9a6c70a4aad89ae9e0ced83d46580ca0f8",
+    "accuracy_evidence.py": "2d3195ff0b42e973998c6a32d81e0f590e45ee97d69132fafb87881c096980c4",
+    "ball_gap_candidate.py": "8f120af1c9d0c7219fd075ea2217612d7755798c94c9d815fe92d85b76e4a4f2"
+  },
+  "omitted_current_wrappers_match_base": true,
+  "historical_wrapper_execution_state_proven": false,
+  "verification_source_sha256": {
+    "postrun_cadence_verify.py": "23946d6b6c5e48b8d9d06084ee6ca2ff4f9c91974e0b9426af9f4589a5aaf20a",
+    "tests/test_review_cadence_evidence.py": "212e4c719aac7e27d4d432be4958508d40eb14e5ec22dd04cbabcd9ff5c7f13e"
+  },
+  "strict_cases_verified": 20,
+  "variant_numeric_reports_verified": 200,
+  "duplicate_json_keys_rejected": true,
+  "extra_external_scoring_performed": false,
+  "new_holdout": false,
+  "target_data_used": false,
+  "endpoint_provenance_distinguished": false,
+  "native_freshness_validated": false,
+  "limitations": [
+    "Four original executed wrappers were omitted from the explicit prospective V2 map; their current bytes match the pinned base.",
+    "Post-run matching is not proof of every historical transient execution state.",
+    "Use this strict publication verifier; the original V2 validator remains frozen historical source.",
+    "Timing-basis marginals do not identify endpoint interpolation, native freshness, or valid source-pair counts.",
+    "Only supplementary.HA_boundaries is run-local and pair-typed; legacy boundary_metrics is unchanged.",
+    "Whole-period fallback subtype can undercount interrupted same-number blocks; ordinary materialization count is valid."
+  ]
+}

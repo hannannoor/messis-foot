@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "stage": "pre_acquisition",
+  "parent_commit": "571ecc77acab885e186a425e599baa7800dfa778",
+  "implementation_sources_added": 12,
+  "original_release_files_preserved": 309,
+  "cadence_frozen_sources_preserved": 100,
+  "approved_C_design_and_plan_preserved": true,
+  "tests": {
+    "total": 454,
+    "executed": 435,
+    "skipped": 19,
+    "failures": 0,
+    "errors": 0,
+    "new_tests_executed": 48
+  },
+  "command": "python -m unittest discover -s tests -p test_*.py",
+  "local_full_test_log_sha256": "006eadbf984c68904cbb98474ea4db66ddaa9d103cc40b8a0bfefaba470ec9e9",
+  "full_log_delivered": false,
+  "archives_acquired": 0,
+  "model_comparisons": 0,
+  "independent_final_review": "pending after scientific failure-or-result evidence"
+}

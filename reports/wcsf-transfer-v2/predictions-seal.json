@@ -1,0 +1,14 @@
+{
+  "freeze_sha256": "cca43bd48da128247fea378fc8e8d3cc5455969ace0f93de377e9458259fc4aa",
+  "geometry_sha256": "4073c979305bdd121dc29ed24984b61ced5dbb3c42b0ce8a3babf4a987eaa124",
+  "private_sha256": {
+    "endpoints": "0ae78d7aa26036e94d457cd0e0fe1ab40bcbe4eef8a8af45a47c99cbfbeec364",
+    "index": "f2beb04bea227e45e9d45ff01fadebf6d8a9cf150cba59d9479f47fe818cb68b",
+    "matched-input-w50": "3a6e08f190f349bb1045ad10d81ef5d797ef3569ae28b33026d3977912e2c30c",
+    "official-convention-w50": "3a6e08f190f349bb1045ad10d81ef5d797ef3569ae28b33026d3977912e2c30c",
+    "provenance": "a5edceecbe32135e80d6efbdee76ed0007fb610ecce0c161e013f5a8b6be04d3",
+    "w0-c32-neutral-missing": "f95290360906c060b206ae9a492b19edd273f126cb85cc38e649b7f9aaa28ec9"
+  },
+  "rows": 143431,
+  "schema_version": 1
+}

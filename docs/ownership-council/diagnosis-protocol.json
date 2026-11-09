@@ -1,0 +1,24 @@
+{
+  "protocol": {
+    "scope": "previously examined external development only; natural inputs",
+    "cases": {
+      "skillcorner-1874553": "development",
+      "skillcorner-1886347": "development",
+      "dfl-J03WOH": "development",
+      "dfl-J03WOY": "development"
+    },
+    "boundary_near_frames": 50,
+    "annotation_edge_frames": 50,
+    "episode_long_frames": 50,
+    "clear_geometry": "unchanged core candidate: within2m and distance margin at least0.75m",
+    "counterfactual": "consistent team-identity exchange, fixed predictor; diagnostic only",
+    "inference_edits": false,
+    "head_fitting": false,
+    "target_data_used": false,
+    "fresh_holdout": false
+  },
+  "source_sha256": {
+    "diagnostic_script": "8d24d8cf3eb3e3958f05b82e3816283bd95d28ad8d3d04747e0cf3d0766888ca"
+  },
+  "baseline_release_sha256": "617a93ac930bdd3910af374a2faf7676298de5b7380c75b0e8062dfb62e73eca"
+}

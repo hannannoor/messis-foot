@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "stage": "pre_csv_ingestion_revision_2",
+  "base_commit": "61a90e331d1e025a00ab3e84e5b5827be654d9a8",
+  "tests": {
+    "total": 455,
+    "executed": 436,
+    "skipped": 19,
+    "failures": 0,
+    "errors": 0,
+    "new_tests_executed": 49
+  },
+  "full_local_log_sha256": "8387c4612cd49a40f9f1f0f2c8df15433680749293e7fb06fe33cdc50770afc8",
+  "full_log_delivered": false,
+  "v1_downloaded_archives": 1,
+  "v1_csv_rows_parsed": 0,
+  "v1_model_calls": 0,
+  "v2_archives_acquired": 0,
+  "model_settings_changed": false,
+  "reference_or_geometry_rules_changed": false,
+  "container_rule_amended": true,
+  "original_v1_evidence_preserved": true
+}

@@ -1,0 +1,284 @@
+{
+  "schema_version": 1,
+  "base_commit": "cee674190775e9356745f461ba1561e9f2a46f7e",
+  "protocol": {
+    "schema_version": 1,
+    "base_commit": "cee674190775e9356745f461ba1561e9f2a46f7e",
+    "max_gap_s": 0.2,
+    "max_pair_rows": 5,
+    "speed_cap_m_s": 50.0,
+    "recent_window_rows": 12,
+    "time_bound_tolerance_s": 1e-09,
+    "switch_cost": 32.0,
+    "motion_weight": 0.0,
+    "floor": 1e-06,
+    "mask_rate": 0.3,
+    "mask_seed": 1729,
+    "max_cases": 20,
+    "max_aggregate_scorings": 200,
+    "cases": [
+      {
+        "cohort": "skillcorner",
+        "match": "1874553",
+        "regime": "natural"
+      },
+      {
+        "cohort": "skillcorner",
+        "match": "1874553",
+        "regime": "retain-2"
+      },
+      {
+        "cohort": "skillcorner",
+        "match": "1874553",
+        "regime": "retain-3"
+      },
+      {
+        "cohort": "skillcorner",
+        "match": "1874553",
+        "regime": "retain-5"
+      },
+      {
+        "cohort": "skillcorner",
+        "match": "1874553",
+        "regime": "mask30-seed1729"
+      },
+      {
+        "cohort": "skillcorner",
+        "match": "1886347",
+        "regime": "natural"
+      },
+      {
+        "cohort": "skillcorner",
+        "match": "1886347",
+        "regime": "retain-2"
+      },
+      {
+        "cohort": "skillcorner",
+        "match": "1886347",
+        "regime": "retain-3"
+      },
+      {
+        "cohort": "skillcorner",
+        "match": "1886347",
+        "regime": "retain-5"
+      },
+      {
+        "cohort": "skillcorner",
+        "match": "1886347",
+        "regime": "mask30-seed1729"
+      },
+      {
+        "cohort": "dfl",
+        "match": "J03WOH",
+        "regime": "natural"
+      },
+      {
+        "cohort": "dfl",
+        "match": "J03WOH",
+        "regime": "retain-2"
+      },
+      {
+        "cohort": "dfl",
+        "match": "J03WOH",
+        "regime": "retain-3"
+      },
+      {
+        "cohort": "dfl",
+        "match": "J03WOH",
+        "regime": "retain-5"
+      },
+      {
+        "cohort": "dfl",
+        "match": "J03WOH",
+        "regime": "mask30-seed1729"
+      },
+      {
+        "cohort": "dfl",
+        "match": "J03WOY",
+        "regime": "natural"
+      },
+      {
+        "cohort": "dfl",
+        "match": "J03WOY",
+        "regime": "retain-2"
+      },
+      {
+        "cohort": "dfl",
+        "match": "J03WOY",
+        "regime": "retain-3"
+      },
+      {
+        "cohort": "dfl",
+        "match": "J03WOY",
+        "regime": "retain-5"
+      },
+      {
+        "cohort": "dfl",
+        "match": "J03WOY",
+        "regime": "mask30-seed1729"
+      }
+    ],
+    "variants": {
+      "frozen-control": {
+        "kind": "fixed"
+      },
+      "bounded-reacquisition-speed-v1": {
+        "kind": "fixed"
+      },
+      "official-convention-w0": {
+        "kind": "fixed"
+      },
+      "official-convention-w25": {
+        "kind": "fixed"
+      },
+      "official-convention-w50": {
+        "kind": "fixed"
+      },
+      "official-convention-w125": {
+        "kind": "fixed"
+      },
+      "matched-input-w0": {
+        "kind": "fixed"
+      },
+      "matched-input-w25": {
+        "kind": "fixed"
+      },
+      "matched-input-w50": {
+        "kind": "fixed"
+      },
+      "matched-input-w125": {
+        "kind": "fixed"
+      }
+    },
+    "duration_bins": {
+      "short": "<=25",
+      "medium": "26..75",
+      "long": "76..250",
+      "very_long": ">250"
+    },
+    "gate": "seven exact aggregate checks plus per-match review; no qualification/promotion",
+    "fresh_holdout": false,
+    "head_fitting_performed": false,
+    "target_data_used": false
+  },
+  "source_sha256": {
+    "ball_gap_experiment.py": "5cef445c157bf9f9b9d0c7dea514dd36ebbbd2db8eeb1c030027aca371c6aa8a",
+    "ball_gap_policy.py": "15fe607774c5aa1a07555cee4eca5466a95da69491a0ec13707fc3e8447a8b9b",
+    "ball_gap_post_review.py": "fcf0e12858f37c39c9b0383d222dafdf2dccffb76b68ffb9e4197608fe48569e",
+    "ball_gap_run.py": "fd5346a9d02dc77963b03a1cbbd4d096e5b413de27f6f161df550a4ab436a5f0",
+    "ball_gap_runtime.py": "d392ee38f4dd16a6e75aaf9873a60ae2d65d13bb4d7d3689304aaa60611ca5db",
+    "benchmark/accuracy-first/selected.json": "528745d96d4b87236bf78644fea90d8b5b27ba317803a18b6f97fd1fe1239185",
+    "benchmark/ball-gap/selected.json": "1dac0dbcd0ab38ce5ef2781b68c93db0d96a48089790ba3480a59680cf0642b4",
+    "cadence_baselines.py": "e99532fd9be091eac085d6300b2ded530e632aea718b9e69c0a00dcfba74093a",
+    "cadence_experiment.py": "1e83fc70cbb58d9fa446fb9d1446d2518c9f49a1cc158aa77367f56dced40792",
+    "cadence_features.py": "3dbc585c99aeed84fb16116cd7538d9a4648b7f48134904ab4924f8d2234c5f3",
+    "cadence_metrics.py": "e24faba9a57b1afff36fae894934986344e9a90de1ad861efb981e86ea7f67eb",
+    "cadence_protocol.py": "044d9cf69533393016178dfb6d7bdf1d8388ad9bc273d87ef80066be1fe505f1",
+    "cadence_receipts.py": "6e81958afd2dd8976915d4324d471cfc36a4dc7c6e755e2181ecf991627b8d6c",
+    "docs/superpowers/plans/2026-11-08-cadence-and-baselines.md": "d1527a2017ed748c68e0a8909648ca76b6be0ee7f1aeb4c1af53ab2cf12ab2a2",
+    "docs/superpowers/specs/2026-11-07-ball-gap-evidence-design.md": "35990be277f4d7a64c5509355b066674e6f92c1287ad3c2cfaf8204f8434abb0",
+    "docs/superpowers/specs/2026-11-08-post-audit-roadmap-design.md": "36033e5b0af09d97cbe4f200f6ac55443ea7a4ff50a619d6cb16c0ac4750b6b5",
+    "gap_solver/__init__.py": "90bdeb562068ff217819802df01415d1c6226512ee6b14064e0ad8fe2ecf8e03",
+    "gap_solver/__main__.py": "0121fafa2bc0aa5a8aff26e1dd1c6bb788c7c95e414da18f99bb96b81089e7d8",
+    "gap_solver/accuracy_protocol.py": "8edac7aa5d651bcc486acbd3378b34c89f0e8447ab263da4bfbade9822db24e7",
+    "gap_solver/acquisition.py": "9daf60b99277cf0e2bc33fb76bfa5f7f7827d220d094e4426faf6af5803c2ee8",
+    "gap_solver/anonymous_motion.py": "b22404d6592c9aba1dff9383215a570c6e307c1536181b487dc563ff76080435",
+    "gap_solver/audit.py": "089c94af1a767da59cf6e37ff6cb3e1f8e500b84961adc696a5b5598002785ae",
+    "gap_solver/automatic_sync.py": "298a27c8635fe1af36648394cbf14c6c7855fedce91664b74565efdc217ba1e9",
+    "gap_solver/benchmark.py": "a90f2267bfc8b4a15e965b21895c3f77a7f4a435d6e1c34177b86a4ab2ed92c6",
+    "gap_solver/candidate_cli.py": "9fceef50b89695cc5535edbe4dafd30586e0a22dc89d33b8593a38c9cb01b853",
+    "gap_solver/clock_discovery.py": "ac7da5e75b201cab9e40758ced89f6f684e736a9088463383588f9063880b532",
+    "gap_solver/clock_ocr.py": "cd8e5d350cd47d83f7c6c266bb5126816423a4860980b7348eef8858fa6e0607",
+    "gap_solver/clock_sync.py": "9f451cc7a5440bf2c20801592690bc282d2e176dbdcee74030f8f83bbd083313",
+    "gap_solver/confidence_ensemble.py": "c01c0dc84da4b400ec6f7dee0de94bb0f2bc9fab70ee5471205ee48d72fe33f9",
+    "gap_solver/core.py": "fc9c0f864422992314b4f26c104319c5e082030f1956ffb5d5250fa801f2974f",
+    "gap_solver/dfl_motion.py": "992aa34db2c8ff754969cf3a1c5c755ded6bc1c4beec247e38a5cc012163344a",
+    "gap_solver/external.py": "3dd225ed05ab11e6367a5c3cb637ffcf9784c7be57bc6523975ddd0ef2ce2d78",
+    "gap_solver/frozen_protocol.py": "1252ab22b921b3f085af90e9a4edd5401ee05054eec3894be80a685cb2767c61",
+    "gap_solver/fusion.py": "1b92239778125bb51706a76b1c0e6472eaed4bdb3afb07ae02a097d355181431",
+    "gap_solver/input_contract.py": "f4559f6af6de2dd8b0ec5bf6da1b2372f5743598add92dfadfa49a28af1e7bd6",
+    "gap_solver/io.py": "633b887cede248e5515818e4f2a6a8592a1d968f27e954128b028f5a0173bcdc",
+    "gap_solver/materialization_control.py": "5bc167744e6702608c503b18a268d5883d5a7a83c8d508e679464edc3491a0e0",
+    "gap_solver/motion.py": "f36699381e567e13fa60c6fc6b4177bdcab91b1fa3ac95d7da64bc63708656d4",
+    "gap_solver/multicam.py": "83ac4a7e6c0440f07806bf68f863d021c4f2fceb7347e91760ef88e4be56292a",
+    "gap_solver/official_metrics.py": "3b10408fd91228c388fdbb1cd7b08a432bc59f88989c6eaf56c2153f92f11fe2",
+    "gap_solver/roi.py": "aad4755dc47e0e4bfa3fa0f662649035c506597d55077cdb2b72ee40d9a1f8c7",
+    "gap_solver/selection.py": "e465e9e2f3b66548eb814bd02681814f2b73e6db5aebb8d189c61c02bc4a659e",
+    "gap_solver/skillcorner.py": "07bd06af0a01b069b37c5a98dd7d40ea4ee191e3218de291b85b8385da4b524f",
+    "gap_solver/soft_sequence.py": "fa829e31d96eb87bebbe93ca98554f95d372c5162c6b7365b92ac9914d3ee4fe",
+    "gap_solver/tactical.py": "b0e4550ae80d6f6d7293781f1bb2401450397591f3239a1bdff7a961aa19f93f",
+    "gap_solver/tactical_cli.py": "cc245579b382247116a7ca1874b81db4773f3aa976dd6e65662f1385d0ada63a",
+    "gap_solver/tactical_model.py": "2072a0585d85128eb8127e8b295e2f7e1757e21569356bb6b8ef9d7f09c74f45",
+    "gap_solver/temporal.py": "f62aac2d9ce5ae4e957749cd0e70588484e315d2feeb5c4e22359bb9fff51822",
+    "gap_solver/temporal_acceptance.py": "0fd01f3f510e1c4daf40bac2966773b710a2fbc3386e85535766050ddb0cacd5",
+    "gap_solver/temporal_development.py": "b5d4f327e73c85f70d6bc36ae0ee1ddd273382113525d5d2078a34a96ee2276a",
+    "gap_solver/temporal_diagnostics.py": "1c2ba3d74a5ba6bfb8ab1a94554754954964ef9f82913d332bbd649cf7f603bb",
+    "gap_solver/temporal_feasibility.py": "3b9101e5026c9c15590502ff43598c6e270de71d40cc2407bee60d7b53eeb208",
+    "gap_solver/temporal_metrics.py": "1e1928308944ef20fb061f28e8829562e22eff19b87f8aa450dabac52b8ef316",
+    "gap_solver/temporal_protocol.py": "f435f36b61edde2514a3606f7c79abeff092846fca160b305a2b8c7e5178ce9a",
+    "gap_solver/temporal_selection.py": "846a22e0c336c7b03eb4c96ff73ed998ff405ac4897602a48427f74f99b644af",
+    "licenses/official-baseline-MIT.txt": "b1f93728571a232a0e158abdd869891f2efd51894134fb20678292c2468ff3ec",
+    "reports/ball-gap/comparison-freeze.json": "a044e1383902816c8851765d67a86b4778b10789e9256fd320f0c1b8e73dc816",
+    "reports/ball-gap/post-review-diagnostics.json": "f7ea8432e1b59bd4576ed4adb1cceb933d9fbc197d752afee10f146cd64d198a",
+    "reports/ball-gap/post-review-source.json": "48499f7d460bdb7d159099367addb389fe633b197344659ac7f1d38430a044cb",
+    "reports/ball-gap/regression-seal.json": "ab775e136978ff50504e5fabc2ce3d9e7e564e2f41222ae6d55500561efef8a0",
+    "reports/ball-gap/regression/dfl-J03WN1-masked.json": "2ae4839fa5854e33fbeea2c560c0bc48967a96cec6463ff65f595b9310d711ff",
+    "reports/ball-gap/regression/dfl-J03WN1-natural.json": "0ed808a0c24be20d6240678905b8d1b75338a825ed55b5182b664dc4875400b9",
+    "reports/ball-gap/regression/dfl-J03WR9-masked.json": "e9fbe4b0489660d5c01349a62fbcedee13f9cf2c219eeacf75c7f4fa386c30aa",
+    "reports/ball-gap/regression/dfl-J03WR9-natural.json": "325f3fcc701dd36003c30f87427346cea2d34acd82551a07522251109d43af8f",
+    "reports/ball-gap/regression/skillcorner-2007448-masked.json": "18fae71e2b215180dcfde439cee168d3c950622dd4f5ac8e6396d3acace0bfc3",
+    "reports/ball-gap/regression/skillcorner-2007448-natural.json": "78db6632611e9c1697284b73747b8a1c0c6178c89757acc359e57396b1b96881",
+    "reports/ball-gap/regression/skillcorner-2007721-masked.json": "843c02c6e473ee4ea5c25c3d5686e4b800122113f896c7bdf5c8bdab7aa28916",
+    "reports/ball-gap/regression/skillcorner-2007721-natural.json": "fec1a1eb032cb195f34e5c0661a51754ffce572c77dd09424e008436a334b162",
+    "reports/ball-gap/regression/skillcorner-2010085-masked.json": "964fac598f368c882793e37bb3756a371a816ac55371c68adc20e2133a522afe",
+    "reports/ball-gap/regression/skillcorner-2010085-natural.json": "2080f1d000b457c1ce2624028b3b4e47d670dd3b7d7224775b3ddf09adadc6ee",
+    "reports/ball-gap/regression/skillcorner-2011166-masked.json": "0b1d93f47c7d5a4a221273afdfc83d14b9479a84b850ad8a6e7f0e76dcc13321",
+    "reports/ball-gap/regression/skillcorner-2011166-natural.json": "bb52d411ba7acf23f3032410af6a44b3d6af782abf0aee3797a729a1cc015208",
+    "reports/ball-gap/regression/skillcorner-2013725-masked.json": "19d8f22139c537beed44d65e7494c69ad1d88cad374b72bf2b356c1a335e73c8",
+    "reports/ball-gap/regression/skillcorner-2013725-natural.json": "135111e1bdd1a80353ef367a08ce86e70fb3d347d33da3bb556ce66eb194f284",
+    "reports/ball-gap/regression/skillcorner-2015213-masked.json": "63b53cc1cc3317f2ba24e5a8587679543c7fe5ace8d2fb031cb5b1e165577211",
+    "reports/ball-gap/regression/skillcorner-2015213-natural.json": "d58577a30e6148a3a7bcc5d57c87c8f3b8ad7f7db2c1421b90a726f920cb0a3e",
+    "reports/ball-gap/regression/skillcorner-2016236-masked.json": "d93bf58304be9f8697591e25b8f2fa39445bdf854a34f619ca0ef19f89569f8a",
+    "reports/ball-gap/regression/skillcorner-2016236-natural.json": "c9118233f2ba2f24ce24adc52cf60728e0331fa72aaa87bf46fc4329a63d3b8b",
+    "reports/ball-gap/regression/skillcorner-2017461-masked.json": "11a2971efa8c3bfc4ce6533221ba4d3cde8a07734f32df40f99d979cabca76fa",
+    "reports/ball-gap/regression/skillcorner-2017461-natural.json": "75fc71205d2ecef1281bd522983057a6afacf089217e8382bcc1b0009cc0ae53",
+    "reports/ball-gap/runner-source.json": "96683179b995f8768976f6316ef56630bece70c71ad84b0f4af3adc9851822d4",
+    "reports/ball-gap/summary.json": "6e5e437cf044afd5c8c462871243dd956b9b7a21432f77e9d3d3af9d5ff90667",
+    "reports/ball-gap/validation-disposition.json": "ec9a130aa2fdb84e80e6415a57fcf6efb0421a483d0e947ac418dc530af095d7",
+    "reports/ball-gap/validation-seal.json": "3a410cd870b1a716711dfaa361fd8932c85f67756ba66922987e8b4e16a27448",
+    "reports/ball-gap/validation/dfl-J03WQQ-masked.json": "b8990330218160e5b2cfcbb0255afbf3749f68d34b804267b3303d0f6cea504b",
+    "reports/ball-gap/validation/dfl-J03WQQ-natural.json": "3195988efe202ae63f636d8d6dac22d3f32a5d43bb96374d0fc9eb0256cf672b",
+    "reports/ball-gap/validation/skillcorner-2006229-masked.json": "55d345123c8af3122c41d4677b006121eacd9a771b75c474796dae9561ef6c49",
+    "reports/ball-gap/validation/skillcorner-2006229-natural.json": "643a3276036e2ffedecd34a50608938f627e14944b7a30311cd3ad9821b9cdc5",
+    "reports/ball-gap/validation/skillcorner-2006363-masked.json": "4a673245277e20e9e11083a53a2f210c4cf1779afba1ab92b35f645614de19b9",
+    "reports/ball-gap/validation/skillcorner-2006363-natural.json": "69a323085591a8f077143557e833814bff3d257308a3323fed8854861d55e5f2",
+    "soft_candidate.py": "e1cce016abe233b56c12c171be6c7d4cf5f70c757de498d3d0fc16967553704e",
+    "tests/cadence_fixtures.py": "c87adc3cef06f9f45679cf7f60fcc2cf910b52fc7d8f3e871880a35acd0a575a",
+    "tests/official-baseline-source.json": "fc469f920d81469b009222afb4d48c1c6db33fff837e2932ec5deb4617311039",
+    "tests/official_baseline_reference.py": "c397070cd2a9ef36249a74b75fc6882005b29c339d75d83f91b65f067677133a",
+    "tests/test_cadence_baselines.py": "7d9db2d0c8e93b17b1926f565f77e6efd42a22eceadc0b2cfd8dab10cdfd001b",
+    "tests/test_cadence_experiment.py": "62245656bb075ac94fd3d54cebde52eb18722179c421ccdb9695204272f7139e",
+    "tests/test_cadence_features.py": "f104e26fcb61cf98acf709751c6da038a90e1dcbe43a468595216155c2e059b0",
+    "tests/test_cadence_metrics.py": "418bd332c4ea9db671825ce5c0a22e755c9a74ad9da0835a96fc39eee43488c9",
+    "tests/test_cadence_protocol.py": "154774679fe1d06e7ee1748ca92da8d3eb90fd57d710f048a9e97063c802e1a9",
+    "tests/test_cadence_run.py": "c219b17884defd7ed2eb52a3dc9a55584f30f4c17f7d030f542a978bcdd0946a"
+  },
+  "input_sha256": {
+    "skillcorner/1874553.metadata.json": "d4c00d1e4fd1b33f54ced2fcc5e05aa9f1ae0c4d3f1da3f6fd5ce6c4f1736c2f",
+    "skillcorner/1874553.features.npz": "0f6127851ae56149c9ba768246f407878244fe7146b9a9cba81e50c3100fe618",
+    "skillcorner/1874553.reference.npz": "789872886854a14d318a5f7f13c6a8f69fce36ffcb40794612d71a91c0539a74",
+    "skillcorner/1886347.metadata.json": "0db8029988b4d52dbced15ac9ffba7f71a73b96c42ff7463c6abdd795048e39c",
+    "skillcorner/1886347.features.npz": "250ebfaf04c97c4a710116eaa65bafd13817eb4a00ebfd2e3ae0fdbf61381fa2",
+    "skillcorner/1886347.reference.npz": "d836794d43ae5b0652399d8abe6b1f28ed4fc9163fcda93fdd94fe61e399d586",
+    "dfl/J03WOH.metadata.json": "a85e2c1a546fcf2e2eaeb12f4cb49b5e8f31f0b39defa75d67a347ee46f6f391",
+    "dfl/J03WOH.features.npz": "39967c61a966441692a30fee66ad2e4622824f18bf472e7ea5030473e4c5b219",
+    "dfl/J03WOH.reference.npz": "5a3ddbab87943a1c949138609b658f658ec5382be3d2a0f38351792ce3274375",
+    "dfl/raw/DFL_02_01_matchinformation_DFL-COM-000002_DFL-MAT-J03WOH.xml": "f23b3ee13b988b1ff9a0bce438c416dac47e71355bbc7ee1dab21aaf3e33c18c",
+    "dfl/raw/DFL_04_03_positions_raw_observed_DFL-COM-000002_DFL-MAT-J03WOH.xml": "ec4dcf30200aad694dea263d5289485fcd0ca42badddaeb7c81f5cd5a4229d4f",
+    "dfl/J03WOY.metadata.json": "485c0e1d044ede25a6508e0250e3cfcd4f31d3def0c945b443b69a6501eb7b11",
+    "dfl/J03WOY.features.npz": "dd8d7c4c6287fc6980652e7da191bec6e1ec0f2980a1c3524e29881ef5432e90",
+    "dfl/J03WOY.reference.npz": "24b336a1cc4ac062d1d04de54a86fd6858790ecd93b28b21083ee4af95e44f71",
+    "dfl/raw/DFL_02_01_matchinformation_DFL-COM-000002_DFL-MAT-J03WOY.xml": "4c497fac683eee8292901c18ca02c0be1d9609d0b9d4bd8aa092c61f9e0b19e9",
+    "dfl/raw/DFL_04_03_positions_raw_observed_DFL-COM-000002_DFL-MAT-J03WOY.xml": "a228ef0e676d009cefff1580fcb721b53f598454eb120ec347e0a628a3a4646b"
+  }
+}

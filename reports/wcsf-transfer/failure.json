@@ -1,0 +1,26 @@
+{
+  "acquired_archive": {
+    "bytes": 22704565,
+    "git_blob": "d7de2a38f5650150684b1008aa7f4fd28b85d777",
+    "name": "positions_FIRST_HALF.csv.zip",
+    "sha256": "e7e5d753dba30549a01f2e37695556dc3cdf62043e8e3e6447a71e77da30fede"
+  },
+  "actual_csv_rows_parsed": 0,
+  "automatic_retry_performed": false,
+  "cause": "Strict sole-CSV rule counts the macOS metadata sidecar as a second CSV.",
+  "freeze_sha256": "ae20218b630bf130e13605b926c317046b3a35ccfacc612ce177d52e54680966",
+  "inference_attempts": 0,
+  "machine_state_values_parsed": 0,
+  "metadata_sidecar": {
+    "bytes": 163,
+    "first_four_bytes_hex": "00051607",
+    "name": "__MACOSX/._positions_FIRST_HALF.csv"
+  },
+  "original_generation_preserved": true,
+  "schema_version": 1,
+  "scoring_attempts": 0,
+  "second_archive_acquired": false,
+  "source_commit_before_acquisition": "61a90e331d1e025a00ab3e84e5b5827be654d9a8",
+  "stage": "archive_container",
+  "status": "structural_failure_before_csv_ingestion"
+}

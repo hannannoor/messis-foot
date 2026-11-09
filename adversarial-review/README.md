@@ -1,0 +1,5 @@
+# Verified adversarial review archive
+
+These are exact artifacts from the separate review of cee6741 and audit branch f426c0e. Reports distinguish source proof, cached-score replay and unverified physical/target truth. The source helpers preserve their original workspace layout: a repo checkout named ball-gap-work, sibling external-reference and independent-reference licensed inputs, and adversarial-review/mirror.git plus exact snapshots. Some helper paths are host-specific. They are published for inspection and archival provenance, not as a fresh raw-to-report command. No caches, target assets, snapshots or bare Git mirror are included. A portable clean rebuild remains a separate roadmap task. Original report references to active/ and next-phase-notes/ name that historical workspace; Council materials and approved plans are now also published under docs/.
+
+The independent original-workspace-runtime-probes.py is not the absent root-probes.py claimed by the original audit. That omission remains explicit; do not substitute provenance between the two.

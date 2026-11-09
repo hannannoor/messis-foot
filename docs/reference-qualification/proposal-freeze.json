@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "frozen_on": "2026-11-09",
+  "parent_commit": "ac411327bc7d4ab92ca7c291b5c3a6eb9c411e1f",
+  "documents": [
+    {
+      "path": "POST-AUDIT-STATUS.md",
+      "sha": "276dcdc342a244a1a76a17f889820e7d74aa0673",
+      "sha256": "7392fab4c31aed23b5965e5386527a65e0c7be4ebed05d31aa64222e05ade4d5",
+      "bytes": 3910,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/reference-qualification/source-comparison.md",
+      "sha": "8484989d74a34f54380782c63e0a8cf9101f9d2b",
+      "sha256": "913935bebbb025ed8ccedb6a3651cf60f8bc5f28e6f1f1d79aa90b370a1cdb1f",
+      "bytes": 7216,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/reference-qualification/evaluation-protocol.md",
+      "sha": "9cc607a3524cfe4d47b95ad9035de4c017077bc3",
+      "sha256": "4712e9c4aa649f983c7480168e1a46cd011e2a18295501ece63e057893ef7f63",
+      "bytes": 9703,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/reference-qualification/source-qualification.json",
+      "sha": "6afe458a77ff7a26c0563c6d1be1c47c7bb82c8c",
+      "sha256": "5354856f14c7824554c50a18ac2cbcfe7add17e249bd99cfc75268f21e3dcc8b",
+      "bytes": 11875,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/reference-qualification/access-and-use-ledger.json",
+      "sha": "73477a2043b5ecac16533a39f5227df3e79eefff",
+      "sha256": "171539efd0bdc2007cf70454e88453cb77ccd0ec5a3735ef5d3aab79f5c1e518",
+      "bytes": 2657,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/reference-qualification/nonoverlap-evidence.json",
+      "sha": "4d842012eae2fa8d1a7077138d53b11cb6edb34e",
+      "sha256": "47e40c3bf0dc774bc28627070486b86f13f3bda7362ded0e0c7b9ed69dea5d14",
+      "bytes": 8478,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/reference-qualification/review-and-scope.md",
+      "sha": "a720694eecb55218ad3ae1c5d56aee39e73b6d7c",
+      "sha256": "6c559402c6020f7801a6d304e07e424aa0ea8112bca5a4a0186b9718ed79480d",
+      "bytes": 3611,
+      "mode": "100644"
+    }
+  ],
+  "requirements": {
+    "at_most_three_existing_leads": "Three prior scout leads only; no broader dataset search.",
+    "current_primary_rights_access_ontology": "16 native doc/metadata receipt hashes plus PFF primary announcement reopened 2026-11-09.",
+    "one_credible_unused_full_state_path": "WCSF owner grant/manual-state provenance; source and metadata pins; structural status pending.",
+    "access_use_and_evaluation_proposal": "Access ledger plus prospective frozen three-method protocol with one-match limits.",
+    "no_acquisition_scoring_annotations_spend_challenge": "GET-only metadata receipts and zero-action ledger; no execution proposed as completed.",
+    "five_review_risks_checked": "Fresh-context review and review-and-scope.md risk/evidence table.",
+    "original_and_scientific_files_preserved": "All 309 original file SHA-256s and 100 V2 frozen-source SHA-256s verified now.",
+    "publish_as_requested_account": "Pending authenticated remote commit/ref and complete-tree verification; not claimed by this local receipt."
+  },
+  "original_309_files_unchanged": true,
+  "frozen_100_sources_unchanged": true,
+  "dataset_asset_acquisition_count": 0,
+  "model_scoring_count": 0,
+  "scientific_qualification_achieved": false,
+  "source_qualification": "Credible acquisition path selected; actual structure unverified."
+}

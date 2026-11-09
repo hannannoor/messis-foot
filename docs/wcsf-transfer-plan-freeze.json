@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "parent_commit": "364e7ec097f0e6793a85d0ade76ffb4bbc379055",
+  "documents": [
+    {
+      "path": "POST-AUDIT-STATUS.md",
+      "sha": "f82d862ce30294e6ab1d402b7933f241202fca18",
+      "sha256": "789f3893d8eb834e75fa18d7ae8c9a742da0605a77c4371019bc09711cb96ef0",
+      "bytes": 4069,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-11-09-wcsf-transfer-design.md",
+      "sha": "8c297c661f3674f37284666959c1d019032c5804",
+      "sha256": "18ea6618bfd55bc70753684e32802a95104af2f55bcc436507fa3a404e2cb781",
+      "bytes": 14829,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-11-09-wcsf-transfer.md",
+      "sha": "135a665c0d68e98682b2cc56fde62b63fc2c7dc6",
+      "sha256": "94abb6df2d7f9b4db327f45413cfb2b8b6eb186eff4f33fb347adce572a9ec41",
+      "bytes": 15395,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/wcsf-transfer-plan-review.md",
+      "sha": "ac2e6af9c048b2942d185f09c74988df9ab81a15",
+      "sha256": "b1d3adfc29d0a98d4761c0eedac0284649fb7ae33c8531bc8f08116ae0736603",
+      "bytes": 2943,
+      "mode": "100644"
+    }
+  ],
+  "approved_C_sha256": {
+    "docs/superpowers/plans/2026-11-08-ownership-path-diagnosis.md": "54e3465bba5bb822b4e6f478b484c3caf52f6f780900a3c8c42960c720fcd65a",
+    "docs/superpowers/specs/2026-11-08-ownership-path-diagnosis-design.md": "bddff762f6539b5d0966cd467ea39417f254bf3f1511ced8146f199e072122c9"
+  },
+  "original_309_preserved": true,
+  "cadence_100_sources_preserved": true,
+  "archives_acquired": 0,
+  "outcomes_opened": 0,
+  "implementation_written": false,
+  "builder_important_questions_resolved": 5,
+  "execution_method": "native inline, one fresh final review",
+  "priority": "WCSF structural qualification/conditional fixed audit, then preserved C",
+  "amendment_style": "Additive dated design supersedes historical ordering; frozen original roadmap untouched."
+}

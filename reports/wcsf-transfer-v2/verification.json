@@ -1,0 +1,11 @@
+{
+  "completed_method_comparisons": 3,
+  "freeze_sha256": "cca43bd48da128247fea378fc8e8d3cc5455969ace0f93de377e9458259fc4aa",
+  "geometry_sha256": "4073c979305bdd121dc29ed24984b61ced5dbb3c42b0ce8a3babf4a987eaa124",
+  "inference_attempts": 3,
+  "results_sha256": "16297acd3e3d176f06ad105575f89d3ecf3818e9ee874a02bafde2cf70c8694d",
+  "schema_version": 1,
+  "scoring_attempts": 3,
+  "status": "completed",
+  "verified": true
+}

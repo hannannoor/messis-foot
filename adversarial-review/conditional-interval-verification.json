@@ -1,0 +1,74 @@
+{
+  "estimator": "equal-provider mean of unweighted paired natural-match spell-F1 deltas",
+  "resampling": "with replacement within provider at original provider match count",
+  "interval": "exact empirical inverse-CDF 0.025 and 0.975 quantiles, no interpolation",
+  "rng": "none: exhaustive multinomial compositions; DFL deltas all zero",
+  "compositions": 6435,
+  "ordered_skillcorner_samples": 16777216,
+  "mean_delta": 0.0017862686598655725,
+  "lower": 0.0004760517173494558,
+  "upper": 0.0032891634823429064,
+  "empirical_mass_at_or_below_zero": 0.00135725736618042,
+  "match_deltas": {
+    "dfl": [
+      {
+        "match": "J03WN1",
+        "delta": 0.0
+      },
+      {
+        "match": "J03WR9",
+        "delta": 0.0
+      }
+    ],
+    "skillcorner": [
+      {
+        "match": 2007448,
+        "delta": -0.0016037048481173377
+      },
+      {
+        "match": 2007721,
+        "delta": 0.009125381660592846
+      },
+      {
+        "match": 2010085,
+        "delta": 0.011300545585634647
+      },
+      {
+        "match": 2011166,
+        "delta": 0.0027512667629880916
+      },
+      {
+        "match": 2013725,
+        "delta": 0.0014726761258918586
+      },
+      {
+        "match": 2015213,
+        "delta": 0.0034883720930232176
+      },
+      {
+        "match": 2016236,
+        "delta": 0.0006006006006005205
+      },
+      {
+        "match": 2017461,
+        "delta": 0.001445160577235316
+      }
+    ]
+  },
+  "receipt_sha256": {
+    "dfl-J03WN1-natural.json": "0ed808a0c24be20d6240678905b8d1b75338a825ed55b5182b664dc4875400b9",
+    "dfl-J03WR9-natural.json": "325f3fcc701dd36003c30f87427346cea2d34acd82551a07522251109d43af8f",
+    "skillcorner-2007448-natural.json": "78db6632611e9c1697284b73747b8a1c0c6178c89757acc359e57396b1b96881",
+    "skillcorner-2007721-natural.json": "fec1a1eb032cb195f34e5c0661a51754ffce572c77dd09424e008436a334b162",
+    "skillcorner-2010085-natural.json": "2080f1d000b457c1ce2624028b3b4e47d670dd3b7d7224775b3ddf09adadc6ee",
+    "skillcorner-2011166-natural.json": "bb52d411ba7acf23f3032410af6a44b3d6af782abf0aee3797a729a1cc015208",
+    "skillcorner-2013725-natural.json": "135111e1bdd1a80353ef367a08ce86e70fb3d347d33da3bb556ce66eb194f284",
+    "skillcorner-2015213-natural.json": "d58577a30e6148a3a7bcc5d57c87c8f3b8ad7f7db2c1421b90a726f920cb0a3e",
+    "skillcorner-2016236-natural.json": "c9118233f2ba2f24ce24adc52cf60728e0331fa72aaa87bf46fc4329a63d3b8b",
+    "skillcorner-2017461-natural.json": "75fc71205d2ecef1281bd522983057a6afacf089217e8382bcc1b0009cc0ae53"
+  },
+  "reused_matches": true,
+  "adaptive_selection_corrected": false,
+  "new_holdout": false,
+  "physical_reference_accuracy_verified": false
+}

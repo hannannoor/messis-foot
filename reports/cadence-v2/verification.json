@@ -1,0 +1,11 @@
+{
+  "experiment_sha256": "c31bef0c58d1805a8add9376df01bc8062021369c0481f329f232bd9bd39a597",
+  "cases_verified": 20,
+  "variant_scores_verified": 200,
+  "sources_and_inputs_verified": true,
+  "receipt_schemas_verified": true,
+  "summary_reproduces": true,
+  "new_holdout": false,
+  "target_data_used": false,
+  "head_fitting_performed": false
+}

@@ -1,0 +1,70 @@
+{
+  "repository": "hannannoor/messis-foot",
+  "audited_commit": "cee674190775e9356745f461ba1561e9f2a46f7e",
+  "default_main_commit": "3a1c8608e050e2f812826719e1af882d87cf2f67",
+  "reviewer_count": 6,
+  "child_model": "gpt-6.1-sol",
+  "child_reasoning_effort": "high",
+  "all_reports_included_verbatim": false,
+  "source_309_blobs_unchanged": true,
+  "reports": [
+    {
+      "path": "agent-1.md",
+      "words": 2157,
+      "bytes": 18317,
+      "sha256": "5868d747b869decd686aa1eb242b84cc1d0e4703440602d263b98cc5674a0a41"
+    },
+    {
+      "path": "agent-2.md",
+      "words": 2239,
+      "bytes": 18932,
+      "sha256": "533e2cf0cdd0f8fdcd4fab159b07c09b095f73cd91b1c5f35d04750615517b2d"
+    },
+    {
+      "path": "agent-3.md",
+      "words": 2111,
+      "bytes": 18655,
+      "sha256": "814efca6636c89456270f8b49044d3aed6d6efd4e151844a23201a6b99771976"
+    },
+    {
+      "path": "agent-4.md",
+      "words": 2116,
+      "bytes": 17591,
+      "sha256": "28758343a09eebaa85bebf8e8fba56a1dcd9c172a5b77ed4cbf623fa732b8021"
+    },
+    {
+      "path": "agent-5.md",
+      "words": 2042,
+      "bytes": 18810,
+      "sha256": "7dcf3e57d3f5a29979a297befe87939c6020d28e97d89fd9306362226f98002b"
+    },
+    {
+      "path": "coordinator.md",
+      "words": 2530,
+      "bytes": 20463,
+      "sha256": "5919b492bfd2ef335dd48a95a3020f015b9f79f062fdf582bdd666edc3418670"
+    }
+  ],
+  "combined": {
+    "path": "FULL-COUNCIL-AUDIT.md",
+    "words": 14366,
+    "bytes": 121537,
+    "sha256": "8490cc82a5d4fcc281806da8eb45eb8ed640b8fdb9b5038b6290447bc7e27352"
+  },
+  "verification": {
+    "tests_run": 341,
+    "successful_executed": 322,
+    "skipped": 19,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 19.76,
+    "log": null,
+    "probe_script": null,
+    "probe_results": "root-probes.json",
+    "log_status": "not delivered in original audit",
+    "probe_script_status": "not delivered in original audit; independent verification sources are separate artifacts"
+  },
+  "delivery_revision": 2,
+  "all_report_logical_text_included": true,
+  "byte_policy": "SHA-256 and lengths refer to exact final Git blob bytes; logical-text inclusion normalizes newlines/outer whitespace."
+}

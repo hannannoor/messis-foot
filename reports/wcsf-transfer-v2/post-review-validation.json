@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "stage": "post_run_review_fixes",
+  "tests": {
+    "total": 462,
+    "executed": 443,
+    "skipped": 19,
+    "failures": 0,
+    "errors": 0,
+    "new_tests_executed": 56
+  },
+  "local_full_test_log_sha256": "8a64bdae13e557e5f78711d0e050edb766471e0b8b8f8270ac6e80feab0c419b",
+  "full_log_delivered": false,
+  "fixes_added_after_scientific_scoring": true,
+  "scientific_rescoring_performed": false,
+  "scientific_source_commit": "2abd83b3a719ae041671194000b4fa3c20ffcfd4",
+  "original_results_sha256": "16297acd3e3d176f06ad105575f89d3ecf3818e9ee874a02bafde2cf70c8694d",
+  "new_public_verification_private_data_required": false,
+  "new_replay_runs_use_distinct_identity": true
+}

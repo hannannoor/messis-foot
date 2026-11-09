@@ -1,0 +1,17 @@
+{
+  "status": "complete",
+  "scope": "Council and measured pilot diagnosis plus approved Superpowers implementation plan; deeper path instrument not built",
+  "advisors": 5,
+  "fresh_anonymous_reviewers": 5,
+  "separate_chairman": 1,
+  "batch_adaptation": "3+2 due host concurrency; no advisor output sharing",
+  "council_model_diversity": "one model family with isolated thinking lenses, not independent vendors",
+  "development_cases": 4,
+  "approved_design_sha256": "bddff762f6539b5d0966cd467ea39417f254bf3f1511ced8146f199e072122c9",
+  "implementation_plan_sha256": "54e3465bba5bb822b4e6f478b484c3caf52f6f780900a3c8c42960c720fcd65a",
+  "unchanged_release_files": 309,
+  "predictor_changed": false,
+  "new_target_outputs": false,
+  "new_head_fitting": false,
+  "follow_on": "Full adversarial repository audit, beginning codex/competitor-audit-2026-11-08"
+}

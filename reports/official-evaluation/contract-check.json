@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-11-09",
+  "official_revision": "f8f2629ff1e0985f81d7e59d8413678514ee1530",
+  "primary_sources": {
+    "EVALUATION.md": {
+      "url": "https://raw.githubusercontent.com/metrica-sports/more-than-a-hack-2027/f8f2629ff1e0985f81d7e59d8413678514ee1530/EVALUATION.md",
+      "status": 200,
+      "bytes": 6916,
+      "sha256": "25b61f6d8a2bcbe77396bd9a9cae564b27424538e0a958aa1cd365e1e58ae571"
+    },
+    "RULES.md": {
+      "url": "https://raw.githubusercontent.com/metrica-sports/more-than-a-hack-2027/f8f2629ff1e0985f81d7e59d8413678514ee1530/RULES.md",
+      "status": 200,
+      "bytes": 5965,
+      "sha256": "b6f63456d215e2e6016619f6268580ed8921bb96ba41c7d3037f2733f8d10153"
+    },
+    "evaluation/possession_metrics.py": {
+      "url": "https://raw.githubusercontent.com/metrica-sports/more-than-a-hack-2027/f8f2629ff1e0985f81d7e59d8413678514ee1530/evaluation/possession_metrics.py",
+      "status": 200,
+      "bytes": 33370,
+      "sha256": "341bad48904b489d6e875397b27687f5d6a4d22a397f3dc8af3a00d48f16874d"
+    },
+    "evaluation/run_evaluation.py": {
+      "url": "https://raw.githubusercontent.com/metrica-sports/more-than-a-hack-2027/f8f2629ff1e0985f81d7e59d8413678514ee1530/evaluation/run_evaluation.py",
+      "status": 200,
+      "bytes": 29419,
+      "sha256": "1c61564fe52499ba4af3006fb5eb4147b825e92bf516651add80de49d267b19f"
+    },
+    "evaluation/validate_submission.py": {
+      "url": "https://raw.githubusercontent.com/metrica-sports/more-than-a-hack-2027/f8f2629ff1e0985f81d7e59d8413678514ee1530/evaluation/validate_submission.py",
+      "status": 200,
+      "bytes": 4192,
+      "sha256": "07ac29499acbd337e1dc1de1832d63f6e1fa1d981e22f6ad08212529e2bbee14"
+    },
+    "SUBMISSION.md": {
+      "url": "https://raw.githubusercontent.com/metrica-sports/more-than-a-hack-2027/f8f2629ff1e0985f81d7e59d8413678514ee1530/SUBMISSION.md",
+      "bytes": 4454,
+      "sha256": "acb90eebc0f113fc072d90ac77be501e63de1dde65e9227186b4718bc24f22d2"
+    },
+    "games.py": {
+      "url": "https://raw.githubusercontent.com/metrica-sports/more-than-a-hack-2027/f8f2629ff1e0985f81d7e59d8413678514ee1530/games.py",
+      "bytes": 10301,
+      "sha256": "3b2122794e9e0476e2b3a871d14880e5fa47c4feaeacf99caef054c2309076ce"
+    }
+  },
+  "ranking": {
+    "metric": "spell_f1_mean",
+    "iou_thresholds": [
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7
+    ],
+    "tie_breakers": [
+      "macro_f1 descending",
+      "loose transition f1 descending",
+      "matched mean absolute latency ascending",
+      "filename ascending"
+    ]
+  },
+  "submission": {
+    "rows": 199319,
+    "first_frame": 0,
+    "last_frame": 199318,
+    "fps": 25,
+    "timeline": "tactical video",
+    "columns": [
+      "frame",
+      "label"
+    ],
+    "alphabet": [
+      "H",
+      "A",
+      "D",
+      "X"
+    ],
+    "blank_cells_allowed": false,
+    "deadline": "2026-11-17",
+    "deadline_time_or_zone_not_stated": true
+  },
+  "repository_snapshot": {
+    "checked_at_utc": "2026-11-09T05:57:40.093269+00:00",
+    "authenticated_login": "The-leonjr",
+    "repository": "hannannoor/messis-foot",
+    "private": false,
+    "default_branch": "main",
+    "branches": [
+      {
+        "name": "codex/cadence-baselines-2026-11-08",
+        "sha": "32113395c53ac5c7f425ab5ff3df8b33bd57c4db"
+      },
+      {
+        "name": "codex/competitor-audit-2026-11-08",
+        "sha": "f426c0e542c1ffdab1296531bdcf5ff0af9d7405"
+      },
+      {
+        "name": "codex/tactical-validation-and-coverage",
+        "sha": "cee674190775e9356745f461ba1561e9f2a46f7e"
+      },
+      {
+        "name": "main",
+        "sha": "3a1c8608e050e2f812826719e1af882d87cf2f67"
+      }
+    ],
+    "open_PRs": [
+      {
+        "number": 2,
+        "url": "https://github.com/hannannoor/messis-foot/pull/2",
+        "title": "Verify post-audit baselines and frozen WCSF transfer results",
+        "draft": true,
+        "head": "32113395c53ac5c7f425ab5ff3df8b33bd57c4db",
+        "base": "cee674190775e9356745f461ba1561e9f2a46f7e"
+      },
+      {
+        "number": 1,
+        "url": "https://github.com/hannannoor/messis-foot/pull/1",
+        "title": "Add possession pipeline and missing-ball evidence experiment",
+        "draft": false,
+        "head": "cee674190775e9356745f461ba1561e9f2a46f7e",
+        "base": "3a1c8608e050e2f812826719e1af882d87cf2f67"
+      }
+    ],
+    "latest_branch_history_count": 27,
+    "all_branch_heads_in_latest_history": true,
+    "mutations_performed": false
+  },
+  "scientific_checkpoint": "32113395c53ac5c7f425ab5ff3df8b33bd57c4db",
+  "measured_external_WCSF": {
+    "accuracy": 0.7095169908846436,
+    "official_macro_f1": 0.7072464532563515,
+    "spell_f1_mean": 0.5052164261931187,
+    "supported_macro_f1": 0.7072464532563515
+  },
+  "error_budget": {
+    "total_wrong_frames": 41587,
+    "missed_dead_frames": 33725,
+    "missed_dead_share_of_errors": 0.8109505374275615,
+    "live_HA_swaps": 7708,
+    "live_false_D": 154,
+    "known_live_correct_team_fraction": 0.8968566330814441
+  },
+  "challenge_score": null,
+  "grades": {
+    "engineering": 75,
+    "independent_evidence": 45,
+    "competition_readiness": 45,
+    "scale": 100,
+    "subjective_not_accuracy": true
+  },
+  "unverified": [
+    "Exact selected target CSV validity",
+    "Raw-to-identical challenge regeneration",
+    "One integrated final release and technical packet",
+    "Registration/team and submission logistics"
+  ],
+  "assessment_actions": {
+    "new_model_comparisons": 0,
+    "challenge_data_accesses": 0,
+    "target_outputs_opened": 0,
+    "visibility_mutations": 0,
+    "merges": 0
+  },
+  "next_goal_created": false
+}

@@ -1,0 +1,10 @@
+{
+  "official_revision": "f8f2629ff1e0985f81d7e59d8413678514ee1530",
+  "official_code_is_exact_text_prefix": true,
+  "all_official_AST_except_appended_license_equal": true,
+  "only_extra_statement": "OFFICIAL_SOURCE_LICENSE",
+  "metrics_changed": false,
+  "official_metric_sha256": "341bad48904b489d6e875397b27687f5d6a4d22a397f3dc8af3a00d48f16874d",
+  "local_metric_sha256": "3b10408fd91228c388fdbb1cd7b08a432bc59f88989c6eaf56c2153f92f11fe2",
+  "primary_url": "https://github.com/metrica-sports/more-than-a-hack-2027/blob/f8f2629ff1e0985f81d7e59d8413678514ee1530/evaluation/possession_metrics.py"
+}
