@@ -14,7 +14,7 @@ from gap_solver.tactical import feature_rows,PortableTree
 from gap_solver.tactical_model import FROZEN_MODEL
 from gap_solver.temporal_metrics import metric_periods
 from cadence_metrics import diagnostic_metrics
-from ownership_paths import path_tables,state_summary,patch_summary,ABS_TOL,REL_TOL
+from ownership_paths import path_tables,state_summary,constraint_summary,patch_summary,ABS_TOL,REL_TOL
 
 FAMILIES=('missed_D','false_D','ownership_swap')
 
@@ -146,6 +146,44 @@ def _baseline(gt,pred,periods):
     return dict(metrics=metrics,spells=spells,confusion=cm.tolist())
 
 
+def check_parity(baseline,pilot,support,expected):
+    """Scalar-only historical comparison, also usable by read-only verification."""
+    if set(expected)=={'pilot'}:
+        if pilot!=expected['pilot']:raise ValueError('Prior pilot parity failed')
+        return
+    if set(expected)!={'wcsf'}:raise ValueError('Unknown baseline parity contract')
+    spells=baseline['spells'];half=spells['per_iou']['0.5'];contract=expected['wcsf']
+    actual=dict(frames=support['frames'],known=support['known'],n_gt=spells['n_gt'],n_pred=spells['n_pred'],
+                **{key:half[key] for key in ('n_matched','n_missed','n_spurious')})
+    if set(contract) not in (set(actual),set(actual)|{'mean_f1','per_iou'}):raise ValueError('Unknown WCSF parity fields')
+    if actual!={key:contract[key] for key in actual}:raise ValueError('Prior WCSF count parity failed')
+    if 'mean_f1' in contract:
+        if not isclose(spells['mean_f1'],contract['mean_f1'],abs_tol=ABS_TOL,rel_tol=REL_TOL):raise ValueError('Prior mean F1 parity failed')
+        if set(contract['per_iou'])!=set(spells['per_iou']):raise ValueError('Historical IoU inventory differs')
+        for key,row in contract['per_iou'].items():
+            if set(row)!={'n_matched','n_missed','n_spurious','f1'}:raise ValueError('Historical spell fields differ')
+            for field,value in row.items():
+                measured=spells['per_iou'][key][field]
+                if not (isclose(measured,value,abs_tol=ABS_TOL,rel_tol=REL_TOL) if field=='f1' else measured==value):
+                    raise ValueError('Prior threshold parity failed')
+
+
+def _all_state_boundaries(gt,pred,periods):
+    a,b=_evaluation(gt,pred,periods);runs=official.valid_runs(a);filled=official.fill_abstentions(b,runs);result={}
+    for tolerance in (12,25):
+        counts={key:0 for key in ('n_gt','n_pred','n_matched','n_missed','n_spurious','n_ambiguous')};latencies=[]
+        for run in runs:
+            row=official.transition_scores(official.transitions(a,[run]),official.transitions(filled,[run]),tolerance,typed='to')
+            for key in counts:counts[key]+=row[key]
+            latencies.extend(p[0]-g[0] for g,p in row['pairs'])
+        tp=counts['n_matched'];ng=counts['n_gt'];npred=counts['n_pred']
+        counts.update(precision=tp/npred if npred else 0.,recall=tp/ng if ng else 0.,f1=2*tp/(ng+npred) if ng+npred else 0.,
+            mean_latency_frames=float(np.mean(latencies)) if latencies else None,
+            mean_abs_latency_frames=float(np.mean(np.abs(latencies))) if latencies else None,matched_latency_denominator=len(latencies))
+        result[str(tolerance)]=counts
+    return result
+
+
 def analyze_case(trace,reference,*,expected_parity=None,on_evaluation=None):
     gt,pred,periods=_arrays(reference,_codes(trace.final),trace.periods)
     n=len(gt)
@@ -162,21 +200,17 @@ def analyze_case(trace,reference,*,expected_parity=None,on_evaluation=None):
                raw_wrong_final_correct=int((measured&(raw!=gt)&(pred==gt)).sum()))
     if on_evaluation:on_evaluation('baseline_metric')
     baseline=_baseline(gt,pred,periods)
-    if expected_parity is not None:
-        if set(expected_parity)=={'pilot'}:
-            actual=pilot
-        elif set(expected_parity)=={'wcsf'}:
-            spells=baseline['spells'];half=spells['per_iou']['0.5']
-            actual=dict(frames=n,known=int(known.sum()),n_gt=spells['n_gt'],n_pred=spells['n_pred'],
-                        **{key:half[key] for key in ('n_matched','n_missed','n_spurious')})
-        else:raise ValueError('Unknown baseline parity contract')
-        if actual!=next(iter(expected_parity.values())):raise ValueError('Prior baseline parity failed')
+    if expected_parity is not None:check_parity(baseline,pilot,dict(frames=n,known=int(known.sum())),expected_parity)
+    margin_names=('prefix_before','local','future','full','emission_margin','switch_margin')
     families={name:dict(frames=0,episodes=0,objective_classes={key:dict(episodes=0,frames=0) for key in
                     ('wrong_emission_preference','switch_penalty_blocks_reference','numerical_tie','mixed_or_nonlocal')},
                     margins={key:_new_stats() for key in ('prefix_before','local','future','full','emission_margin','switch_margin')},
-                    local_reference_favoring_frames=0,local_wrong_favoring_frames=0,future_reversal_frames=0,
+                    local_reference_favoring_frames=0,local_wrong_favoring_frames=0,future_reversal_frames=0,numerical_tie_frames=0,
                     patch_emission_gain=0.,patch_additional_switches=0,patch_objective_gain=0.) for name in FAMILIES}
-    lengths={name:[] for name in FAMILIES};agreement={name:dict(frames=0,full_margin=_new_stats()) for name in 'HAD'}
+    lengths={name:[] for name in FAMILIES}
+    agreement={name:dict(frames=0,margins={key:_new_stats() for key in margin_names},numerical_tie_frames=0) for name in 'HAD'}
+    legacy=dict(frames=0,selected_D_frames=0,numerical_tie_frames=0,margins={key:_new_stats() for key in margin_names})
+    local_sign=np.zeros(n,dtype=np.int8)
     fingerprint=hashlib.sha256(b'ownership-input-paths-v1\n');exact_ties=0;checked=0
     for first,stop in trace.segments:
         table=path_tables(trace.emissions[first:stop]);selected=trace.latent[first:stop]
@@ -190,14 +224,22 @@ def analyze_case(trace,reference,*,expected_parity=None,on_evaluation=None):
         for index in range(first,stop):
             if not known[index]:continue
             r=int(gt[index]);p=int(latent[index]);at=index-first
+            if r<2:
+                query=constraint_summary(table,at,r);legacy['frames']+=1;legacy['selected_D_frames']+=int(p==2)
+                legacy['numerical_tie_frames']+=int(query['numerical_tie'])
+                for key,stat in legacy['margins'].items():_add_stat(stat,query[key])
             if r==p:
                 other=1-r if r<2 else max((0,1),key=lambda k:table.forward[at][k]+table.backward[at][k])
                 query=state_summary(table,at,r,other);row=agreement['HAD'[r]]
-                row['frames']+=1;_add_stat(row['full_margin'],query['full']);continue
+                row['frames']+=1;row['numerical_tie_frames']+=int(query['numerical_tie'])
+                for key,stat in row['margins'].items():_add_stat(stat,query[key])
+                continue
             query=state_summary(table,at,r,p)
             if query['full'] < -(ABS_TOL+REL_TOL*max(abs(query['reference_score']),abs(query['comparison_score']))):
                 raise ValueError('Selected state is not a constrained optimum')
             row=families[_family(r,p)];row['frames']+=1
+            row['numerical_tie_frames']+=int(query['numerical_tie'])
+            local_sign[index]=1 if query['local']>ABS_TOL else -1 if query['local'] < -ABS_TOL else 0
             for key,stat in row['margins'].items():_add_stat(stat,query[key])
             row['local_reference_favoring_frames']+=int(query['local'] < -ABS_TOL)
             row['local_wrong_favoring_frames']+=int(query['local']>ABS_TOL)
@@ -228,9 +270,18 @@ def analyze_case(trace,reference,*,expected_parity=None,on_evaluation=None):
         for index in np.flatnonzero(gt[a+1:b]!=gt[a:b-1])+a+1:near[max(a,index-50):min(b,index+51)]=True
     def stratum(mask):
         at=known&mask;wrong=at&error
+        swaps=wrong&live&(pred<2);supported_wrong=wrong&supported
         return dict(frames=int(at.sum()),known_live_frames=int((at&live).sum()),supported_errors=int((wrong&supported).sum()),
                     carried_errors=int((wrong&carried).sum()),ownership_swaps=int((at&live&(pred<2)&(pred!=gt)).sum()),
-                    wrong_with_opposed_memory=int((wrong&(memory<2)&(memory!=gt)).sum()))
+                    usable_frames=int((at&usable).sum()),unusable_frames=int((at&~usable).sum()),
+                    reference_state_support={name:int((at&(gt==k)).sum()) for k,name in enumerate('HAD')},
+                    memory_evaluable_ownership_swaps=int((swaps&(memory<2)).sum()),
+                    ownership_swaps_with_opposed_memory=int((swaps&(memory<2)&(memory!=gt)).sum()),
+                    family_emission_evidence={name:dict(frames=int((supported_wrong&family).sum()),
+                        local_reference_favoring=int((supported_wrong&family&(local_sign<0)).sum()),
+                        local_wrong_favoring=int((supported_wrong&family&(local_sign>0)).sum()),
+                        local_near_zero=int((supported_wrong&family&(local_sign==0)).sum()))
+                        for name,family in (('missed_D',gt==2),('false_D',(gt<2)&(pred==2)),('ownership_swap',live&(pred<2)))})
     counterfactuals={}
     for name,labels in diagnostic_repairs(trace,gt).items():
         if on_evaluation:on_evaluation(name)
@@ -239,12 +290,12 @@ def analyze_case(trace,reference,*,expected_parity=None,on_evaluation=None):
         counterfactuals[name]=dict(diagnostic_only=True,changed_rows=int((estimate!=pred).sum()),
             spell_f1_delta=new-old if old is not None and new is not None else None,
             metrics=evaluated['metrics'],spells=evaluated['spells'])
-    return dict(schema_version=1,support=dict(frames=n,known=int(known.sum()),unknown=n-int(known.sum()),
+    return dict(schema_version=2,support=dict(frames=n,known=int(known.sum()),unknown=n-int(known.sum()),
                    **{name:int((gt==k).sum()) for k,name in enumerate('HAD')}),
         input_segments=len(trace.segments),input_path_sha256=fingerprint.hexdigest(),exact_recurrence_ties=exact_ties,
         supported_error_frames=int((error&supported).sum()),carried_known_frames=int(carried.sum()),carried_error_frames=int((error&carried).sum()),
-        families=families,agreement=agreement,baseline=baseline,counterfactuals=counterfactuals,pilot_parity=pilot,
-        HA_boundaries=diagnostic_metrics(gt,pred,periods,[])['HA_boundaries'],policy_counts=trace.policy_counts,
+        families=families,agreement=agreement,legacy_HA_queries=legacy,baseline=baseline,counterfactuals=counterfactuals,pilot_parity=pilot,
+        HA_boundaries=diagnostic_metrics(gt,pred,periods,[])['HA_boundaries'],all_state_boundaries=_all_state_boundaries(gt,pred,periods),policy_counts=trace.policy_counts,
         strata=dict(all_known=stratum(np.ones(n,dtype=bool)),ball_observed=stratum(observed),ball_missing=stratum(~observed),
                     near_boundary_2s=stratum(near),near_annotation_edge_2s=stratum(edges),
                     observed_interior_beyond2s=stratum(observed&~near&~edges)))

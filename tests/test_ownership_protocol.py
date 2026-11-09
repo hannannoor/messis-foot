@@ -26,7 +26,8 @@ def fixture():
     with tempfile.TemporaryDirectory() as directory,ExitStack() as stack:
         root=Path(directory)/'code';root.mkdir()
         for name in ('competition_release.py','docs/superpowers/specs/2026-11-08-ownership-path-diagnosis-design.md',
-                     'docs/superpowers/plans/2026-11-08-ownership-path-diagnosis.md'):
+                     'docs/superpowers/plans/2026-11-08-ownership-path-diagnosis.md',
+                     *json.loads((ROOT/'release/manifest.json').read_text())['sources']):
             target=root/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(ROOT/name,target)
         sources={name:root/name for name in ('ownership_paths.py','ownership_diagnosis.py','ownership_run.py')}
         for path in sources.values():path.write_text('# controlled synthetic source identity\n')
@@ -136,11 +137,34 @@ class OwnershipProtocol(unittest.TestCase):
                 bad=copy.deepcopy(good)
                 if mutate=='new_event_key':bad['diagnostic']['harmless_notes']=[{'start':3,'owner':'H'}]
                 else:bad['diagnostic']['families']['false_D']['margins']['full']['total']=[1,2]
-                with self.assertRaises(ValueError):runner.validate_case_report(bad)
+                with self.assertRaises(ValueError):runner.validate_case_report(bad,good['input_sha256'])
             extra=session.public/'extra.json';extra.write_text('{}')
             with self.assertRaises(ValueError):session.verify()
             extra.unlink();path.write_text(json.dumps(dict(good,freeze_sha256='0'*64)))
             with self.assertRaises(ValueError):session.verify()
+
+    def test_summary_shadow_arrays_and_boolean_counts_are_rejected(self):
+        for kind in ('shadow','boolean'):
+            with fixture() as (root,_,__),self.subTest(kind=kind):
+                session=runner.DiagnosisSession('summary-egress',root=root)
+                session.freeze();session.run_cases();session.summarize()
+                path=session.public/'summary.json';original=path.read_text()
+                if kind=='shadow':path.write_text('{"schema_version":[{"start":1,"owner":"H"}],'+original[1:])
+                else:
+                    value=json.loads(original);value['schema_version']=True;path.write_text(json.dumps(value))
+                with self.assertRaises(ValueError):session.verify()
+
+    def test_case_hash_keys_and_prefreeze_release_runtime_drift(self):
+        with fixture() as (root,_,__):
+            session=runner.DiagnosisSession('hash-keys',root=root);session.freeze();session.run_cases();session.summarize()
+            good=json.loads((session.public/(runner.CASE_IDS[0]+'.json')).read_text())
+            runner.validate_case_report(good,good['input_sha256'])
+            bad=copy.deepcopy(good);bad['input_sha256']['private/home-coordinate/12.1/44.3']='a'*64
+            with self.assertRaises(ValueError):runner.validate_case_report(bad,good['input_sha256'])
+            with patch.object(runner.platform,'python_version',return_value='different-runtime'),self.assertRaises(ValueError):session.verify()
+        with fixture() as (root,_,__):
+            (root/'gap_solver/tactical.py').write_text('# persistent pre-freeze edit\n')
+            with self.assertRaises(ValueError):runner.DiagnosisSession('component-drift',root=root).freeze()
 
     def test_baseline_parity_precedes_path_queries_and_repairs(self):
         frames=[motion_frame(1,None,[(1.,1.)]*3,[(70.,1.)]*3) for _ in range(5)]

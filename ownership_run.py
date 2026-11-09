@@ -19,7 +19,7 @@ import numpy as np
 from accuracy_evidence import assert_public_report
 from gap_solver.input_contract import reject_linked_ancestors
 from gap_solver.tactical_model import FROZEN_MODEL
-from ownership_diagnosis import prepare_inference,analyze_case,FAMILIES
+from ownership_diagnosis import prepare_inference,analyze_case,check_parity,FAMILIES
 
 ROOT=Path(__file__).resolve().parent
 CASE_IDS=('skillcorner-1874553','skillcorner-1886347','dfl-J03WOH','dfl-J03WOY','wcsf-used-match')
@@ -58,6 +58,19 @@ def _write_new(path,value):
 
 def _hashes(paths):return {name:_sha(path) for name,path in sorted(paths.items())}
 def _utc():return datetime.now(timezone.utc).isoformat()
+
+
+def _environment():
+    import pandas as pd
+    return dict(python=platform.python_version(),numpy=np.__version__,pandas=pd.__version__,sqlite=sqlite3.sqlite_version,platform=platform.platform())
+
+
+def _release_components(root):
+    tree=ast.parse((root/'competition_release.py').read_text(encoding='utf-8'))
+    manifest=next(ast.literal_eval(node.value) for node in tree.body if isinstance(node,ast.Assign)
+        and any(isinstance(name,ast.Name) and name.id=='MANIFEST' for name in node.targets))
+    if manifest['model_sha256']!=MODEL or _hashes({name:root/name for name in manifest['sources']})!=manifest['sources']:
+        raise ValueError('Executed release component differs from pinned artifact')
 
 
 def _sources(root):
@@ -114,9 +127,11 @@ def _bindings(root):
     directory=root.parent/'wcsf-reference/wcsf-2026-11-09-2';cid=CASE_IDS[-1]
     if _sha(root/'reports/wcsf-transfer-v2/results.json')!='16297acd3e3d176f06ad105575f89d3ecf3818e9ee874a02bafde2cf70c8694d':
         raise ValueError('Prior WCSF result changed')
+    prior=_read(root/'reports/wcsf-transfer-v2/results.json')['match']['w0-c32-neutral-missing']['spells']
     result[cid]=dict(cohort='wcsf',files={cid+'/'+name:directory/name for name in WCSF_SHA},
         expected={cid+'/'+k:v for k,v in WCSF_SHA.items()},parity={'wcsf':dict(frames=143431,known=143165,
-            n_gt=411,n_pred=490,n_matched=233,n_missed=178,n_spurious=257)})
+            n_gt=411,n_pred=490,n_matched=233,n_missed=178,n_spurious=257,mean_f1=prior['mean_f1'],
+            per_iou={t:{k:row[k] for k in ('n_matched','n_missed','n_spurious','f1')} for t,row in prior['per_iou'].items()})})
     return result
 
 
@@ -172,21 +187,25 @@ STATS=dict(n='count',total='number',minimum='nullable',maximum='nullable',positi
 FAMILY=dict(frames='count',episodes='count',objective_classes={k:dict(episodes='count',frames='count') for k in
     ('wrong_emission_preference','switch_penalty_blocks_reference','numerical_tie','mixed_or_nonlocal')},
     margins={k:STATS for k in ('prefix_before','local','future','full','emission_margin','switch_margin')},
-    local_reference_favoring_frames='count',local_wrong_favoring_frames='count',future_reversal_frames='count',
+    local_reference_favoring_frames='count',local_wrong_favoring_frames='count',future_reversal_frames='count',numerical_tie_frames='count',
     patch_emission_gain='number',patch_additional_switches='integer',patch_objective_gain='number',
     duration=dict(median_s='nullable',p90_s='nullable',max_s='nullable',frames_in_episodes_at_least2s='count'))
 BOUNDARY={**{k:'count' for k in ('n_gt','n_pred','n_matched','n_missed','n_spurious','n_ambiguous','matched_latency_denominator')},
     **{k:'nullable' for k in ('precision','recall','f1','mean_latency_frames','mean_abs_latency_frames')}}
-DIAGNOSTIC=dict(schema_version=(1,),support={k:'count' for k in ('frames','known','unknown','H','A','D')},
+QUERY=dict(frames='count',numerical_tie_frames='count',margins={k:STATS for k in ('prefix_before','local','future','full','emission_margin','switch_margin')})
+DIAGNOSTIC=dict(schema_version=(2,),support={k:'count' for k in ('frames','known','unknown','H','A','D')},
     input_segments='count',input_path_sha256='hash',exact_recurrence_ties='count',supported_error_frames='count',
     carried_known_frames='count',carried_error_frames='count',families={k:FAMILY for k in FAMILIES},
-    agreement={k:dict(frames='count',full_margin=STATS) for k in 'HAD'},
+    agreement={k:QUERY for k in 'HAD'},legacy_HA_queries={**QUERY,'selected_D_frames':'count'},
     baseline=dict(metrics=METRICS,spells=SPELL_SCHEMA,confusion='confusion'),
     counterfactuals={k:dict(diagnostic_only=(True,),changed_rows='count',spell_f1_delta='nullable',metrics=METRICS,spells=SPELL_SCHEMA) for k in VARIANTS[1:]},
     pilot_parity={k:'count' for k in ('frames','wrong_team','raw_correct_final_wrong','raw_wrong_final_correct')},
-    HA_boundaries={str(t):BOUNDARY for t in (12,25)},
+    HA_boundaries={str(t):BOUNDARY for t in (12,25)},all_state_boundaries={str(t):BOUNDARY for t in (12,25)},
     policy_counts={k:'count' for k in ('neutral_active_usable_rows','unsupported_segments','unsupported_active_rows')},
-    strata={k:{field:'count' for field in ('frames','known_live_frames','supported_errors','carried_errors','ownership_swaps','wrong_with_opposed_memory')}
+    strata={k:{**{field:'count' for field in ('frames','known_live_frames','supported_errors','carried_errors','ownership_swaps',
+        'usable_frames','unusable_frames','memory_evaluable_ownership_swaps','ownership_swaps_with_opposed_memory')},
+        'reference_state_support':{state:'count' for state in 'HAD'},
+        'family_emission_evidence':{name:{field:'count' for field in ('frames','local_reference_favoring','local_wrong_favoring','local_near_zero')} for name in FAMILIES}}
         for k in ('all_known','ball_observed','ball_missing','near_boundary_2s','near_annotation_edge_2s','observed_interior_beyond2s')})
 
 
@@ -207,12 +226,13 @@ def _spell_counts(spells,known):
     if not _close(spells['mean_f1'],sum(scores)/len(scores) if scores else None):raise ValueError('Mean spell F1 differs')
 
 
-def validate_case_report(value):
+def validate_case_report(value,expected_input_sha256):
     if not isinstance(value,dict):raise ValueError('Case receipt must be a dictionary')
-    expected=dict(schema_version=(1,),case_id=CASE_IDS,freeze_sha256='hash',input_sha256={k:'hash' for k in value.get('input_sha256',{})},
+    expected=dict(schema_version=(1,),case_id=CASE_IDS,freeze_sha256='hash',input_sha256={k:'hash' for k in expected_input_sha256},
         trace_container_sha256='hash',trace_semantic_sha256='hash',diagnostic=DIAGNOSTIC,parity_passed=(True,),
         evaluation_counts={k:(1,) for k in VARIANTS})
     _shape(value,expected);assert_public_report(value)
+    if value['input_sha256']!=expected_input_sha256:raise ValueError('Input identity differs from trusted case binding')
     d=value['diagnostic'];s=d['support'];cm=d['baseline']['confusion']
     if s['known']+s['unknown']!=s['frames'] or s['H']+s['A']+s['D']!=s['known']:raise ValueError('Support counts differ')
     if [sum(row) for row in cm]!=[s[k] for k in ('H','A','D','unknown')]:raise ValueError('Confusion support differs')
@@ -230,7 +250,17 @@ def validate_case_report(value):
         if not _close(row['spell_f1_delta'],new-old if old is not None else None):raise ValueError('Counterfactual delta differs')
         changed=sum(d['families'][k]['frames'] for k in (('missed_D','false_D') if name==VARIANTS[1] else ('ownership_swap',)))
         if row['changed_rows']!=changed:raise ValueError('Repair eligibility differs')
-    for row in d['HA_boundaries'].values():
+    for query in list(d['agreement'].values())+[d['legacy_HA_queries']]:
+        if query['numerical_tie_frames']>query['frames']:raise ValueError('Query tie support differs')
+        for stat in query['margins'].values():
+            if stat['n']!=query['frames'] or stat['positive']+stat['negative']+stat['near_zero']!=stat['n']:raise ValueError('Query support differs')
+    for row in d['strata'].values():
+        if row['usable_frames']+row['unusable_frames']!=row['frames'] or sum(row['reference_state_support'].values())!=row['frames']:raise ValueError('Stratum support differs')
+        if row['ownership_swaps_with_opposed_memory']>row['memory_evaluable_ownership_swaps'] or row['memory_evaluable_ownership_swaps']>row['ownership_swaps']:raise ValueError('Swap-memory support differs')
+        for family in row['family_emission_evidence'].values():
+            if family['local_reference_favoring']+family['local_wrong_favoring']+family['local_near_zero']!=family['frames']:raise ValueError('Stratum emission signs differ')
+        if sum(f['frames'] for f in row['family_emission_evidence'].values())!=row['supported_errors']:raise ValueError('Stratum families differ')
+    for row in list(d['HA_boundaries'].values())+list(d['all_state_boundaries'].values()):
         if row['n_matched']+row['n_missed']!=row['n_gt'] or row['n_matched']+row['n_spurious']!=row['n_pred'] or row['matched_latency_denominator']!=row['n_matched']:raise ValueError('Boundary counts differ')
     return value
 
@@ -265,6 +295,7 @@ class DiagnosisSession:
         model_bytes=json.dumps(FROZEN_MODEL['model'],sort_keys=True,separators=(',',':'),allow_nan=False).encode()
         if hashlib.sha256(model_bytes).hexdigest()!=MODEL:raise ValueError('Frozen model changed')
         if _hashes({k:self.root/k for k in PROTECTED})!=PROTECTED:raise ValueError('Released artifact or approved design changed')
+        _release_components(self.root)
         sources=_sources(self.root)
         if not set(ENTRIES)<=set(sources):raise ValueError('Incomplete source inventory')
         bindings=_bindings(self.root)
@@ -278,14 +309,13 @@ class DiagnosisSession:
         self.private.parent.mkdir(parents=True,exist_ok=True);self.private.mkdir()
         _write_new(self.private/'.incomplete',dict(stage='freeze',utc=_utc()))
         self.public.mkdir(parents=True,exist_ok=False)
-        import pandas as pd
         value=dict(schema_version=1,run_id=self.run_id,created_utc=_utc(),source_git_commit=_git_commit(self.root),
             model_sha256=MODEL,source_sha256=_hashes(sources),input_sha256={cid:b['expected'] for cid,b in bindings.items()},
             case_contracts={cid:b['parity'] for cid,b in bindings.items()},
             protocol=dict(selected_id='w0-c32-neutral-missing',switch_cost=32,dead_weight=0,emission_floor=1e-6,
                 state_order='H/A/D',regime='natural',fresh_holdout=False,target_data_used=False,head_fitting_performed=False,
                 inference_entries=5,baseline_evaluations=5,reference_only_repair_evaluations=10,carry_eligible=False),
-            environment=dict(python=platform.python_version(),numpy=np.__version__,pandas=pd.__version__,sqlite=sqlite3.sqlite_version,platform=platform.platform()))
+            environment=_environment())
         assert_public_report(value);_write_new(self.public/'freeze.json',value)
         _write_new(self.private/'freeze-anchor.json',dict(freeze_sha256=_sha(self.public/'freeze.json')))
         _write_new(self.private/'input-map.json',{cid:{k:str(p.resolve()) for k,p in b['files'].items()} for cid,b in bindings.items()})
@@ -296,6 +326,7 @@ class DiagnosisSession:
         if (self.private/'.incomplete').exists():raise ValueError('Incomplete freeze')
         freeze=_read(self.public/'freeze.json');anchor=_read(self.private/'freeze-anchor.json')
         if anchor!={'freeze_sha256':_sha(self.public/'freeze.json')}:raise ValueError('Freeze anchor changed')
+        if freeze['environment']!=_environment():raise ValueError('Frozen runtime environment changed')
         sources,bindings=self._current()
         if freeze['source_sha256']!=_hashes(sources) or freeze['input_sha256']!={cid:b['expected'] for cid,b in bindings.items()} or freeze['case_contracts']!={cid:b['parity'] for cid,b in bindings.items()} or freeze['model_sha256']!=MODEL or freeze['run_id']!=self.run_id:
             raise ValueError('Frozen binding changed')
@@ -325,7 +356,7 @@ class DiagnosisSession:
             receipt=dict(schema_version=1,case_id=cid,freeze_sha256=identity,input_sha256=bindings[cid]['expected'],
                 trace_container_sha256=_sha(directory/'input-trace.npz'),trace_semantic_sha256=_semantic(arrays),
                 diagnostic=diagnostic,parity_passed=True,evaluation_counts={name:1 for name in VARIANTS})
-            validate_case_report(receipt)
+            validate_case_report(receipt,bindings[cid]['expected'])
             target=self.public/(cid+'.json');_write_new(target,receipt)
             if target.read_bytes()!=_bytes(receipt):raise ValueError('Persisted receipt differs')
             _write_new(directory/'complete.json',dict(report_sha256=_sha(target)))
@@ -340,17 +371,12 @@ class DiagnosisSession:
         for cid in CASE_IDS:
             directory=cases/cid
             if {p.name for p in directory.iterdir()}!={'input-trace.npz','complete.json'}:raise ValueError('Incomplete case generation')
-            path=self.public/(cid+'.json');value=validate_case_report(_read(path))
+            path=self.public/(cid+'.json');value=validate_case_report(_read(path),bindings[cid]['expected'])
             if value['case_id']!=cid or value['freeze_sha256']!=identity or value['input_sha256']!=bindings[cid]['expected'] or _read(directory/'complete.json')!={'report_sha256':_sha(path)}:raise ValueError('Case identity differs')
             if value['trace_container_sha256']!=_sha(directory/'input-trace.npz'):raise ValueError('Trace container changed')
             with np.load(directory/'input-trace.npz',allow_pickle=False) as trace:
                 if value['trace_semantic_sha256']!=_semantic({k:trace[k] for k in trace.files}):raise ValueError('Trace content changed')
-            parity=bindings[cid]['parity'];d=value['diagnostic']
-            if 'pilot' in parity:actual=d['pilot_parity']
-            else:
-                spells=d['baseline']['spells'];half=spells['per_iou']['0.5']
-                actual=dict(frames=d['support']['frames'],known=d['support']['known'],n_gt=spells['n_gt'],n_pred=spells['n_pred'],**{k:half[k] for k in ('n_matched','n_missed','n_spurious')})
-            if actual!=next(iter(parity.values())):raise ValueError('Stored parity differs')
+            d=value['diagnostic'];check_parity(d['baseline'],d['pilot_parity'],d['support'],bindings[cid]['parity'])
             rows[cid]=value
         return rows
 
@@ -377,7 +403,7 @@ class DiagnosisSession:
         expected={'freeze.json','summary.json',*(cid+'.json' for cid in CASE_IDS)}
         if not self.public.is_dir() or {p.name for p in self.public.iterdir()}!=expected:raise ValueError('Unexpected public inventory')
         rows=self._receipts()
-        if _read(self.public/'summary.json')!=self._summary(rows):raise ValueError('Summary differs')
+        if (self.public/'summary.json').read_bytes()!=_bytes(self._summary(rows)):raise ValueError('Summary bytes differ')
         events=[json.loads(line) for line in (self.private/'access.jsonl').read_text().splitlines()]
         expected=[]
         for cid in CASE_IDS:

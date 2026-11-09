@@ -34,6 +34,13 @@ examples/
 !reports/ownership-path/2026-11-09-natural-v1/dfl-J03WOY.json
 !reports/ownership-path/2026-11-09-natural-v1/wcsf-used-match.json
 !reports/ownership-path/2026-11-09-natural-v1/summary.json
+!reports/ownership-path/2026-11-09-natural-v2/freeze.json
+!reports/ownership-path/2026-11-09-natural-v2/skillcorner-1874553.json
+!reports/ownership-path/2026-11-09-natural-v2/skillcorner-1886347.json
+!reports/ownership-path/2026-11-09-natural-v2/dfl-J03WOH.json
+!reports/ownership-path/2026-11-09-natural-v2/dfl-J03WOY.json
+!reports/ownership-path/2026-11-09-natural-v2/wcsf-used-match.json
+!reports/ownership-path/2026-11-09-natural-v2/summary.json
 !reports/ownership-path/verification.json
 !benchmark/figshare-manifest.json
 !benchmark/provenance.json
