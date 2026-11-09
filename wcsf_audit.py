@@ -122,7 +122,7 @@ def source_paths(root):
                  'docs/reference-qualification/evaluation-protocol.md'):
         paths[name]=root/name
     required={'accuracy_experiment.py','accuracy_experiment_frozen.py','accuracy_evidence.py','ball_gap_candidate.py',
-              'wcsf_source.py','wcsf_geometry.py','wcsf_reference.py','wcsf_audit.py','wcsf_report.py'}
+              'wcsf_source.py','wcsf_geometry.py','wcsf_reference.py','wcsf_audit.py','wcsf_report.py','wcsf_postrun_verify.py'}
     if not required<=paths.keys() or any(not p.is_file() for p in paths.values()):raise ValueError('Incomplete prospective source inventory')
     return dict(sorted(paths.items()))
 
@@ -154,12 +154,12 @@ class AuditSession:
     def _expected_freeze(self):
         import pandas as pd
         import wcsf_source as source
-        return dict(schema_version=1,base_commit='61a90e331d1e025a00ab3e84e5b5827be654d9a8',
+        return dict(schema_version=1,base_commit='2abd83b3a719ae041671194000b4fa3c20ffcfd4',
             methods=list(METHODS),generation=self.private.name,
             assets={str(i):dict(name=n,git_blob=b,bytes=s) for i,(n,b,s) in enumerate(source.ASSETS,1)},
             source_sha256={n:sha256(p) for n,p in source_paths(self.root).items()},
             environment=dict(python=sys.version,numpy=np.__version__,pandas=pd.__version__,sqlite=sqlite3.sqlite_version,system=platform.system()),
-            contract='2026-11-09-wcsf-transfer-design + container-amendment v2; fixed descriptive three-method audit')
+            contract='2026-11-09-wcsf-transfer-design + container-amendment v2; post-review replay/log guards v3; unchanged fixed methods')
 
     def freeze(self):
         value=self._expected_freeze();write_new(self.public/'freeze.json',value);return value
@@ -220,8 +220,8 @@ class AuditSession:
         write_new(self.public/'geometry.json',value);return value
 
     def attempts(self):
-        p=self.private/'attempts.jsonl'
-        return [] if not p.exists() else [json.loads(s) for s in p.read_text(encoding='utf-8').splitlines()]
+        from wcsf_postrun_verify import load_attempts
+        return load_attempts(self.private/'attempts.jsonl',digest(self._freeze()))
 
     def _attempt(self,stage,method):
         from wcsf_source import event
@@ -258,8 +258,7 @@ class AuditSession:
         data=canonical_input(self.paths.geometry_db,decision)
         if data.quality!=value['quality']:raise ValueError('Canonical quality differs from seal')
         folder.mkdir()
-        self._attempt('infer',METHODS[0])
-        result=infer_fixed(data.frames,on_method=lambda m:self._attempt('infer',m) if m!=METHODS[0] else None)
+        result=infer_fixed(data.frames,on_method=lambda m:self._attempt('infer',m))
         files=self._prediction_paths()
         arrays={**result,'index':np.asarray(data.index,dtype=np.int64),
                 'endpoints':np.asarray([[(-1 if v is None else v) for v in pair] for pair in data.endpoints],dtype=np.int64),
@@ -279,35 +278,34 @@ class AuditSession:
         self._predictions()
         if (self.public/'results.json').exists():self._results();return read_json(self.public/'results.json')
         started=self.private/'score-started.json'
-        if started.exists():raise ValueError('Preserve incomplete scoring attempt; no automatic retry')
-        write_new(started,dict(freeze_sha256=digest(self._freeze())))
-        self._attempt('score',METHODS[0])
+        try:
+            with started.open('x',encoding='utf-8') as f:json.dump(dict(freeze_sha256=digest(self._freeze())),f)
+        except FileExistsError:raise ValueError('Scoring already claimed; preserve incomplete generation') from None
         event(self.paths.access_log,'reference_summary_and_outcomes_opened',protocol_hash=digest(self._freeze()),permanently_used=True)
         index_array=np.load(self._prediction_paths()['index'],allow_pickle=False)
         index=[(int(p),int(t)) for p,t in index_array]
         reference=reference_codes(self.paths.reference_db,index)
         methods={m:np.load(self._prediction_paths()[m],allow_pickle=False) for m in METHODS}
-        report=score_fixed(reference,index_array[:,0].astype(np.uint8),methods,
-                           on_method=lambda m:self._attempt('score',m) if m!=METHODS[0] else None)
+        report=score_fixed(reference,index_array[:,0].astype(np.uint8),methods,on_method=lambda m:self._attempt('score',m))
         write_new(self.public/'results.json',report)
         write_new(self.public/'score-seal.json',dict(schema_version=1,freeze_sha256=digest(self._freeze()),
             predictions_seal_sha256=sha256(self.public/'predictions-seal.json'),results_sha256=sha256(self.public/'results.json'),
-            attempts_sha256=sha256(self.private/'attempts.jsonl')))
+            attempts_sha256=sha256(self.private/'attempts.jsonl'),access_sha256=sha256(self.paths.access_log)))
         return report
 
     def _results(self):
         from wcsf_report import read_json,keys,validate_report
         self._predictions();seal=read_json(self.public/'score-seal.json')
-        keys(seal,('schema_version','freeze_sha256','predictions_seal_sha256','results_sha256','attempts_sha256'))
+        keys(seal,('schema_version','freeze_sha256','predictions_seal_sha256','results_sha256','attempts_sha256','access_sha256'))
         expected=dict(schema_version=1,freeze_sha256=digest(self._freeze()),
             predictions_seal_sha256=sha256(self.public/'predictions-seal.json'),results_sha256=sha256(self.public/'results.json'),
-            attempts_sha256=sha256(self.private/'attempts.jsonl'))
+            attempts_sha256=sha256(self.private/'attempts.jsonl'),access_sha256=sha256(self.paths.access_log))
         if seal!=expected:raise ValueError('Scientific result/attempt identity changed')
         if [a['method'] for a in self.attempts() if a['stage']=='score']!=list(METHODS):raise ValueError('Unexpected scoring attempts')
         validate_report(read_json(self.public/'results.json'))
-        events=[json.loads(s)['event'] for s in self.paths.access_log.read_text(encoding='utf-8').splitlines()]
-        if events.count('predictions_sealed')!=1 or events.count('reference_summary_and_outcomes_opened')!=1 or events.index('predictions_sealed')>events.index('reference_summary_and_outcomes_opened'):
-            raise ValueError('Reference/outcome opening order differs')
+        from wcsf_postrun_verify import validate_logs
+        acquisition=self._acquisition()
+        validate_logs(self.paths.access_log,self.private/'attempts.jsonl',digest(self._freeze()),acquisition['first_machine_reference_access_utc'])
         return seal
 
     def verify(self):
@@ -329,8 +327,12 @@ class AuditSession:
 def main():
     import argparse
     root=Path(__file__).resolve().parent
+    import re
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('stage',choices=('freeze','acquire','qualify','infer','score','verify'))
-    args=parser.parse_args();session=AuditSession(root,root/'reports/wcsf-transfer-v2',root.parent/'wcsf-reference/wcsf-2026-11-09-2')
+    parser.add_argument('--run-id',required=True,help='Fresh replay identity; published evidence is checked by wcsf_postrun_verify.py public')
+    args=parser.parse_args()
+    if not re.fullmatch('[A-Za-z0-9][A-Za-z0-9_-]{0,63}',args.run_id):parser.error('Run identity must be 1..64 letters/digits/underscores/hyphens')
+    session=AuditSession(root,root/'.tmp/wcsf-runs'/args.run_id/'reports',root.parent/'wcsf-reference'/args.run_id)
     try:
         result=getattr(session,args.stage)()
         summary=dict(stage=args.stage,status='ok')

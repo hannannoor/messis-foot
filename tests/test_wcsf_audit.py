@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier,Lock
 from unittest.mock import patch
 
 from wcsf_fixtures import rows,csv_zip
@@ -87,11 +89,54 @@ class AuditTests(unittest.TestCase):
 
     def test_attempt_counter_includes_aborted_call(self):
         self.ready();self.session.infer()
-        with patch('wcsf_audit.score_fixed',side_effect=ValueError('synthetic failure')):
+        with patch('wcsf_audit._score_cell',side_effect=ValueError('synthetic failure after method entry')):
             with self.assertRaises(ValueError):self.session.score()
         attempts=self.session.attempts();self.assertEqual(sum(a['stage']=='score' for a in attempts),1)
         with self.assertRaises(ValueError):self.session.score()
         self.assertEqual(self.session.attempts(),attempts)
+
+    def test_reference_load_failure_has_no_method_attempt(self):
+        self.ready();self.session.infer()
+        with patch('wcsf_reference.reference_codes',side_effect=ValueError('synthetic reference load failure')):
+            with self.assertRaises(ValueError):self.session.score()
+        self.assertEqual([e for e in self.session.attempts() if e['stage']=='score'],[])
+
+    def test_two_concurrent_score_callers_compute_once(self):
+        self.ready();self.session.infer();barrier=Barrier(2);lock=Lock();calls=[]
+        original_write=self.api.write_new;original_score=self.api.score_fixed
+        def write(path,value):
+            if Path(path).name=='score-started.json':
+                barrier.wait(timeout=30)
+                with lock:return original_write(path,value)
+            return original_write(path,value)
+        def score(*args,**kwargs):
+            with lock:calls.append(1)
+            return original_score(*args,**kwargs)
+        def caller():
+            try:self.session.score();return True
+            except (ValueError,FileExistsError):return False
+        with patch('wcsf_audit.write_new',side_effect=write),patch('wcsf_audit.score_fixed',side_effect=score):
+            with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(lambda _:caller(),range(2)))
+        self.assertTrue(any(results));self.assertEqual(len(calls),1)
+
+    def test_access_and_attempt_logs_reject_deleted_unknown_and_duplicate_events(self):
+        self.ready();self.session.infer();self.session.score()
+        access=self.session.paths.access_log;attempts=self.session.private/'attempts.jsonl';sealpath=self.session.public/'score-seal.json'
+        original_access=access.read_bytes();original_attempts=attempts.read_bytes();original_seal=sealpath.read_bytes()
+        for kind in ('delete_machine','unknown_stage','duplicate_key','wrong_protocol'):
+            access.write_bytes(original_access);attempts.write_bytes(original_attempts);sealpath.write_bytes(original_seal)
+            if kind=='delete_machine':access.write_bytes(b'\n'.join(original_access.splitlines()[1:])+b'\n')
+            elif kind=='wrong_protocol':
+                lines=original_access.decode().splitlines();row=json.loads(lines[0]);row['protocol_hash']='0'*64;lines[0]=json.dumps(row);access.write_text('\n'.join(lines)+'\n')
+            elif kind=='unknown_stage':
+                row=json.loads(original_attempts.splitlines()[0]);row['stage']='other'
+                with attempts.open('a') as f:f.write(json.dumps(row)+'\n')
+            else:
+                text=original_attempts.decode();self.assertIn('"stage": "infer"',text);attempts.write_bytes(text.replace('"stage": "infer"','"stage": "other", "stage": "infer"',1).encode())
+            seal=json.loads(sealpath.read_text());seal['attempts_sha256']=self.api.sha256(attempts)
+            if 'access_sha256' in seal:seal['access_sha256']=self.api.sha256(access)
+            sealpath.write_text(json.dumps(seal))
+            with self.subTest(kind=kind),self.assertRaises(ValueError):self.session.verify()
 
 
 if __name__=='__main__':unittest.main()

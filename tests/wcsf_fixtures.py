@@ -3,6 +3,9 @@ from pathlib import Path
 import csv
 import io
 import zipfile
+from contextlib import contextmanager
+import hashlib
+from unittest.mock import patch
 
 HEADERS = ('x','y','group_id','timestamp_ms','x_ball','y_ball','player_id','AliveFlag','PossessionFlag')
 
@@ -38,3 +41,20 @@ def source_paths(folder, first=None, second=None):
     archives=(csv_zip(folder/'first.zip',rows() if first is None else first),
               csv_zip(folder/'second.zip',rows() if second is None else second))
     return SourcePaths(archives,folder/'geometry.sqlite',folder/'reference.sqlite',folder/'access.jsonl')
+
+
+@contextmanager
+def scored_session(folder):
+    import wcsf_source
+    from wcsf_audit import AuditSession
+    folder=Path(folder);assets=[];responses={}
+    for name,_,_ in wcsf_source.ASSETS:
+        p=csv_zip(folder/name,rows());b=p.read_bytes()
+        assets.append((name,hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest(),len(b)));responses[name]=b
+    session=AuditSession(Path(__file__).resolve().parents[1],folder/'reports',folder/'private')
+    with patch('wcsf_source.ASSETS',tuple(assets)):
+        session.freeze()
+        with patch('wcsf_source.urllib.request.urlopen',side_effect=lambda req,**kw:io.BytesIO(responses[req.full_url.rsplit('/',1)[1]])):
+            session.acquire()
+        session.qualify();session.infer();session.score();session.verify()
+        yield session

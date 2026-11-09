@@ -1,0 +1,26 @@
+{
+  "acquisition_sha256": "1b5a6f488b10aaa18633bacff619252739bca0f2bb2565ce4b072da2ae23541d",
+  "decision": {
+    "candidate_counts": {
+      "absolute-x": 233,
+      "absolute-xy": 57374,
+      "offset-x": 0,
+      "offset-xy": 0
+    },
+    "eligible": 57374,
+    "failure": null,
+    "selected": "absolute-xy"
+  },
+  "freeze_sha256": "cca43bd48da128247fea378fc8e8d3cc5455969ace0f93de377e9458259fc4aa",
+  "quality": {
+    "canonical_rows": 143431,
+    "interpolated_ball_rows": 114744,
+    "interpolated_geometry_rows": 114744,
+    "missing_ball_rows": 0,
+    "native_ball_rows": 28687,
+    "native_grid_rows": 28687,
+    "native_source_frames": 57374,
+    "unusable_geometry_rows": 0
+  },
+  "schema_version": 1
+}

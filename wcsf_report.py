@@ -8,7 +8,7 @@ IOUS=('0.3','0.4','0.5','0.6','0.7')
 BINS=('short','medium','long','very_long')
 
 
-def read_json(path):
+def parse_json(text):
     def pairs(items):
         result={}
         for key,value in items:
@@ -16,7 +16,11 @@ def read_json(path):
             result[key]=value
         return result
     def constant(_):raise ValueError('Nonfinite JSON value')
-    with open(path,encoding='utf-8') as f:return json.load(f,object_pairs_hook=pairs,parse_constant=constant)
+    return json.loads(text,object_pairs_hook=pairs,parse_constant=constant)
+
+
+def read_json(path):
+    with open(path,encoding='utf-8') as f:return parse_json(f.read())
 
 
 def prf(tp,fp,fn):
@@ -95,6 +99,9 @@ def _cell(value):
             if n>ng:raise ValueError('Short-spell match exceeds support')
             number(cell['recall'],n/ng if ng else None)
     if sum(r['n_gt'] for r in value['duration'].values())!=value['spells']['n_gt']:raise ValueError('Duration-bin support differs')
+    for iou in IOUS:
+        if sum(r['per_iou'][iou]['n_matched'] for r in value['duration'].values())!=value['spells']['per_iou'][iou]['n_matched']:
+            raise ValueError('Duration matches differ from total matches')
     keys(value['HA_boundaries'],('12','25'))
     for tolerance,row in value['HA_boundaries'].items():
         keys(row,('n_gt','n_pred','n_matched','n_missed','n_spurious','n_ambiguous','precision','recall','f1',
@@ -134,6 +141,19 @@ def validate_report(value):
             for iou in IOUS:
                 for key in ('n_matched','n_spurious','n_missed'):
                     if match['per_iou'][iou][key]!=sum(extract(h)['per_iou'][iou][key] for h in halves):raise ValueError('Match IoU counts not pooled')
+        for name in BINS:
+            row=cell['duration'][name]
+            if row['n_gt']!=sum(h['duration'][name]['n_gt'] for h in halves):raise ValueError('Duration support not pooled')
+            for iou in IOUS:
+                if row['per_iou'][iou]['n_matched']!=sum(h['duration'][name]['per_iou'][iou]['n_matched'] for h in halves):raise ValueError('Duration matches not pooled')
+        for tolerance in ('12','25'):
+            row=cell['HA_boundaries'][tolerance];parts=[h['HA_boundaries'][tolerance] for h in halves]
+            for key in ('n_gt','n_pred','n_matched','n_missed','n_spurious','n_ambiguous','matched_latency_denominator'):
+                if row[key]!=sum(p[key] for p in parts):raise ValueError('Boundary counts not pooled')
+            for key in ('mean_latency_frames','mean_abs_latency_frames'):
+                total=row['matched_latency_denominator']
+                expected=sum(p[key]*p['matched_latency_denominator'] for p in parts if p['matched_latency_denominator'])/total if total else None
+                number(row[key],expected)
     for method,delta in value['deltas'].items():
         keys(delta,METRICS)
         for metric in METRICS:

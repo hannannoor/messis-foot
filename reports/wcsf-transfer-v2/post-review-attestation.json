@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "stage": "post_run_guard_attestation",
+  "historical_source_commit": "2abd83b3a719ae041671194000b4fa3c20ffcfd4",
+  "historical_freeze_sha256": "cca43bd48da128247fea378fc8e8d3cc5455969ace0f93de377e9458259fc4aa",
+  "results_sha256": "16297acd3e3d176f06ad105575f89d3ecf3818e9ee874a02bafde2cf70c8694d",
+  "historical_sources_verified": 175,
+  "private_input_hashes_verified": 4,
+  "private_output_hashes_verified": 6,
+  "logs": {
+    "access_sha256": "295581fb772bfad3cf4fd628bbe8a030a22a4792f1234afa6839fe678730b8c7",
+    "attempts_sha256": "9f452c4e908af01912b8676de6a86648dab815918b20827b5e4999e1357c6504",
+    "access_events": 3,
+    "inference_attempts": 3,
+    "scoring_attempts": 3,
+    "attempt_timestamp_semantics": "legacy first-score stage entry"
+  },
+  "scientific_rescoring_performed": false,
+  "guards_added_after_scoring": true,
+  "guard_source_sha256": {
+    "wcsf_postrun_verify.py": "e32cd3ae972615f72378c9d755ac86c2fc55e1a5647471de1db449135410fa0d",
+    "wcsf_report.py": "27a76bfed9ca5059ea58c67503f570b271b273fe506c0b46eb40c5d01aa20f6f",
+    "wcsf_audit.py": "662759144448de5d7fa44abcefd8f3f6285512ffb183fd96d3b657c408be5cb9"
+  }
+}

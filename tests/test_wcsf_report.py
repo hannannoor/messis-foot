@@ -84,5 +84,16 @@ class ReportTests(unittest.TestCase):
             else:row['n_ambiguous']=row['n_gt']+1
             with self.subTest(kind=kind),self.assertRaises(ValueError):self.api.validate_report(r)
 
+    def test_duration_and_boundary_diagnostics_match_totals_and_halves(self):
+        for kind in ('duration_matches','duration_pool','ambiguity_pool','latency_pool'):
+            r=self.case();cell=r['match']['w0-c32-neutral-missing']
+            if kind=='duration_matches':cell['duration']['short']['per_iou']['0.3'].update(n_matched=0,recall=0.)
+            elif kind=='duration_pool':
+                cell['duration']['short']['n_gt']=3;cell['duration']['long']['n_gt']=1
+                for row in cell['duration']['short']['per_iou'].values():row['recall']=2/3
+            elif kind=='ambiguity_pool':cell['HA_boundaries']['12']['n_ambiguous']=1
+            else:cell['HA_boundaries']['12'].update(mean_latency_frames=5.,mean_abs_latency_frames=5.)
+            with self.subTest(kind=kind),self.assertRaises(ValueError):self.api.validate_report(r)
+
 
 if __name__=='__main__':unittest.main()

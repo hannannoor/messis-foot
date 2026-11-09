@@ -1,0 +1,13 @@
+{
+  "first_machine_reference_access_utc": "2026-11-09T01:57:20.798222+00:00",
+  "freeze_sha256": "cca43bd48da128247fea378fc8e8d3cc5455969ace0f93de377e9458259fc4aa",
+  "identical_geometry_duplicates": 0,
+  "input_sha256": {
+    "archive_1": "e7e5d753dba30549a01f2e37695556dc3cdf62043e8e3e6447a71e77da30fede",
+    "archive_2": "8653a296952a717eb1f106fce77bf497f28e34cae673f7e3ae6baa61908751ae",
+    "geometry_store": "951f4e6d91c0706654181874e116932db345f16094108ba8dfcc1fd4264ce6c3",
+    "reference_store": "39465638737add82029468a4d292a71317f702e05dbc4fdd6bd58100171fb398"
+  },
+  "schema_version": 1,
+  "source_rows": 1262231
+}
