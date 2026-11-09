@@ -1,0 +1,3 @@
+# Official code/format checks only; selected inference has no pip dependencies.
+numpy==2.5.1
+pandas==3.0.5

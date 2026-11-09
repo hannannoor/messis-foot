@@ -1,0 +1,90 @@
+{
+  "checked_on": "2026-11-09",
+  "scope": "Planning only; repository documentation/code and local source bytes; no challenge assets, reference labels or predictions opened.",
+  "project": {
+    "head": "aaa5ba8f938545f77d8e2cb084bea561ef09c680",
+    "branch": "codex/cadence-baselines-2026-11-08",
+    "visibility": "public",
+    "remote_blobs": 443,
+    "local_blobs_checked": 443,
+    "missing": [],
+    "changed": [],
+    "changes_since_handoff": 0,
+    "branches": [
+      {
+        "name": "codex/cadence-baselines-2026-11-08",
+        "sha": "aaa5ba8f938545f77d8e2cb084bea561ef09c680"
+      },
+      {
+        "name": "codex/competitor-audit-2026-11-08",
+        "sha": "f426c0e542c1ffdab1296531bdcf5ff0af9d7405"
+      },
+      {
+        "name": "codex/tactical-validation-and-coverage",
+        "sha": "cee674190775e9356745f461ba1561e9f2a46f7e"
+      },
+      {
+        "name": "main",
+        "sha": "3a1c8608e050e2f812826719e1af882d87cf2f67"
+      }
+    ],
+    "open_prs": [
+      {
+        "number": 2,
+        "draft": true,
+        "head": "aaa5ba8f938545f77d8e2cb084bea561ef09c680",
+        "base": "cee674190775e9356745f461ba1561e9f2a46f7e"
+      },
+      {
+        "number": 1,
+        "draft": false,
+        "head": "cee674190775e9356745f461ba1561e9f2a46f7e",
+        "base": "3a1c8608e050e2f812826719e1af882d87cf2f67"
+      }
+    ]
+  },
+  "competition": {
+    "head": "f8f2629ff1e0985f81d7e59d8413678514ee1530",
+    "changes_since_pinned_revision": 0,
+    "files": [
+      {
+        "path": "EVALUATION.md",
+        "blob_sha": "0c281c41787cdbb77b1f8b6aba9403f28cf9c4a2",
+        "url": "https://github.com/metrica-sports/more-than-a-hack-2027/blob/f8f2629ff1e0985f81d7e59d8413678514ee1530/EVALUATION.md"
+      },
+      {
+        "path": "RULES.md",
+        "blob_sha": "d26a3835a93e800cc2039723943a250d90a44c20",
+        "url": "https://github.com/metrica-sports/more-than-a-hack-2027/blob/f8f2629ff1e0985f81d7e59d8413678514ee1530/RULES.md"
+      },
+      {
+        "path": "SUBMISSION.md",
+        "blob_sha": "ef703837ba6855dba010704256d7375752a559f5",
+        "url": "https://github.com/metrica-sports/more-than-a-hack-2027/blob/f8f2629ff1e0985f81d7e59d8413678514ee1530/SUBMISSION.md"
+      },
+      {
+        "path": "evaluation/possession_metrics.py",
+        "blob_sha": "767494a053628cbdc81a8e9deaf43ef21cc7e58a",
+        "url": "https://github.com/metrica-sports/more-than-a-hack-2027/blob/f8f2629ff1e0985f81d7e59d8413678514ee1530/evaluation/possession_metrics.py"
+      },
+      {
+        "path": "evaluation/run_evaluation.py",
+        "blob_sha": "16adc82b66ec15c7d4bb1ca86a72eceb7327d45f",
+        "url": "https://github.com/metrica-sports/more-than-a-hack-2027/blob/f8f2629ff1e0985f81d7e59d8413678514ee1530/evaluation/run_evaluation.py"
+      },
+      {
+        "path": "evaluation/validate_submission.py",
+        "blob_sha": "9b25e3fc9f4973f5b58f1d58fd19ef80d34b206b",
+        "url": "https://github.com/metrica-sports/more-than-a-hack-2027/blob/f8f2629ff1e0985f81d7e59d8413678514ee1530/evaluation/validate_submission.py"
+      }
+    ],
+    "deadline": "2026-11-17",
+    "closing_time_timezone": "not specified"
+  },
+  "runtime_observed": {
+    "python": "CPython 3.14.5 Windows x64",
+    "numpy": "2.5.1",
+    "pandas": "3.0.5"
+  },
+  "completed_experiments_repeated": 0
+}
