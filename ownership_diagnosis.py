@@ -146,7 +146,7 @@ def _baseline(gt,pred,periods):
     return dict(metrics=metrics,spells=spells,confusion=cm.tolist())
 
 
-def analyze_case(trace,reference):
+def analyze_case(trace,reference,*,expected_parity=None,on_evaluation=None):
     gt,pred,periods=_arrays(reference,_codes(trace.final),trace.periods)
     n=len(gt)
     if any(len(value)!=n for value in (trace.emissions,trace.observed,trace.usable,trace.latent,trace.raw_codes,trace.memory_owner,trace.memory_age)):
@@ -155,6 +155,22 @@ def analyze_case(trace,reference):
     error=known&(pred!=gt);supported=known&(latent<3);carried=known&(latent==3)
     if np.any((latent<3)&(latent!=pred)):
         raise ValueError('Supported labels changed during materialization')
+    memory=np.asarray(trace.memory_owner);raw=np.asarray(trace.raw_codes)
+    measured=live&observed&usable
+    pilot=dict(frames=int(live.sum()),wrong_team=int((live&(pred<2)&(pred!=gt)).sum()),
+               raw_correct_final_wrong=int((measured&(raw==gt)&(pred!=gt)).sum()),
+               raw_wrong_final_correct=int((measured&(raw!=gt)&(pred==gt)).sum()))
+    if on_evaluation:on_evaluation('baseline_metric')
+    baseline=_baseline(gt,pred,periods)
+    if expected_parity is not None:
+        if set(expected_parity)=={'pilot'}:
+            actual=pilot
+        elif set(expected_parity)=={'wcsf'}:
+            spells=baseline['spells'];half=spells['per_iou']['0.5']
+            actual=dict(frames=n,known=int(known.sum()),n_gt=spells['n_gt'],n_pred=spells['n_pred'],
+                        **{key:half[key] for key in ('n_matched','n_missed','n_spurious')})
+        else:raise ValueError('Unknown baseline parity contract')
+        if actual!=next(iter(expected_parity.values())):raise ValueError('Prior baseline parity failed')
     families={name:dict(frames=0,episodes=0,objective_classes={key:dict(episodes=0,frames=0) for key in
                     ('wrong_emission_preference','switch_penalty_blocks_reference','numerical_tie','mixed_or_nonlocal')},
                     margins={key:_new_stats() for key in ('prefix_before','local','future','full','emission_margin','switch_margin')},
@@ -210,24 +226,19 @@ def analyze_case(trace,reference):
     for a,b in _blocks(known,periods):
         edges[a:min(b,a+50)]=True;edges[max(a,b-50):b]=True
         for index in np.flatnonzero(gt[a+1:b]!=gt[a:b-1])+a+1:near[max(a,index-50):min(b,index+51)]=True
-    memory=np.asarray(trace.memory_owner);raw=np.asarray(trace.raw_codes)
     def stratum(mask):
         at=known&mask;wrong=at&error
         return dict(frames=int(at.sum()),known_live_frames=int((at&live).sum()),supported_errors=int((wrong&supported).sum()),
                     carried_errors=int((wrong&carried).sum()),ownership_swaps=int((at&live&(pred<2)&(pred!=gt)).sum()),
                     wrong_with_opposed_memory=int((wrong&(memory<2)&(memory!=gt)).sum()))
-    baseline=_baseline(gt,pred,periods)
     counterfactuals={}
     for name,labels in diagnostic_repairs(trace,gt).items():
+        if on_evaluation:on_evaluation(name)
         estimate=_codes(labels);evaluated=_baseline(gt,estimate,periods)
         old=baseline['spells']['mean_f1'];new=evaluated['spells']['mean_f1']
         counterfactuals[name]=dict(diagnostic_only=True,changed_rows=int((estimate!=pred).sum()),
             spell_f1_delta=new-old if old is not None and new is not None else None,
             metrics=evaluated['metrics'],spells=evaluated['spells'])
-    measured=live&observed&usable
-    pilot=dict(frames=int(live.sum()),wrong_team=int((live&(pred<2)&(pred!=gt)).sum()),
-               raw_correct_final_wrong=int((measured&(raw==gt)&(pred!=gt)).sum()),
-               raw_wrong_final_correct=int((measured&(raw!=gt)&(pred==gt)).sum()))
     return dict(schema_version=1,support=dict(frames=n,known=int(known.sum()),unknown=n-int(known.sum()),
                    **{name:int((gt==k).sum()) for k,name in enumerate('HAD')}),
         input_segments=len(trace.segments),input_path_sha256=fingerprint.hexdigest(),exact_recurrence_ties=exact_ties,
