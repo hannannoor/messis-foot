@@ -20,6 +20,7 @@ examples/
 !config.example.json
 !requirements*.txt
 !OFFICIAL_METRIC_LICENSE.txt
+!release/manifest.json
 !benchmark/figshare-manifest.json
 !benchmark/provenance.json
 !benchmark/frozen/freeze-manifest.json
