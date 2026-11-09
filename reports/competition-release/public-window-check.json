@@ -1,0 +1,19 @@
+{
+  "artifact_sha256": "e8d35e15be9524270bed82352791dc2849087b49b4c2b59c191023954b19eddb",
+  "candidate_count": 1,
+  "csv_sha256": "4074cc046500e3d54668a81baf5e46f6d90aeb40a0a247fcefbfa8ee1bd226a5",
+  "hidden_full_match_score_known": false,
+  "metrics": {
+    "accuracy": 0.668,
+    "macro_f1": 0.4941997358152784,
+    "n_graded": 7500,
+    "n_gt_spells": 17,
+    "n_pred_spells": 23,
+    "spell_f1_mean": 0.38
+  },
+  "no_tuning_or_selection": true,
+  "official_revision": "f8f2629ff1e0985f81d7e59d8413678514ee1530",
+  "schema_version": 1,
+  "scope": "one_frozen_public_five_minute_correctness_check",
+  "score_attempts": 1
+}

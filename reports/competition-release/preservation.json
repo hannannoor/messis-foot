@@ -1,0 +1,19 @@
+{
+  "all_other_original_blobs_identical": true,
+  "allowed_original_changes": [
+    ".gitignore",
+    "README.md"
+  ],
+  "base_commit": "aaa5ba8f938545f77d8e2cb084bea561ef09c680",
+  "frozen_public_score_attempts": 1,
+  "model_or_setting_changed": false,
+  "new_target_inference_calls": 2,
+  "original_blobs_checked": 443,
+  "protected_sha256": {
+    "docs/superpowers/plans/2026-11-08-ownership-path-diagnosis.md": "54e3465bba5bb822b4e6f478b484c3caf52f6f780900a3c8c42960c720fcd65a",
+    "docs/superpowers/specs/2026-11-08-ownership-path-diagnosis-design.md": "bddff762f6539b5d0966cd467ea39417f254bf3f1511ced8146f199e072122c9",
+    "reports/wcsf-transfer-v2/results.json": "16297acd3e3d176f06ad105575f89d3ecf3818e9ee874a02bafde2cf70c8694d"
+  },
+  "schema_version": 1,
+  "scientific_comparisons_rerun": 0
+}

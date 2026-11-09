@@ -36,7 +36,9 @@ On the previously unused WCSF audit, the unchanged control scored spell F1 .5052
 
 The control misses many stoppages: WCSF D recall 49.6198%, with missed D accounting for 81.095% of wrong frames. That does not quantify its share of spell-score loss. Direct H/A boundary recall within 12 canonical frames is 84/237. Frozen DFL inactive coordinates may make stationarity an overly effective provider shortcut. Missing/reacquired ball speeds, retained-control features, asymmetric learned support, unobserved hidden changes, nonlocal smoothing and deterministic ties remain limitations. Coordinate availability does not prove observation freshness or physical possession truth.
 
-The release decision reports real-file regeneration and any scoped public five-minute check separately. The public check is not model-selection evidence; the private full-match score/rank remains unknown. Future performance work should attribute missed/split/merged spell objects and emissions versus decoder costs before testing one justified intervention.
+Two clean raw-input runs now regenerate the exact selected file and match both preserved historical selected files byte-for-byte; the exact file passes the official format validator. [Reproduction receipt](../reports/competition-release/reproduction.json).
+
+One frozen public five-minute correctness check covered 7500 graded frames and 17 reference spells (23 predicted): spell F1 .3800, macro F1 .494200, accuracy 66.8%. No model/setting selection, tuning, alternate candidate or time-shift search followed. [Scoped public-check receipt](../reports/competition-release/public-window-check.json). This small-window result does not estimate the private full-match score/rank. Future performance work should attribute missed/split/merged spell objects and emissions versus decoder costs using already-used external cases, excluding the public window, before testing one justified intervention.
 
 ## Reproduction
 
