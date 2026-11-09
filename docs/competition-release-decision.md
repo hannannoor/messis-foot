@@ -8,7 +8,7 @@ Status: **candidate under verification**, unchanged `w0-c32-neutral-missing`. No
 | Standalone/build | 13 selected modules; isolated `-I -S` inference; deterministic builds; no research receipts, unused model files or third-party inference dependencies. |
 | Output protection | New-directory exclusive claim, input mutation check, incomplete marker, validation before completion, race/hardlink/junction tests. |
 | Full-index synthetic contract | Passed on a generated 199319-row fixture, including original-index/structural endpoints and the unchanged official validator. [Receipt](../reports/competition-release/contract.json). |
-| Whole-change review / suite | Pre-target suite passed: 481 total, 19 environment skips, 462 executed, all 19 new release tests execute. Fresh whole-change review pending. |
+| Whole-change review / suite | One fresh review found five Important guard issues; one RED→GREEN fix pass addressed them and a coherent-build-snapshot issue. Final suite: 489 total, 19 environment skips, 470 executed; all 27 new release tests execute. [Review/fix record](competition-release-review.md). |
 | Two real raw-to-identical-file runs | Pending; no target access in implementation so far. |
 | Exact selected-file official validation | Pending. |
 | One frozen public-window correctness check | Pending; no tuning/comparison permitted. |

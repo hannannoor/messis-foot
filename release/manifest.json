@@ -21,7 +21,7 @@
     "gap_solver/tactical.py": "b0e4550ae80d6f6d7293781f1bb2401450397591f3239a1bdff7a961aa19f93f",
     "gap_solver/tactical_model.py": "2072a0585d85128eb8127e8b295e2f7e1757e21569356bb6b8ef9d7f09c74f45",
     "gap_solver/temporal.py": "f62aac2d9ce5ae4e957749cd0e70588484e315d2feeb5c4e22359bb9fff51822",
-    "release_runtime.py": "bc770e4ccf8cdb72a7234f2072c198f6dbaeea51e3c5a321b469c929b14fb20d"
+    "release_runtime.py": "a10bac2fc9b95b263b450ab0f1a7c5704501c7f2d71a6fcd0caa5fe4ccbe9d60"
   },
   "switch_cost": 32.0,
   "version": "2026.11.09-frozen-control-release"

@@ -17,6 +17,8 @@ python competition_release.py --version
 
 Use the exact executable revision listed in the release decision when reproducing the candidate. The builder reads an explicit 13-module source map and emits deterministic artifact/manifest bytes. The manifest identifies selected sources and the frozen model; runtime does not verify unrelated research history. The new release reads raw inputs directly, so its identity does not depend on random research-cache UUIDs. Old cache seals remain unchanged.
 
+Run the standalone in its own fresh Python process. It rejects preloaded modules that could bypass the embedded source loader, pins the loaded artifact identity and refuses completion if its disk bytes change. Builder writes reject linked output paths and replace only staged owned files.
+
 ## Generate the selected CSV
 
 ```powershell

@@ -9,17 +9,6 @@ import json
 import os
 from pathlib import Path
 from typing import Sequence
-import xml.etree.ElementTree as ET
-
-from ball_gap_policy import POLICY_ID, decode_ball_gap
-from gap_solver.anonymous_motion import associate_anonymous
-from gap_solver.input_contract import read_epts_contract, iter_records, quality_mask, sha256, reject_linked_ancestors
-from gap_solver.io import N_FRAMES
-from gap_solver.materialization_control import materialize_abstentions
-from gap_solver.motion import MotionFrame
-from gap_solver.soft_sequence import sequence_usable
-from gap_solver.tactical import PortableTree, feature_rows
-from gap_solver.tactical_model import FROZEN_MODEL
 
 MODEL_SHA256 = '363c45c70838b398cd87aee7474d7e281fd392f059a31b85712e312058aaab4d'
 VERSION = '2026.11.09-frozen-control-release'
@@ -51,8 +40,28 @@ RELEASE_SETTINGS = {
     'csv_schema': 'frame,label; UTF-8 without BOM; CRLF including final row',
     'semantic_schema': 'release-input-v1; sorted compact JSON MotionFrame records; LF',
 }
-_BUNDLE_MANIFEST = None
-_BUNDLE_ARTIFACT = None
+_BUNDLE_MANIFEST = globals().get('_BUNDLE_MANIFEST')
+_BUNDLE_ARTIFACT = globals().get('_BUNDLE_ARTIFACT')
+_BUNDLE_START_SHA256 = globals().get('_BUNDLE_START_SHA256')
+
+
+def _source_manifest() -> dict:
+    root = Path(__file__).resolve().parent
+    return dict(RELEASE_SETTINGS, sources={path: hashlib.sha256((root/path).read_bytes()).hexdigest()
+                                          for path in sorted(SOURCE_FILES.values())})
+
+
+_SOURCE_START_MANIFEST = _source_manifest() if _BUNDLE_MANIFEST is None else None
+
+from ball_gap_policy import POLICY_ID, decode_ball_gap
+from gap_solver.anonymous_motion import associate_anonymous
+from gap_solver.input_contract import read_epts_contract, iter_records, quality_mask, sha256, reject_linked_ancestors
+from gap_solver.io import N_FRAMES
+from gap_solver.materialization_control import materialize_abstentions
+from gap_solver.motion import MotionFrame
+from gap_solver.soft_sequence import sequence_usable
+from gap_solver.tactical import PortableTree, feature_rows
+from gap_solver.tactical_model import FROZEN_MODEL
 
 
 def _json_bytes(value) -> bytes:
@@ -123,11 +132,14 @@ def submission_bytes(labels: Sequence[str]) -> bytes:
 
 def _release_identity() -> dict:
     if _BUNDLE_MANIFEST is not None:
+        if not _is_digest(_BUNDLE_START_SHA256) or sha256(_BUNDLE_ARTIFACT) != _BUNDLE_START_SHA256:
+            raise ValueError('Loaded release artifact changed on disk')
         manifest = _BUNDLE_MANIFEST
-        identity = dict(mode='standalone', artifact_sha256=sha256(_BUNDLE_ARTIFACT))
+        identity = dict(mode='standalone', artifact_sha256=_BUNDLE_START_SHA256)
     else:
-        root = Path(__file__).resolve().parent
-        manifest = dict(RELEASE_SETTINGS, sources={path: sha256(root/path) for path in sorted(SOURCE_FILES.values())})
+        if _source_manifest() != _SOURCE_START_MANIFEST:
+            raise ValueError('Loaded release sources changed on disk')
+        manifest = _SOURCE_START_MANIFEST
         identity = dict(mode='source')
     return dict(identity, manifest_sha256=hashlib.sha256(_json_bytes(manifest)).hexdigest(),
                 source_sha256=manifest['sources'], version=VERSION)
@@ -146,6 +158,10 @@ def _protect_destination(directory: Path) -> None:
         raise FileExistsError('Release requires a new nonexistent output directory')
 
 
+def _is_digest(value) -> bool:
+    return type(value) is str and len(value) == 64 and all(c in '0123456789abcdef' for c in value)
+
+
 def _verify_generation(directory: Path, *, _allow_incomplete: bool = False) -> dict:
     directory = Path(directory)
     if ((directory/'.incomplete').exists() and not _allow_incomplete) or not (directory/'release-receipt.json').is_file():
@@ -156,8 +172,25 @@ def _verify_generation(directory: Path, *, _allow_incomplete: bool = False) -> d
     receipt = json.loads((directory/'release-receipt.json').read_text(encoding='utf-8'))
     required = {'schema_version', 'policy_id', 'model_sha256', 'release', 'scope', 'input_sha256',
                 'semantic_sha256', 'labels_sha256', 'csv_sha256', 'rows', 'label_counts', 'policy_counts'}
-    if set(receipt) != required or receipt['schema_version'] != 1 or receipt['policy_id'] != POLICY_ID:
+    if type(receipt) is not dict or set(receipt) != required or receipt['schema_version'] != 1 or receipt['policy_id'] != POLICY_ID:
         raise ValueError('Invalid release receipt')
+    rows = receipt['rows']
+    counts = receipt['policy_counts']
+    count_keys = {'neutral_active_usable_rows', 'unsupported_segments', 'unsupported_active_rows',
+                  'materialized_rows', 'latent_unknown_active'}
+    if (type(rows) is not int or rows < 1 or receipt['scope'] not in ('tactical', 'synthetic')
+            or receipt['scope'] == 'tactical' and rows != N_FRAMES
+            or receipt['model_sha256'] != MODEL_SHA256 or receipt['release'] != _release_identity()
+            or not all(_is_digest(receipt[key]) for key in ('semantic_sha256','labels_sha256','csv_sha256'))
+            or type(receipt['input_sha256']) is not dict
+            or set(receipt['input_sha256']) != {'metadata','tracking','homography'}
+            or not all(_is_digest(value) for value in receipt['input_sha256'].values())
+            or type(counts) is not dict or set(counts) != count_keys
+            or any(type(value) is not int or not 0 <= value <= rows for value in counts.values())
+            or type(receipt['label_counts']) is not dict
+            or not set(receipt['label_counts']) <= set('HADX')
+            or any(type(value) is not int or not 0 < value <= rows for value in receipt['label_counts'].values())):
+        raise ValueError('Invalid release provenance or bounded counts')
     data = (directory/'submission.csv').read_bytes()
     if hashlib.sha256(data).hexdigest() != receipt['csv_sha256']:
         raise ValueError('Submission identity differs from receipt')
@@ -196,7 +229,10 @@ def run_source(meta: Path, raw: Path, quality: Path, directory: Path, *, scope: 
                    labels_sha256=hashlib.sha256(''.join(prediction.labels).encode('ascii')).hexdigest(),
                    csv_sha256=sha256(directory/'submission.csv'), rows=len(prediction.labels),
                    label_counts=dict(Counter(prediction.labels)), policy_counts=prediction.counts)
-    _write_exclusive(directory/'release-receipt.json', _json_bytes(receipt)+b'\n')
+    receipt_bytes = _json_bytes(receipt)+b'\n'
+    _write_exclusive(directory/'release-receipt.json', receipt_bytes)
+    if (directory/'release-receipt.json').read_bytes() != receipt_bytes:
+        raise ValueError('Persisted receipt differs from completed inference')
     _verify_generation(directory, _allow_incomplete=True)
     (directory/'.incomplete').unlink()
     return receipt
@@ -210,7 +246,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         receipt = run_source(*(Path(args.prefix+suffix) for suffix in ('_atd.xml','_atd.txt','_homography.csv')), Path(args.out))
-    except (OSError, ValueError, TypeError, KeyError, ET.ParseError) as error:
+    except Exception as error:
         parser.error('Release input/output validation failed ('+type(error).__name__+'); check schema, input identity and a new output directory')
     print(json.dumps(dict(status='complete', policy_id=POLICY_ID, rows=receipt['rows'], csv_sha256=receipt['csv_sha256']), sort_keys=True))
     return 0

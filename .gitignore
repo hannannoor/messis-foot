@@ -22,6 +22,7 @@ examples/
 !OFFICIAL_METRIC_LICENSE.txt
 !release/manifest.json
 !reports/competition-release/contract.json
+!reports/competition-release/validation.json
 !reports/release-planning-2026-11-09/state-check.json
 !benchmark/figshare-manifest.json
 !benchmark/provenance.json
