@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "proposal_frozen_on": "2026-11-09",
+  "states": {
+    "documentation_reviewed": true,
+    "existing_cohort_metadata_checked": true,
+    "WCSF_archives_acquired": false,
+    "WCSF_rows_opened": false,
+    "WCSF_reference_opened": false,
+    "WCSF_model_outcomes_opened": false,
+    "new_annotations_created": false,
+    "challenge_data_opened": false
+  },
+  "executed_actions": {
+    "dataset_assets_downloaded": 0,
+    "models_scored": 0,
+    "forms_submitted": 0,
+    "accounts_created": 0,
+    "messages_sent": 0,
+    "money_spent": 0
+  },
+  "source_use_classification": {
+    "WCSF": "Unused assets/outcomes; documentation visited. One match with two halves.",
+    "SkillCorner_20_and_DFL_7": "Previously used: not fresh qualification.",
+    "PFF": "Documentation only; no acquisition.",
+    "SoccerTrack_v2": "Documentation/metadata only; no acquisition."
+  },
+  "reference_access_events": [],
+  "outcome_opening_events": [],
+  "acquisition_events": [],
+  "frozen_method_proposal": {
+    "release_commit": "ac411327bc7d4ab92ca7c291b5c3a6eb9c411e1f",
+    "primary": "w0-c32-neutral-missing",
+    "comparators": [
+      "official-convention-w50",
+      "matched-input-w50"
+    ],
+    "selection_basis": "Completed seen-development natural baseline comparison, before WCSF outcomes.",
+    "fit_or_parameter_search_allowed": false,
+    "rejected_cadence_contrast_included": false,
+    "decision_rule": "Descriptive paired comparisons only; no advancement or superiority claim."
+  },
+  "partition_proposal": {
+    "development": "Existing used sources only.",
+    "calibration": "None on WCSF.",
+    "qualification": "Both WCSF halves together: one provider-transfer audit.",
+    "after_outcomes": "Permanently used; all later adaptation is development/regression."
+  },
+  "future_required_events": [
+    "Acquisition timestamp/archive identities.",
+    "Input-only structural decision and coordinate/time contract.",
+    "Complete source/protocol/reference-mapping freeze.",
+    "First reference access and outcome opening."
+  ],
+  "future_event_fields": [
+    "event",
+    "timestamp_utc",
+    "source_identity",
+    "protocol_hash",
+    "actor",
+    "purpose"
+  ],
+  "resources_requiring_new_decision": [
+    "Paid data/annotation, owner messages, account/form/gate acceptance are not included."
+  ],
+  "source_specific_next_permitted_step": "Separately plan/check WCSF structural adapter and fixed audit before acquisition.",
+  "existing_roadmap_next_goal": "Approved whole-segment diagnosis; any reordering must be explicit in a subsequent planning goal."
+}

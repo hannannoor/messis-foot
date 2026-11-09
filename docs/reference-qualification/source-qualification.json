@@ -1,0 +1,245 @@
+{
+  "schema_version": 1,
+  "report_frozen_on": "2026-11-09",
+  "scope": "Exactly three prior scout leads; documentation and existing metadata only.",
+  "selected_source": "WCSF Solution Room",
+  "sources": [
+    {
+      "source": "WCSF Solution Room",
+      "documentation_checked_on": "2026-11-08",
+      "primary_links": [
+        "https://github.com/MatKempeGroningen/WCSF_SolutionRoom/blob/1c9ba798f98a9fffb16081a5d3965774d4e5662c/README.md",
+        "https://github.com/MatKempeGroningen/WCSF_SolutionRoom/issues/5#issuecomment-6681182193",
+        "https://github.com/MatKempeGroningen/WCSF_SolutionRoom/tree/1c9ba798f98a9fffb16081a5d3965774d4e5662c"
+      ],
+      "revision": "1c9ba798f98a9fffb16081a5d3965774d4e5662c",
+      "asset_metadata": [
+        {
+          "path": "positions_FIRST_HALF.csv.zip",
+          "sha": "d7de2a38f5650150684b1008aa7f4fd28b85d777",
+          "size": 22704565
+        },
+        {
+          "path": "positions_SECOND_HALF.csv.zip",
+          "sha": "66fc3ee2966aaf3392d4a327ba3f49385e9c7032",
+          "size": 23746663
+        }
+      ],
+      "asset_rights": {
+        "tracking_and_state_fields": "Owner declares dataset MIT; no repository LICENSE file.",
+        "video": "Not required or acquired.",
+        "redistribution": "Raw assets will not be republished by this project."
+      },
+      "access_steps": [
+        "Public pinned archive GET in a separately planned goal; verify Git blob identities before extraction."
+      ],
+      "dense_HAD_status": "Documented co-timed liveness and possession fields; actual support/consistency unopened.",
+      "ontology": {
+        "home": 1,
+        "away": 2,
+        "alive_field": "AliveFlag",
+        "possession_field": "PossessionFlag",
+        "unknowns": "Conflicting, missing or invalid references become evaluation X; exact contested/flight conventions unknown."
+      },
+      "known_overlap": "League/time metadata support different match from all 20 SkillCorner and 7 DFL matches; exact identity unknown.",
+      "label_independence": "Maintainer attributes manual state annotation to SciSports; error/adjudication rates undocumented.",
+      "resource_estimate": {
+        "compressed_bytes": 46451228,
+        "extracted_bytes": null,
+        "proposed_extracted_limit_bytes": 2000000000,
+        "price": 0,
+        "local_disk_check_required": true
+      },
+      "unresolved_dependencies": [
+        "Input-only ball coordinate reconstruction, clock, duplicates and frame coverage.",
+        "Verify H/A/D and event support without modifying the frozen method selection."
+      ],
+      "disposition": "Selected credible acquisition path; structural qualification pending, not a ready validated benchmark."
+    },
+    {
+      "source": "PFF 2022 World Cup",
+      "documentation_checked_on": "2026-11-08",
+      "primary_links": [
+        "https://www.blog.fc.pff.com/blog/pff-fc-release-2022-world-cup-data"
+      ],
+      "asset_rights": {
+        "tracking": "Applicable grant not verified.",
+        "events": "Applicable grant not verified.",
+        "video": "Not requested."
+      },
+      "access_steps": [
+        "Provider access form; not submitted. Terms/specification required before acquisition."
+      ],
+      "dense_HAD_status": "Tracking/events advertisement does not establish dense full-state reference.",
+      "ontology": "Full-state semantics and annotation provenance not verified.",
+      "known_overlap": "World Cup identity differs in league; no match-level acquisition/use ledger verified.",
+      "label_independence": "Unknown for the desired dense state reference.",
+      "resource_estimate": {
+        "matches_advertised": 64,
+        "bytes": null,
+        "price": null
+      },
+      "unresolved_dependencies": [
+        "Access terms, specification, dense state availability and storage estimate."
+      ],
+      "disposition": "Unqualified in this bounded scope; no form, account or contact."
+    },
+    {
+      "source": "SoccerTrack v2",
+      "documentation_checked_on": "2026-11-08",
+      "primary_links": [
+        "https://github.com/AtomScott/SoccerTrack-v2/blob/a752d294df2a0e816e827b70f284980698f5a50e/LICENSE-DATA",
+        "https://github.com/AtomScott/SoccerTrack-v2/blob/a752d294df2a0e816e827b70f284980698f5a50e/docs/format-gsr.md",
+        "https://github.com/AtomScott/SoccerTrack-v2/blob/a752d294df2a0e816e827b70f284980698f5a50e/docs/format-bas.md",
+        "https://huggingface.co/api/datasets/atomscott/soccertrack-v2"
+      ],
+      "revision": "a752d294df2a0e816e827b70f284980698f5a50e",
+      "hf_revision": "325bd4c57ee8e135ab652f3921d274526ada496b",
+      "asset_rights": {
+        "video": "Explicit CC BY 4.0 dataset licence.",
+        "GSR_BAS_MOT": "Explicit CC BY 4.0 dataset licence; credit and changes required.",
+        "code": "Separate MIT code licence."
+      },
+      "access_steps": [
+        "Canonical Hugging Face metadata reports gated=auto; no gate accepted or asset downloaded."
+      ],
+      "dense_HAD_status": "No verified dense H/A/D or compatible ball-XY reference; BAS events cannot fill missing state truth.",
+      "ontology": "Player reconstruction plus ball actions; separate blinded full-state annotation/input construction needed.",
+      "known_overlap": "Ten university match IDs; checked match dates null. Exact overlap remains unverified.",
+      "label_independence": "Fresh manual state labels would need prediction-blinded external annotators and adjudication.",
+      "resource_estimate": {
+        "matches_documented": 10,
+        "annotation_json_per_half_gb_approx": 2.7,
+        "naive_json_memory_gb_approx": 20,
+        "annotation_cost": null
+      },
+      "unresolved_dependencies": [
+        "Gate terms, match identity, ball observations, current schema/time/geometry divergences.",
+        "Independent annotation manual, annotators, adjudication and resource quote."
+      ],
+      "disposition": "Licensed external-annotation fallback; substantially larger project, not a ready H/A/D holdout."
+    }
+  ],
+  "source_selection_is_not_performance_qualification": true,
+  "owner_evidence": {
+    "url": "https://github.com/MatKempeGroningen/WCSF_SolutionRoom/issues/5#issuecomment-6681182193",
+    "author": "MatKempeGroningen",
+    "association": "OWNER",
+    "created_at": "2026-11-06T09:01:27Z",
+    "cached_response_sha256": "914a8e6c1af79ffe575733a17ef12eb44320eb378becbf0d2e7f826c00cf6384"
+  },
+  "documentation_receipts": {
+    "wcsf-repository.json": {
+      "url": "https://api.github.com/repos/MatKempeGroningen/WCSF_SolutionRoom",
+      "status": 200,
+      "bytes": 6067,
+      "sha256": "dda0dbfb2ffffc41ef86558ba0bd4abc8db7d7e8591bbe03d2d38edffc32cb3d",
+      "documentation_or_metadata_only": true
+    },
+    "wcsf-head.json": {
+      "url": "https://api.github.com/repos/MatKempeGroningen/WCSF_SolutionRoom/commits/main",
+      "status": 200,
+      "bytes": 5013,
+      "sha256": "c72a3e74689167fd47dd2ac2c6fb25ee92b7be4f2e5a5cb7b05bb6e8a26b58a3",
+      "documentation_or_metadata_only": true
+    },
+    "wcsf-tree.json": {
+      "url": "https://api.github.com/repos/MatKempeGroningen/WCSF_SolutionRoom/git/trees/1c9ba798f98a9fffb16081a5d3965774d4e5662c?recursive=1",
+      "status": 200,
+      "bytes": 2045,
+      "sha256": "87c5a3007084a0ddbb17d5747c4f56e7b771f8a79bf04bfd7b9fb4fd4ec4bc81",
+      "documentation_or_metadata_only": true
+    },
+    "wcsf-README.md.txt": {
+      "url": "https://raw.githubusercontent.com/MatKempeGroningen/WCSF_SolutionRoom/1c9ba798f98a9fffb16081a5d3965774d4e5662c/README.md",
+      "status": 200,
+      "bytes": 6935,
+      "sha256": "c96cf55603b0b51a5229e988284a878043a7a9e374f5724e2563d23a00ca8f41",
+      "documentation_or_metadata_only": true
+    },
+    "soccertrack-repository.json": {
+      "url": "https://api.github.com/repos/AtomScott/SoccerTrack-v2",
+      "status": 200,
+      "bytes": 5435,
+      "sha256": "de68c14a008742346bc2c8c6db8b38cd4144580177382f7dd68679b84ec951ca",
+      "documentation_or_metadata_only": true
+    },
+    "soccertrack-head.json": {
+      "url": "https://api.github.com/repos/AtomScott/SoccerTrack-v2/commits/main",
+      "status": 200,
+      "bytes": 9177,
+      "sha256": "91eb024474a90c21fb3da18d674f0f70258732c543532ad5c9c8d71528c6e860",
+      "documentation_or_metadata_only": true
+    },
+    "soccertrack-tree.json": {
+      "url": "https://api.github.com/repos/AtomScott/SoccerTrack-v2/git/trees/a752d294df2a0e816e827b70f284980698f5a50e?recursive=1",
+      "status": 200,
+      "bytes": 88861,
+      "sha256": "e515214edd45a3d622c2c9e49590c4d0fd0e989a3ee30f48f22bfdfe2028f7f9",
+      "documentation_or_metadata_only": true
+    },
+    "soccertrack-README.md.txt": {
+      "url": "https://raw.githubusercontent.com/AtomScott/SoccerTrack-v2/a752d294df2a0e816e827b70f284980698f5a50e/README.md",
+      "status": 200,
+      "bytes": 6047,
+      "sha256": "672fd07fafc650ce6bdd257443c6f8767038d370f81a324a98776642c4c1e451",
+      "documentation_or_metadata_only": true
+    },
+    "soccertrack-LICENSE-DATA.txt": {
+      "url": "https://raw.githubusercontent.com/AtomScott/SoccerTrack-v2/a752d294df2a0e816e827b70f284980698f5a50e/LICENSE-DATA",
+      "status": 200,
+      "bytes": 1686,
+      "sha256": "35a20f5f925dcd821c3d002976a6b2758132227ac2d2440ddbd05edc99848711",
+      "documentation_or_metadata_only": true
+    },
+    "soccertrack-docs-format-gsr.md.txt": {
+      "url": "https://raw.githubusercontent.com/AtomScott/SoccerTrack-v2/a752d294df2a0e816e827b70f284980698f5a50e/docs/format-gsr.md",
+      "status": 200,
+      "bytes": 11175,
+      "sha256": "54859ab20387a09de4216475408ba13acf4b0e7f1f5690e8fc6ac62c0827c71f",
+      "documentation_or_metadata_only": true
+    },
+    "soccertrack-docs-format-bas.md.txt": {
+      "url": "https://raw.githubusercontent.com/AtomScott/SoccerTrack-v2/a752d294df2a0e816e827b70f284980698f5a50e/docs/format-bas.md",
+      "status": 200,
+      "bytes": 5179,
+      "sha256": "19c61f6c413c9d402cfa9d3d25ca7c9505bef3cf19924f7d856f455e6cd6482c",
+      "documentation_or_metadata_only": true
+    },
+    "soccertrack-docs-matches.json.txt": {
+      "url": "https://raw.githubusercontent.com/AtomScott/SoccerTrack-v2/a752d294df2a0e816e827b70f284980698f5a50e/docs/matches.json",
+      "status": 200,
+      "bytes": 2352,
+      "sha256": "27dc7f88c9a623da3dedca6b599da749542ab33f1b894ade67fee8d1a7742fd4",
+      "documentation_or_metadata_only": true
+    },
+    "wcsf-issues.json": {
+      "url": "https://api.github.com/repos/MatKempeGroningen/WCSF_SolutionRoom/issues?state=all&per_page=10",
+      "status": 200,
+      "bytes": 17962,
+      "sha256": "bdf4dd89c83eb37984e904336fbe1cca1331d9d3a60231fadd9988c8e18ed3fb",
+      "documentation_or_metadata_only": true
+    },
+    "soccertrack-hf-metadata.json": {
+      "url": "https://huggingface.co/api/datasets/atomscott/soccertrack-v2",
+      "status": 200,
+      "bytes": 10912,
+      "sha256": "23eef50023fb92d323a1265c64aec4686f4c05c81deb4665839c8e71f0603458",
+      "documentation_or_metadata_only": true
+    },
+    "wcsf-issue-5.json": {
+      "url": "https://api.github.com/repos/MatKempeGroningen/WCSF_SolutionRoom/issues/5",
+      "status": 200,
+      "bytes": 3168,
+      "sha256": "47572242dd63c0d7fc959c46def3485ff464b9fc2626d5cf4a178877b71a6463",
+      "documentation_or_metadata_only": true
+    },
+    "wcsf-issue-5-comments.json": {
+      "url": "https://api.github.com/repos/MatKempeGroningen/WCSF_SolutionRoom/issues/5/comments",
+      "status": 200,
+      "bytes": 2152,
+      "sha256": "914a8e6c1af79ffe575733a17ef12eb44320eb378becbf0d2e7f826c00cf6384",
+      "documentation_or_metadata_only": true
+    }
+  }
+}

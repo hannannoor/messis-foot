@@ -1,0 +1,234 @@
+{
+  "schema_version": 1,
+  "documentation_only": true,
+  "claim": "Different-match status supported by league/time metadata; exact anonymous WCSF identity unverified.",
+  "wcsf_primary_link": "https://github.com/MatKempeGroningen/WCSF_SolutionRoom/issues/5#issuecomment-6681182193",
+  "skillcorner_source_revision": "4340d274572876239c154c90bc507a9b3250a656",
+  "skillcorner_records": [
+    {
+      "match_id": 1874553,
+      "date_time": "2024-11-23T06:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "e6974e402779d8be44e75bf88ef2a3acfd4d025b87b3fc57f518fa826a645ad8",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 1886347,
+      "date_time": "2024-11-30T04:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "30c608e78663e9f490b3545479a3ce67b171f418c5133d5609cb249a2466abb2",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 1899585,
+      "date_time": "2024-12-07T04:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "41de8cb74a0512fcf0cbaaa5c615ae3e7dcaaf6745b9c78a050b59b906b1cb06",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 1925299,
+      "date_time": "2024-12-21T06:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "f4345b32c0fdd7c9990df70050b3a74f57b1992cf762e20f2a4d309bd2fba7d2",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 1927964,
+      "date_time": "2024-12-22T06:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "f967f911c20f5c5f8c89bbe2020a30c92731173616d5a1e4bafeb65435278b76",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 1953632,
+      "date_time": "2024-12-31T08:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "366c8dd6b504d4f4ace5685040648b0f30081043a44f01663b8b7e077e6bfde8",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 1959846,
+      "date_time": "2025-01-10T08:35:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "4bbe2058af53edd42d5e3acd7fb28ecb8c79e4afb16cb9b77a6fe9b58f6e516b",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 1986691,
+      "date_time": "2025-01-26T06:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "754f6a6fd0d996236cf553ef5c3c24513274b0db024cb6833a7419b08d55dd68",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 1996435,
+      "date_time": "2025-02-01T06:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "f54179645d3c3f308a7094086283277f2a7c99da5f3919302e622cbd82f9d065",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 1996436,
+      "date_time": "2025-02-01T04:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "4e8999668a79fccd43f01e5538d7595b4614ec6061d648b831a96951e495c78a",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 2006229,
+      "date_time": "2025-03-07T08:35:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "87386df74b45eb7ccac80742c603763146cb2b61f47561122355fe246d8795eb",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 2006363,
+      "date_time": "2025-03-08T08:35:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "26d4068baf7454d1e066b6e70715da6c7ac016b14963a3bfa3ed99ed7c3aba79",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 2007448,
+      "date_time": "2025-03-15T10:45:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "434b31c032656be4a89e7042eadd442d4dfb468e4bfa87ce188102f314262873",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 2007721,
+      "date_time": "2025-03-16T04:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "0ed112bc955eb341bc25005f9a7bb3fdf040223c8e1765646225c47e974b6139",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 2010085,
+      "date_time": "2025-04-05T06:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "3222413d358251e1ac1cdde1f5ee2fd126b0d9cc3470c2aa1bb07177a09ef24d",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 2011166,
+      "date_time": "2025-04-12T05:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "6b381b8bd338859c394c1992da137436e2e09cd609a81ac94d5f5f941d35d1bc",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 2013725,
+      "date_time": "2025-04-27T07:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "c8b9372fbd2e79ddcbb859b51b5086111ed7f3cd84ca0b457091c7d0e5209df3",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 2015213,
+      "date_time": "2025-05-03T08:00:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "300342194bf3dcd9fe356ed30df26fd0ee6e8caeb8ce5d8cfd27cf90cd995dff",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 2016236,
+      "date_time": "2025-05-09T09:35:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "93ccf67cead82def1acda87d3cf550fd42f96cb0e1adbff9eeb8824077980495",
+      "matches_pinned_git_blob": true
+    },
+    {
+      "match_id": 2017461,
+      "date_time": "2025-05-17T09:35:00Z",
+      "league": "AUS - A-League - 2024/2025",
+      "sha256": "db27759bf734dc8e3d9e56f047965cc7c74833bc3d0345ee3821ab97681ce4b9",
+      "matches_pinned_git_blob": true
+    }
+  ],
+  "dfl_records": [
+    {
+      "metadata_file": "DFL_02_01_matchinformation_DFL-COM-000001_DFL-MAT-J03WMX.xml",
+      "sha256": "a884728647a564cf8b20e5223a1d04a5da6f6725e1e506c8651505327c197ba9",
+      "competition_headers": [
+        {
+          "CompetitionName": "Bundesliga",
+          "CompetitionId": "DFL-COM-000001",
+          "Season": "2022/2023"
+        }
+      ]
+    },
+    {
+      "metadata_file": "DFL_02_01_matchinformation_DFL-COM-000001_DFL-MAT-J03WN1.xml",
+      "sha256": "5490286436c86e6f80a538d2b1b379d0efd016e0defcaf594bc59d9ef5079f4c",
+      "competition_headers": [
+        {
+          "CompetitionName": "Bundesliga",
+          "CompetitionId": "DFL-COM-000001",
+          "Season": "2022/2023"
+        }
+      ]
+    },
+    {
+      "metadata_file": "DFL_02_01_matchinformation_DFL-COM-000002_DFL-MAT-J03WOH.xml",
+      "sha256": "f23b3ee13b988b1ff9a0bce438c416dac47e71355bbc7ee1dab21aaf3e33c18c",
+      "competition_headers": [
+        {
+          "CompetitionName": "2. Bundesliga",
+          "CompetitionId": "DFL-COM-000002",
+          "Season": "2022/2023"
+        }
+      ]
+    },
+    {
+      "metadata_file": "DFL_02_01_matchinformation_DFL-COM-000002_DFL-MAT-J03WOY.xml",
+      "sha256": "4c497fac683eee8292901c18ca02c0be1d9609d0b9d4bd8aa092c61f9e0b19e9",
+      "competition_headers": [
+        {
+          "CompetitionName": "2. Bundesliga",
+          "CompetitionId": "DFL-COM-000002",
+          "Season": "2022/2023"
+        }
+      ]
+    },
+    {
+      "metadata_file": "DFL_02_01_matchinformation_DFL-COM-000002_DFL-MAT-J03WPY.xml",
+      "sha256": "566dd5e4c86e124ab90fcdba51100881f0436e22afa71832945a451a2d95a420",
+      "competition_headers": [
+        {
+          "CompetitionName": "2. Bundesliga",
+          "CompetitionId": "DFL-COM-000002",
+          "Season": "2022/2023"
+        }
+      ]
+    },
+    {
+      "metadata_file": "DFL_02_01_matchinformation_DFL-COM-000002_DFL-MAT-J03WQQ.xml",
+      "sha256": "e976aa0c5dba862cfa898ea57ec226efce9d1bc04b23b8d775908db86aa6fa41",
+      "competition_headers": [
+        {
+          "CompetitionName": "2. Bundesliga",
+          "CompetitionId": "DFL-COM-000002",
+          "Season": "2022/2023"
+        }
+      ]
+    },
+    {
+      "metadata_file": "DFL_02_01_matchinformation_DFL-COM-000002_DFL-MAT-J03WR9.xml",
+      "sha256": "429b584e89df3e3e8b81f4bd0d004b38bd0b4298bb390b8fb43efccb60963e01",
+      "competition_headers": [
+        {
+          "CompetitionName": "2. Bundesliga",
+          "CompetitionId": "DFL-COM-000002",
+          "Season": "2022/2023"
+        }
+      ]
+    }
+  ],
+  "reference_arrays_opened": false,
+  "challenge_data_opened": false,
+  "limitations": [
+    "Anonymous WCSF match/date cannot be independently matched exactly.",
+    "Different provider does not imply statistically independent annotation errors."
+  ]
+}

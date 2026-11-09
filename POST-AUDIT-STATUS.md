@@ -1,4 +1,4 @@
-# Post-audit checkpoint: cadence experiment
+# Post-audit checkpoint: cadence and source qualification
 
 The bounded code experiment is complete. **The velocity-only contrast is not promoted.** The existing frozen experimental candidate remains the control; no new target output or head fit was produced.
 
@@ -18,4 +18,6 @@ Final tests: 406 total, zero failures/errors, 19 skips (387 executed); all 65 ne
 
 Commit history preserves the initial source/freeze and the reporting correction. No protected target assets, raw/cache/reference arrays, per-frame outputs, tokens or credentials are included. Original licensed external inputs remain local. No automatic merge or deployment is implied.
 
-Next sequential goals: qualify one concrete independent H/A/D reference path, then execute the approved frozen-control whole-segment diagnosis. Select at most one later model intervention from evidence; do not expand the rejected velocity-only contrast automatically.
+The bounded three-source qualification is now documented: [source decision](docs/reference-qualification/source-comparison.md), [frozen access/evaluation proposal](docs/reference-qualification/evaluation-protocol.md), and [access/use ledger](docs/reference-qualification/access-and-use-ledger.json). WCSF is the selected acquisition lead after verifying an existing owner clarification missed by the earlier scout. Its actual geometry, coverage and dense reference remain unopened and structurally unqualified. No new model score or improved readiness grade is claimed.
+
+The existing roadmap queues the approved whole-segment diagnosis next. New primary source evidence supports considering a WCSF structural-adapter and fixed transfer-audit plan first; that priority amendment must be made explicit in the subsequent planning goal before acquisition. Select at most one later model intervention from evidence; do not expand the rejected velocity-only contrast automatically.
