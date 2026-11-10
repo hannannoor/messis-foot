@@ -1,6 +1,6 @@
 # Gap rule and observed-only touch addenda — 10 November 2026
 
-Status: implementation and full-suite verification complete; external harm check pending. No scientific evaluation has run in this new experiment.
+Status: fixed gap rule passed external4a harm check; Metrica4b source/reference qualification complete, no sample predictions or scores yet.
 
 ## Scope and preserved history
 
@@ -45,3 +45,55 @@ Pre-score targeted verification:23 gap-rule tests,17 protocol tests and6 observe
 ## Full-suite verification
 
 The fixed-source run passed654 collected tests:633 executed,21 environment skips,zero failures/errors. The baseline group remains608 total/21 skips/587 executed; all46 addendum tests execute. The unchanged frozen artifact was rebuilt with SHA-256 e8d35e15be9524270bed82352791dc2849087b49b4c2b59c191023954b19eddb. No Python source changed after this successful run. The public count receipt is reports/gap-liveness/full-suite.json.
+
+## Stage4a external harm check: pass
+
+Prospective freeze549d42b6f4ee465a84096c0f7e08c96242a090a9, SHA-25668b4635894a506d13b35a70f5102b262820e9b9d86683d43ca98ffacc47fa92a. Thirty control scores reproduced .5518160816768707 natural and .4691488389454344 masked, and every complete control count table exactly matched the archived control. Control results were sealed at fcd384f before the thirty rule scores. Rule results were sealed at e55a0d0. No rule parameter changed afterward.
+
+| Primary equal-provider score | Control | Gap rule | Delta | Gates? |
+|---|---:|---:|---:|---|
+| natural | 0.551816 | 0.550876 | -0.000940 | Pass |
+| mask30-seed1729 | 0.469149 | 0.438025 | -0.031124 | Descriptive only |
+
+| Provider | Regime | Control | Gap rule | Delta |
+|---|---|---:|---:|---:|
+| skillcorner | natural | 0.596567 | 0.593746 | -0.002820 |
+| skillcorner | mask30-seed1729 | 0.555155 | 0.479297 | -0.075858 |
+| dfl | natural | 0.553665 | 0.553665 | +0.000000 |
+| dfl | mask30-seed1729 | 0.441154 | 0.429656 | -0.011498 |
+| wcsf | natural | 0.505216 | 0.505216 | +0.000000 |
+| wcsf | mask30-seed1729 | 0.411138 | 0.405122 | -0.006016 |
+
+Natural primary loss .000940 is within .005, and SkillCorner loss .002820 is within .01; natural DFL/WCSF are unchanged and contain no long gaps. Thus4a passes; this establishes no measured gain. The masked primary loss .031124 and SkillCorner masked loss .075858 are retained as material robustness limitations, although random-mask results were expressly nongating.
+
+| Provider | Role | Regime | Long gaps | Stoppage | Relabelled frames | Of these on known reference |
+|---|---|---|---:|---:|---:|---:|
+| skillcorner | fit-disjoint | natural | 1337 | 494 | 226795 | 10148 |
+| dfl | fit-disjoint | natural | 0 | 0 | 0 | 0 |
+| dfl | fitting-overlap | natural | 0 | 0 | 0 | 0 |
+| wcsf | fit-disjoint | natural | 0 | 0 | 0 | 0 |
+| skillcorner | fit-disjoint | mask30-seed1729 | 2175 | 989 | 417612 | 95693 |
+| dfl | fit-disjoint | mask30-seed1729 | 356 | 165 | 5087 | 5087 |
+| dfl | fitting-overlap | mask30-seed1729 | 346 | 168 | 6507 | 6507 |
+| wcsf | fit-disjoint | mask30-seed1729 | 178 | 69 | 9437 | 9420 |
+
+Since the rule only changes labels to D, the increase in predicted-D on known-reference rows equals relabelled known frames; this table is derived from counts without another run. Much natural SkillCorner relabelling lies outside known-reference support, and the other natural providers have no long gaps. The external harm gate therefore offers limited direct evidence about long challenge stoppages.
+
+The read-only audit verified all sixty receipts/provisionals/claims, private control hashes, source/input/freeze identities and preservation of854 prior files with zero additional inference or scoring calls. The result is external-verification.json.
+
+## Stage4b source and reference qualification
+
+All three Metrica samples plus README/event definitions were pinned at e706dd506b360d69d9d123d5b8026e7294b13996; all11 downloaded assets matched recorded byte counts and Git blob identities. The public repository has no formal dataset licence in its README; it requests responsible use and source acknowledgement. Source: Metrica Sports Sample Data, https://github.com/metrica-sports/sample-data . Raw files remain private and will not be committed.
+
+The event-derived reference and geometry mapping were committed before any sample prediction/score. Source clocks all agree at25Hz; index=source frame-1, without a fitted shift. Game3 varying player slots are resolved through XML channel metadata. Sourceformat tests qualified145006,141156 and143761 frames respectively, with141398,139015 and141346 known-reference rows. Referencing convention details and uncertainty are in the separately committed Metrica design document.
+
+One qualification attempt failed on a missing end timestamp on a SET PIECE. The initial diagnosis incorrectly called it a pretracking start; bounded inspection corrected that diagnosis. The valid restart start is preserved and the irrelevant absent end is normalized to an instantaneous restart, with a missing-end counter. Failing-first tests, the original failed log/receipt, corrected diagnostic and successful qualification are all retained. This happened with zero predictions/scores; no rule threshold, time shift, team or event reference was selected from model performance.
+
+The Metrica check is partly circular because tracking is manually corrected and ball absence is largely dead play. The sparse-event convention is not adjudicated possession truth; match identity/overlap with fitting sources is not independently known. These limits remain regardless of the eventual measured result.
+
+
+### Final pre-score reference qualification and review
+
+One fresh-context review of the new Metrica subproject found integrity, preservation and scope issues. The single pre-score fix pass binds qualification/source/sequence hashes, retains returned aggregates before validation, uses a strictly nondeclining mean gate, holds CARD inert, verifies source inventory/runtime after computation, keeps detailed per-case scores private, and reconstructs the entire final authorized summary. Thirty-six targeted Metrica tests pass.
+
+A draft three-kind GOAL whitelist was too narrow for the addendum's rule that any goal starts D: Game3 includes a RECOVERY/GOAL annotation. This was discovered without any model inference or score. The final rule treats an exact GOAL subtype on any supported non-card event as a stop. All intermediate reference code, qualification versions and bounded sequence witnesses are preserved. Qualification-v3 reproduces the original qualified reference sequences exactly in all three games (zero changed labels, same SHA-256), while strengthening future-edge handling. It has141398,139015 and141346 known rows respectively. The source-count qualification and model scoring are separate; zero sample predictions/scores have run so far.
