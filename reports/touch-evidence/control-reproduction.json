@@ -1,0 +1,1 @@
+{"expected":{"mask30-seed1729":0.469149,"natural":0.551816},"freeze_commit":"6a5151a552a4d3d1de2650153b53f571f7cccd36","freeze_sha256":"5a207320fc6f2c726c417c6ce060072c1d08133f064858d111a4b9be42a7d375","means":{"jitter":0.3936732760030828,"mask30-seed1729":0.4691488389454344,"natural":0.5518160816768707},"passed":true,"scoring_calls":45}
