@@ -14,6 +14,7 @@ class Event:
     team:str
     kind:str
     subtypes:tuple=()
+    missing_end:bool=False
 
 
 def _index(frame,time):
@@ -24,8 +25,10 @@ def _index(frame,time):
 
 def _event(period,start,end,team,kind,tokens):
     kind=str(kind).strip().upper();tokens=tuple(str(v).strip().upper() for v in tokens if str(v).strip())
+    missing_end=end==-1 and start>=0 and kind=='SET PIECE'
+    if missing_end:end=start
     if int(period) not in (1,2) or end<start or kind not in KINDS or team not in ('H','A',''):raise ValueError('Unsupported Metrica event mapping')
-    return Event(int(period),start,end,team,kind,tokens)
+    return Event(int(period),start,end,team,kind,tokens,missing_end)
 
 
 def normalize_csv(row):
@@ -82,6 +85,6 @@ def build_reference(events,periods):
                 teams=set(owners);owner=next(iter(teams)) if len(teams)==1 and '' not in teams else 'X'
                 conflicts+=int(owner=='X')
             labels[at]=owner
-    summary=dict(events=len(events),outside_events=len(events)-len(used),clipped_events=clipped,conflict_frames=conflicts,
+    summary=dict(events=len(events),missing_end_events=sum(e.missing_end for e in events),outside_events=len(events)-len(used),clipped_events=clipped,conflict_frames=conflicts,
         known_frames=sum(v!='X' for v in labels),label_counts={v:labels.count(v) for v in 'HADX'})
     return tuple(labels),summary

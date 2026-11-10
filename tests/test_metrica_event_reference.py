@@ -46,3 +46,11 @@ class MetricaReference(unittest.TestCase):
         self.assertEqual(event.start,-1)
         labels,summary=r.build_reference([event,self.event(1,3)],[1]*5)
         self.assertEqual(labels,tuple('XHHHX'));self.assertEqual(summary['outside_events'],1)
+
+    def test_missing_set_piece_end_uses_only_documented_start(self):
+        row=dict(Team='Away',Type='SET PIECE',Subtype='THROW IN',Period='1',**{'Start Frame':'26','Start Time [s]':'1.04','End Frame':'0','End Time [s]':'0'})
+        event=r.normalize_csv(row)
+        self.assertEqual((event.start,event.end,event.team),(25,25,'A'))
+        self.assertTrue(event.missing_end)
+        labels,summary=r.build_reference([event],[1]*30)
+        self.assertEqual(labels[25],'A');self.assertEqual(summary['missing_end_events'],1)

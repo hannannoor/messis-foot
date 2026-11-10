@@ -1,0 +1,1 @@
+{"affected_events":1,"affected_game":"Sample_Game_1","corrected_reason":"missing_end_sentinel_for_one_set_piece","inference_calls":0,"initial_incorrect_diagnosis_retained":true,"instantaneous_restart_from_start":true,"schema_version":1,"scoring_calls":0,"valid_start_preserved":true,"zero_start_events":0}
