@@ -1,0 +1,1053 @@
+{
+ "gates": {
+  "q07_loss_within_005": false,
+  "q09_not_lower": false
+ },
+ "levels": {
+  "0.7": {
+   "enabled": {
+    "dfl-J03WN1": false,
+    "dfl-J03WOH": true,
+    "dfl-J03WOY": true,
+    "dfl-J03WR9": true,
+    "skillcorner-1874553": true,
+    "skillcorner-1886347": true,
+    "skillcorner-2007448": false,
+    "skillcorner-2007721": false,
+    "skillcorner-2010085": false,
+    "skillcorner-2011166": false,
+    "skillcorner-2013725": false,
+    "skillcorner-2015213": false,
+    "skillcorner-2016236": false,
+    "skillcorner-2017461": true,
+    "wcsf-used-match": true
+   },
+   "macro_f1": {
+    "by_provider": {
+     "dfl": {
+      "control": 0.9070128226343883,
+      "delta": 0.0010308547332195106,
+      "fused": 0.9080436773676078
+     },
+     "skillcorner": {
+      "control": 0.5758530982818981,
+      "delta": 0.0010063741614402266,
+      "fused": 0.5768594724433384
+     },
+     "wcsf": {
+      "control": 0.7072464532563515,
+      "delta": -0.0006331181829508647,
+      "fused": 0.7066133350734006
+     }
+    },
+    "control": 0.7300374580575459,
+    "delta": 0.0004680369039030685,
+    "fused": 0.730505494961449
+   },
+   "mapping_correct": {
+    "dfl-J03WN1": false,
+    "dfl-J03WOH": true,
+    "dfl-J03WOY": true,
+    "dfl-J03WR9": true,
+    "skillcorner-1874553": true,
+    "skillcorner-1886347": true,
+    "skillcorner-2007448": false,
+    "skillcorner-2007721": false,
+    "skillcorner-2010085": false,
+    "skillcorner-2011166": false,
+    "skillcorner-2013725": false,
+    "skillcorner-2015213": false,
+    "skillcorner-2016236": false,
+    "skillcorner-2017461": true,
+    "wcsf-used-match": true
+   },
+   "p_estimated": {
+    "by_provider": {
+     "dfl": 0.6433276992375712,
+     "skillcorner": 0.6256395731896903,
+     "wcsf": 0.7022998296422487
+    },
+    "primary": 0.6570890340231701
+   },
+   "spell_f1": {
+    "by_provider": {
+     "dfl": {
+      "control": 0.5536652409632008,
+      "delta": -0.006368957294602184,
+      "fused": 0.5472962836685986
+     },
+     "skillcorner": {
+      "control": 0.5965665778742927,
+      "delta": 0.005070617210662931,
+      "fused": 0.6016371950849556
+     },
+     "wcsf": {
+      "control": 0.5052164261931187,
+      "delta": -0.01465897454351689,
+      "fused": 0.4905574516496018
+     }
+    },
+    "control": 0.5518160816768707,
+    "delta": -0.005319104875818659,
+    "fused": 0.546496976801052
+   },
+   "spells_before_after": {
+    "dfl-J03WN1": [
+     338,
+     338
+    ],
+    "dfl-J03WOH": [
+     307,
+     278
+    ],
+    "dfl-J03WOY": [
+     327,
+     309
+    ],
+    "dfl-J03WR9": [
+     289,
+     260
+    ],
+    "skillcorner-1874553": [
+     325,
+     320
+    ],
+    "skillcorner-1886347": [
+     310,
+     289
+    ],
+    "skillcorner-2007448": [
+     285,
+     285
+    ],
+    "skillcorner-2007721": [
+     320,
+     320
+    ],
+    "skillcorner-2010085": [
+     295,
+     295
+    ],
+    "skillcorner-2011166": [
+     357,
+     357
+    ],
+    "skillcorner-2013725": [
+     365,
+     365
+    ],
+    "skillcorner-2015213": [
+     392,
+     392
+    ],
+    "skillcorner-2016236": [
+     366,
+     366
+    ],
+    "skillcorner-2017461": [
+     374,
+     353
+    ],
+    "wcsf-used-match": [
+     490,
+     468
+    ]
+   },
+   "tag_precision": {
+    "by_provider": {
+     "dfl": 0.6174525813104181,
+     "skillcorner": 0.6530557704366069,
+     "wcsf": 0.623505461125832
+    },
+    "primary": 0.6313379376242857
+   }
+  },
+  "0.9": {
+   "enabled": {
+    "dfl-J03WN1": false,
+    "dfl-J03WOH": true,
+    "dfl-J03WOY": true,
+    "dfl-J03WR9": true,
+    "skillcorner-1874553": true,
+    "skillcorner-1886347": true,
+    "skillcorner-2007448": true,
+    "skillcorner-2007721": true,
+    "skillcorner-2010085": true,
+    "skillcorner-2011166": true,
+    "skillcorner-2013725": true,
+    "skillcorner-2015213": true,
+    "skillcorner-2016236": true,
+    "skillcorner-2017461": true,
+    "wcsf-used-match": true
+   },
+   "macro_f1": {
+    "by_provider": {
+     "dfl": {
+      "control": 0.9070128226343883,
+      "delta": -0.0020913408367277952,
+      "fused": 0.9049214817976605
+     },
+     "skillcorner": {
+      "control": 0.5758530982818981,
+      "delta": 0.005980525346317878,
+      "fused": 0.581833623628216
+     },
+     "wcsf": {
+      "control": 0.7072464532563515,
+      "delta": -0.008940895690530803,
+      "fused": 0.6983055575658207
+     }
+    },
+    "control": 0.7300374580575459,
+    "delta": -0.0016839037269802404,
+    "fused": 0.7283535543305657
+   },
+   "mapping_correct": {
+    "dfl-J03WN1": false,
+    "dfl-J03WOH": true,
+    "dfl-J03WOY": true,
+    "dfl-J03WR9": true,
+    "skillcorner-1874553": true,
+    "skillcorner-1886347": true,
+    "skillcorner-2007448": true,
+    "skillcorner-2007721": true,
+    "skillcorner-2010085": true,
+    "skillcorner-2011166": true,
+    "skillcorner-2013725": true,
+    "skillcorner-2015213": true,
+    "skillcorner-2016236": true,
+    "skillcorner-2017461": true,
+    "wcsf-used-match": true
+   },
+   "p_estimated": {
+    "by_provider": {
+     "dfl": 0.713643876857011,
+     "skillcorner": 0.7521516691878027,
+     "wcsf": 0.8080433195424678
+    },
+    "primary": 0.7579462885290938
+   },
+   "spell_f1": {
+    "by_provider": {
+     "dfl": {
+      "control": 0.5536652409632008,
+      "delta": -0.016380571696460455,
+      "fused": 0.5372846692667403
+     },
+     "skillcorner": {
+      "control": 0.5965665778742927,
+      "delta": 0.018316296679170452,
+      "fused": 0.6148828745534631
+     },
+     "wcsf": {
+      "control": 0.5052164261931187,
+      "delta": -0.03300071693168849,
+      "fused": 0.4722157092614302
+     }
+    },
+    "control": 0.5518160816768707,
+    "delta": -0.010354997316326053,
+    "fused": 0.5414610843605446
+   },
+   "spells_before_after": {
+    "dfl-J03WN1": [
+     338,
+     338
+    ],
+    "dfl-J03WOH": [
+     307,
+     263
+    ],
+    "dfl-J03WOY": [
+     327,
+     283
+    ],
+    "dfl-J03WR9": [
+     289,
+     245
+    ],
+    "skillcorner-1874553": [
+     325,
+     296
+    ],
+    "skillcorner-1886347": [
+     310,
+     265
+    ],
+    "skillcorner-2007448": [
+     285,
+     262
+    ],
+    "skillcorner-2007721": [
+     320,
+     292
+    ],
+    "skillcorner-2010085": [
+     295,
+     272
+    ],
+    "skillcorner-2011166": [
+     357,
+     339
+    ],
+    "skillcorner-2013725": [
+     365,
+     365
+    ],
+    "skillcorner-2015213": [
+     392,
+     359
+    ],
+    "skillcorner-2016236": [
+     366,
+     351
+    ],
+    "skillcorner-2017461": [
+     374,
+     321
+    ],
+    "wcsf-used-match": [
+     490,
+     442
+    ]
+   },
+   "tag_precision": {
+    "by_provider": {
+     "dfl": 0.7163081680870376,
+     "skillcorner": 0.7974279469349109,
+     "wcsf": 0.7265236217928004
+    },
+    "primary": 0.7467532456049163
+   }
+  }
+ },
+ "matches": {
+  "0.7": {
+   "dfl-J03WN1": {
+    "confident_tagged_frames": 9414,
+    "control": {
+     "accuracy": 0.9213625221635903,
+     "macro_f1": 0.8926984383820785,
+     "n_gt": 500,
+     "n_pred": 338,
+     "spell_f1": 0.5288782816229116
+    },
+    "enabled": false,
+    "fused": {
+     "accuracy": 0.9213625221635903,
+     "macro_f1": 0.8926984383820785,
+     "n_gt": 500,
+     "n_pred": 338,
+     "spell_f1": 0.5288782816229116
+    },
+    "mapping_correct": false,
+    "p_estimated": 0.5650095602294455,
+    "provider": "dfl",
+    "role": "fit-disjoint",
+    "tag_frames": 46521,
+    "tag_precision": 0.5574570536179073
+   },
+   "dfl-J03WOH": {
+    "confident_tagged_frames": 9593,
+    "control": {
+     "accuracy": 0.9259915169006078,
+     "macro_f1": 0.9067981260114849,
+     "n_gt": 402,
+     "n_pred": 307,
+     "spell_f1": 0.5799717912552891
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.9268441995714723,
+     "macro_f1": 0.9078060919170506,
+     "n_gt": 402,
+     "n_pred": 278,
+     "spell_f1": 0.5647058823529412
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.7455436255603044,
+    "provider": "dfl",
+    "role": "fitting-overlap",
+    "tag_frames": 44880,
+    "tag_precision": 0.7098927373559593
+   },
+   "dfl-J03WOY": {
+    "confident_tagged_frames": 10438,
+    "control": {
+     "accuracy": 0.9160562945501487,
+     "macro_f1": 0.8969439432458014,
+     "n_gt": 456,
+     "n_pred": 327,
+     "spell_f1": 0.5435504469987229
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.9131728124824605,
+     "macro_f1": 0.8933347658654275,
+     "n_gt": 456,
+     "n_pred": 309,
+     "spell_f1": 0.5218300653594772
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.6833684613910711,
+    "provider": "dfl",
+    "role": "fitting-overlap",
+    "tag_frames": 45320,
+    "tag_precision": 0.6485680190930787
+   },
+   "dfl-J03WR9": {
+    "confident_tagged_frames": 16964,
+    "control": {
+     "accuracy": 0.9351951501941285,
+     "macro_f1": 0.9213272068866981,
+     "n_gt": 370,
+     "n_pred": 289,
+     "spell_f1": 0.5784522003034901
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.9367209318166337,
+     "macro_f1": 0.9233889163531371,
+     "n_gt": 370,
+     "n_pred": 260,
+     "spell_f1": 0.5657142857142856
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.7216458382456967,
+    "provider": "dfl",
+    "role": "fit-disjoint",
+    "tag_frames": 55880,
+    "tag_precision": 0.6774481090029288
+   },
+   "skillcorner-1874553": {
+    "confident_tagged_frames": 17970,
+    "control": {
+     "accuracy": 0.9042356824155002,
+     "macro_f1": 0.5988825204979721,
+     "n_gt": 250,
+     "n_pred": 325,
+     "spell_f1": 0.6615652173913044
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.903697817981786,
+     "macro_f1": 0.598624961717591,
+     "n_gt": 250,
+     "n_pred": 320,
+     "spell_f1": 0.655438596491228
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.655370061213133,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 44293,
+    "tag_precision": 0.6397781040952847
+   },
+   "skillcorner-1886347": {
+    "confident_tagged_frames": 10742,
+    "control": {
+     "accuracy": 0.8868967241810453,
+     "macro_f1": 0.5895580546029155,
+     "n_gt": 237,
+     "n_pred": 310,
+     "spell_f1": 0.6705667276051188
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.8950112528132033,
+     "macro_f1": 0.5951957799236335,
+     "n_gt": 237,
+     "n_pred": 289,
+     "spell_f1": 0.7064638783269961
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.6920498975982126,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 44000,
+    "tag_precision": 0.704535013454092
+   },
+   "skillcorner-2007448": {
+    "confident_tagged_frames": 9716,
+    "control": {
+     "accuracy": 0.8772083475880944,
+     "macro_f1": 0.5848530348633609,
+     "n_gt": 226,
+     "n_pred": 285,
+     "spell_f1": 0.5886497064579256
+    },
+    "enabled": false,
+    "fused": {
+     "accuracy": 0.8772083475880944,
+     "macro_f1": 0.5848530348633609,
+     "n_gt": 226,
+     "n_pred": 285,
+     "spell_f1": 0.5886497064579256
+    },
+    "mapping_correct": false,
+    "p_estimated": 0.5233635240839852,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 46223,
+    "tag_precision": 0.6195847305490635
+   },
+   "skillcorner-2007721": {
+    "confident_tagged_frames": 11300,
+    "control": {
+     "accuracy": 0.886521848528055,
+     "macro_f1": 0.5910232178786232,
+     "n_gt": 248,
+     "n_pred": 320,
+     "spell_f1": 0.6049295774647887
+    },
+    "enabled": false,
+    "fused": {
+     "accuracy": 0.886521848528055,
+     "macro_f1": 0.5910232178786232,
+     "n_gt": 248,
+     "n_pred": 320,
+     "spell_f1": 0.6049295774647887
+    },
+    "mapping_correct": false,
+    "p_estimated": 0.6151327433628319,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 49453,
+    "tag_precision": 0.5997900691022539
+   },
+   "skillcorner-2010085": {
+    "confident_tagged_frames": 15077,
+    "control": {
+     "accuracy": 0.8861206885898244,
+     "macro_f1": 0.5865111683209171,
+     "n_gt": 232,
+     "n_pred": 295,
+     "spell_f1": 0.5889943074003796
+    },
+    "enabled": false,
+    "fused": {
+     "accuracy": 0.8861206885898244,
+     "macro_f1": 0.5865111683209171,
+     "n_gt": 232,
+     "n_pred": 295,
+     "spell_f1": 0.5889943074003796
+    },
+    "mapping_correct": false,
+    "p_estimated": 0.5760429793725542,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 50258,
+    "tag_precision": 0.6240626655144538
+   },
+   "skillcorner-2011166": {
+    "confident_tagged_frames": 16521,
+    "control": {
+     "accuracy": 0.8374743795803412,
+     "macro_f1": 0.5562127845360353,
+     "n_gt": 271,
+     "n_pred": 357,
+     "spell_f1": 0.5388535031847134
+    },
+    "enabled": false,
+    "fused": {
+     "accuracy": 0.8374743795803412,
+     "macro_f1": 0.5562127845360353,
+     "n_gt": 271,
+     "n_pred": 357,
+     "spell_f1": 0.5388535031847134
+    },
+    "mapping_correct": false,
+    "p_estimated": 0.6481447854246111,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 44758,
+    "tag_precision": 0.6456237596660508
+   },
+   "skillcorner-2013725": {
+    "confident_tagged_frames": 9038,
+    "control": {
+     "accuracy": 0.847318733543125,
+     "macro_f1": 0.5649152961474337,
+     "n_gt": 306,
+     "n_pred": 365,
+     "spell_f1": 0.5991058122205664
+    },
+    "enabled": false,
+    "fused": {
+     "accuracy": 0.847318733543125,
+     "macro_f1": 0.5649152961474337,
+     "n_gt": 306,
+     "n_pred": 365,
+     "spell_f1": 0.5991058122205664
+    },
+    "mapping_correct": false,
+    "p_estimated": 0.6274618278380173,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 53008,
+    "tag_precision": 0.6767278339907391
+   },
+   "skillcorner-2015213": {
+    "confident_tagged_frames": 9586,
+    "control": {
+     "accuracy": 0.8488701122649084,
+     "macro_f1": 0.5644706044591263,
+     "n_gt": 296,
+     "n_pred": 392,
+     "spell_f1": 0.5813953488372092
+    },
+    "enabled": false,
+    "fused": {
+     "accuracy": 0.8488701122649084,
+     "macro_f1": 0.5644706044591263,
+     "n_gt": 296,
+     "n_pred": 392,
+     "spell_f1": 0.5813953488372092
+    },
+    "mapping_correct": false,
+    "p_estimated": 0.6435426663884832,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 48840,
+    "tag_precision": 0.6906406830476439
+   },
+   "skillcorner-2016236": {
+    "confident_tagged_frames": 17158,
+    "control": {
+     "accuracy": 0.8532499386804022,
+     "macro_f1": 0.5685946829825054,
+     "n_gt": 300,
+     "n_pred": 366,
+     "spell_f1": 0.5927927927927927
+    },
+    "enabled": false,
+    "fused": {
+     "accuracy": 0.8532499386804022,
+     "macro_f1": 0.5685946829825054,
+     "n_gt": 300,
+     "n_pred": 366,
+     "spell_f1": 0.5927927927927927
+    },
+    "mapping_correct": false,
+    "p_estimated": 0.6173213661265882,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 47520,
+    "tag_precision": 0.6407546039826322
+   },
+   "skillcorner-2017461": {
+    "confident_tagged_frames": 10727,
+    "control": {
+     "accuracy": 0.837651170919259,
+     "macro_f1": 0.5535096185300915,
+     "n_gt": 283,
+     "n_pred": 374,
+     "spell_f1": 0.5388127853881278
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.8444040545263893,
+     "macro_f1": 0.5581931936041573,
+     "n_gt": 283,
+     "n_pred": 353,
+     "spell_f1": 0.559748427672956
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.657965880488487,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 47838,
+    "tag_precision": 0.6890602409638554
+   },
+   "wcsf-used-match": {
+    "confident_tagged_frames": 16436,
+    "control": {
+     "accuracy": 0.7095169908846436,
+     "macro_f1": 0.7072464532563515,
+     "n_gt": 411,
+     "n_pred": 490,
+     "spell_f1": 0.5052164261931187
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.7091188488806621,
+     "macro_f1": 0.7066133350734006,
+     "n_gt": 411,
+     "n_pred": 468,
+     "spell_f1": 0.4905574516496018
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.7022998296422487,
+    "provider": "wcsf",
+    "role": "fit-disjoint",
+    "tag_frames": 43478,
+    "tag_precision": 0.623505461125832
+   }
+  },
+  "0.9": {
+   "dfl-J03WN1": {
+    "confident_tagged_frames": 9414,
+    "control": {
+     "accuracy": 0.9213625221635903,
+     "macro_f1": 0.8926984383820785,
+     "n_gt": 500,
+     "n_pred": 338,
+     "spell_f1": 0.5288782816229116
+    },
+    "enabled": false,
+    "fused": {
+     "accuracy": 0.9213625221635903,
+     "macro_f1": 0.8926984383820785,
+     "n_gt": 500,
+     "n_pred": 338,
+     "spell_f1": 0.5288782816229116
+    },
+    "mapping_correct": false,
+    "p_estimated": 0.5909284045039302,
+    "provider": "dfl",
+    "role": "fit-disjoint",
+    "tag_frames": 46521,
+    "tag_precision": 0.6440005205622071
+   },
+   "dfl-J03WOH": {
+    "confident_tagged_frames": 9593,
+    "control": {
+     "accuracy": 0.9259915169006078,
+     "macro_f1": 0.9067981260114849,
+     "n_gt": 402,
+     "n_pred": 307,
+     "spell_f1": 0.5799717912552891
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.9225807862171499,
+     "macro_f1": 0.9022017273159806,
+     "n_gt": 402,
+     "n_pred": 263,
+     "spell_f1": 0.5365413533834587
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.8167413739184822,
+    "provider": "dfl",
+    "role": "fitting-overlap",
+    "tag_frames": 44880,
+    "tag_precision": 0.7664463852821041
+   },
+   "dfl-J03WOY": {
+    "confident_tagged_frames": 10438,
+    "control": {
+     "accuracy": 0.9160562945501487,
+     "macro_f1": 0.8969439432458014,
+     "n_gt": 456,
+     "n_pred": 327,
+     "spell_f1": 0.5435504469987229
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.9154880170623562,
+     "macro_f1": 0.8961523735872724,
+     "n_gt": 456,
+     "n_pred": 283,
+     "spell_f1": 0.508254397834912
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.8310021076834643,
+    "provider": "dfl",
+    "role": "fitting-overlap",
+    "tag_frames": 45320,
+    "tag_precision": 0.7724624455987645
+   },
+   "dfl-J03WR9": {
+    "confident_tagged_frames": 16964,
+    "control": {
+     "accuracy": 0.9351951501941285,
+     "macro_f1": 0.9213272068866981,
+     "n_gt": 370,
+     "n_pred": 289,
+     "spell_f1": 0.5784522003034901
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.9316872147673864,
+     "macro_f1": 0.9171445252132425,
+     "n_gt": 370,
+     "n_pred": 245,
+     "spell_f1": 0.5456910569105691
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.8363593492100919,
+    "provider": "dfl",
+    "role": "fit-disjoint",
+    "tag_frames": 55880,
+    "tag_precision": 0.7886158156118681
+   },
+   "skillcorner-1874553": {
+    "confident_tagged_frames": 17970,
+    "control": {
+     "accuracy": 0.9042356824155002,
+     "macro_f1": 0.5988825204979721,
+     "n_gt": 250,
+     "n_pred": 325,
+     "spell_f1": 0.6615652173913044
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.901069616771591,
+     "macro_f1": 0.5970812767943124,
+     "n_gt": 250,
+     "n_pred": 296,
+     "spell_f1": 0.6505494505494506
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.8062882582081247,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 44293,
+    "tag_precision": 0.807603197911568
+   },
+   "skillcorner-1886347": {
+    "confident_tagged_frames": 10742,
+    "control": {
+     "accuracy": 0.8868967241810453,
+     "macro_f1": 0.5895580546029155,
+     "n_gt": 237,
+     "n_pred": 310,
+     "spell_f1": 0.6705667276051188
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.8936984246061516,
+     "macro_f1": 0.5942621986855503,
+     "n_gt": 237,
+     "n_pred": 265,
+     "spell_f1": 0.6892430278884463
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.8131632843045988,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 44000,
+    "tag_precision": 0.818960425280567
+   },
+   "skillcorner-2007448": {
+    "confident_tagged_frames": 9716,
+    "control": {
+     "accuracy": 0.8772083475880944,
+     "macro_f1": 0.5848530348633609,
+     "n_gt": 226,
+     "n_pred": 285,
+     "spell_f1": 0.5886497064579256
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.8886075949367088,
+     "macro_f1": 0.5924948670916682,
+     "n_gt": 226,
+     "n_pred": 262,
+     "spell_f1": 0.6172131147540983
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.7386784685055579,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 46223,
+    "tag_precision": 0.7711614673305558
+   },
+   "skillcorner-2007721": {
+    "confident_tagged_frames": 11300,
+    "control": {
+     "accuracy": 0.886521848528055,
+     "macro_f1": 0.5910232178786232,
+     "n_gt": 248,
+     "n_pred": 320,
+     "spell_f1": 0.6049295774647887
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.8981200800373828,
+     "macro_f1": 0.5987789796178041,
+     "n_gt": 248,
+     "n_pred": 292,
+     "spell_f1": 0.64
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.7704424778761062,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 49453,
+    "tag_precision": 0.7905064582908126
+   },
+   "skillcorner-2010085": {
+    "confident_tagged_frames": 15077,
+    "control": {
+     "accuracy": 0.8861206885898244,
+     "macro_f1": 0.5865111683209171,
+     "n_gt": 232,
+     "n_pred": 295,
+     "spell_f1": 0.5889943074003796
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.8920649044105834,
+     "macro_f1": 0.590956599131958,
+     "n_gt": 232,
+     "n_pred": 272,
+     "spell_f1": 0.5952380952380952
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.7592359222657027,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 50258,
+    "tag_precision": 0.7820923814568059
+   },
+   "skillcorner-2011166": {
+    "confident_tagged_frames": 16521,
+    "control": {
+     "accuracy": 0.8374743795803412,
+     "macro_f1": 0.5562127845360353,
+     "n_gt": 271,
+     "n_pred": 357,
+     "spell_f1": 0.5388535031847134
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.8535617912912692,
+     "macro_f1": 0.5670406931916393,
+     "n_gt": 271,
+     "n_pred": 339,
+     "spell_f1": 0.5639344262295082
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.7541311058652624,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 44758,
+    "tag_precision": 0.7871415862588107
+   },
+   "skillcorner-2013725": {
+    "confident_tagged_frames": 9038,
+    "control": {
+     "accuracy": 0.847318733543125,
+     "macro_f1": 0.5649152961474337,
+     "n_gt": 306,
+     "n_pred": 365,
+     "spell_f1": 0.5991058122205664
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.8519812471902897,
+     "macro_f1": 0.5680187844721812,
+     "n_gt": 306,
+     "n_pred": 365,
+     "spell_f1": 0.6038748137108793
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.6806815667183005,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 53008,
+    "tag_precision": 0.8242725661693249
+   },
+   "skillcorner-2015213": {
+    "confident_tagged_frames": 9586,
+    "control": {
+     "accuracy": 0.8488701122649084,
+     "macro_f1": 0.5644706044591263,
+     "n_gt": 296,
+     "n_pred": 392,
+     "spell_f1": 0.5813953488372092
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.8607678235348311,
+     "macro_f1": 0.5724895772116861,
+     "n_gt": 296,
+     "n_pred": 359,
+     "spell_f1": 0.6088549618320611
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.7230335906530356,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 48840,
+    "tag_precision": 0.8221012839731474
+   },
+   "skillcorner-2016236": {
+    "confident_tagged_frames": 17158,
+    "control": {
+     "accuracy": 0.8532499386804022,
+     "macro_f1": 0.5685946829825054,
+     "n_gt": 300,
+     "n_pred": 366,
+     "spell_f1": 0.5927927927927927
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.856046112337503,
+     "macro_f1": 0.5704070924059551,
+     "n_gt": 300,
+     "n_pred": 351,
+     "spell_f1": 0.5984639016897082
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.714418929945215,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 47520,
+    "tag_precision": 0.7630184159305285
+   },
+   "skillcorner-2017461": {
+    "confident_tagged_frames": 10727,
+    "control": {
+     "accuracy": 0.837651170919259,
+     "macro_f1": 0.5535096185300915,
+     "n_gt": 283,
+     "n_pred": 374,
+     "spell_f1": 0.5388127853881278
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.8576721426074799,
+     "macro_f1": 0.5668061676794055,
+     "n_gt": 283,
+     "n_pred": 321,
+     "spell_f1": 0.5814569536423841
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.7614430875361238,
+    "provider": "skillcorner",
+    "role": "fit-disjoint",
+    "tag_frames": 47838,
+    "tag_precision": 0.807421686746988
+   },
+   "wcsf-used-match": {
+    "confident_tagged_frames": 16436,
+    "control": {
+     "accuracy": 0.7095169908846436,
+     "macro_f1": 0.7072464532563515,
+     "n_gt": 411,
+     "n_pred": 490,
+     "spell_f1": 0.5052164261931187
+    },
+    "enabled": true,
+    "fused": {
+     "accuracy": 0.7016030454370831,
+     "macro_f1": 0.6983055575658207,
+     "n_gt": 411,
+     "n_pred": 442,
+     "spell_f1": 0.4722157092614302
+    },
+    "mapping_correct": true,
+    "p_estimated": 0.8080433195424678,
+    "provider": "wcsf",
+    "role": "fit-disjoint",
+    "tag_frames": 43478,
+    "tag_precision": 0.7265236217928004
+   }
+  }
+ },
+ "note": "Mechanism test with tags simulated from reference labels; not a prediction of the gain on the provided match.",
+ "passed": false,
+ "scoring_calls": 30
+}
