@@ -1,0 +1,61 @@
+{
+ "agreement_a": 0.10658578856152513,
+ "changed_by_pair": {
+  "A->H": 6629,
+  "D->A": 19,
+  "H->A": 3815
+ },
+ "confident_tagged_frames": 19618,
+ "current": {
+  "counts": {
+   "A": 37073,
+   "D": 65860,
+   "H": 55924,
+   "X": 0
+  },
+  "median_spell": 124,
+  "spells": 434,
+  "spells_under_25": 29
+ },
+ "current_final_labels_sha256": "bc7b78668039d3830bceadea5d120bd0b4cf05a7baddcfae6e009fd166d29bba",
+ "disabled_reason": "",
+ "frames_changed_vs_current_candidate": 10463,
+ "graded_frames_changed_share": 0.06586426786355024,
+ "metadata_home_team_on_H": "yes",
+ "owner_margin_quantiles": {
+  "25": 1.2619432758114302,
+  "5": 0.794663088315621,
+  "50": 2.800381018994589,
+  "75": 2.8136123946115754,
+  "95": 2.8136123946115754
+ },
+ "p": 0.8934142114384749,
+ "single_team_window_shares": {
+  "current": {
+   "D": 0.1601964941619136,
+   "X": 0.0,
+   "other": 0.1857437214441425,
+   "tagged": 0.654059784393944
+  },
+  "with_tags": {
+   "D": 0.159912801982859,
+   "X": 0.0,
+   "other": 0.03429689133096425,
+   "tagged": 0.8057903066861767
+  }
+ },
+ "tag_coverage_of_graded": 0.4215992999993705,
+ "tags_enabled": true,
+ "with_tags": {
+  "counts": {
+   "A": 34278,
+   "D": 65841,
+   "H": 58738,
+   "X": 0
+  },
+  "median_spell": 177,
+  "spells": 301,
+  "spells_under_25": 27
+ },
+ "with_tags_final_labels_sha256": "72bd35a600bfdf31853ca4e6589c5f1e6d44ee8f59883238278a88127fa090cf"
+}
