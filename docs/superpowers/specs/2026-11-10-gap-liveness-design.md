@@ -1,6 +1,6 @@
 # Gap liveness design — addendum 2, 10 November 2026
 
-Status: draft, awaiting two requested clarifications. User authorized applying both addenda in chat. Base a5d5aa3c7da86837ec0f0a750f8e1996b66e639a. All files already present at base, including the rejected touch experiment and frozen release, are preserved byte-for-byte. This is a new experiment with a new registry; no old budget is reset.
+Status: approved for implementation; both requested clarifications were answered in chat. User authorized applying both addenda in chat. Base a5d5aa3c7da86837ec0f0a750f8e1996b66e639a. All files already present at base, including the rejected touch experiment and frozen release, are preserved byte-for-byte. This is a new experiment with a new registry; no old budget is reset.
 
 ## Approved source brief
 
@@ -92,7 +92,17 @@ One implementation, one external run (4a), one Metrica run (4b), one challenge a
 - No Stage 0 rerun. Supplied addendum aggregate claims are provenance-distinct from our earlier all-frame planar-width proxy probe; the earlier measured receipt is not overwritten.
 - The official competition repository was rechecked: HEAD remains f8f2629ff1e0985f81d7e59d8413678514ee1530.
 
-## Pending clarifications — no dependent implementation or scoring yet
+## Resolved clarifications — user replies recorded before implementation
 
-1. Test 12's unrestricted scale invariance conflicts with the fixed 12 m/s exclusion. Synthetic counterexample: reference players 2 m/s, gap players 1 m/s => stoppage; multiply all by ten => all 20 m/s reference values are discarded while 10 m/s gap values remain, so no defined reference and no stoppage. Proposed resolution: preserve the rule; test invariance only for positive common multipliers that do not change speed-cap eligibility.
-2. The named probe-results.json is absent beside the addenda and no matching file was found below that supplied folder. Requested either its location or permission to use the addenda's narrative aggregates without independently claiming their receipt has been verified.
+1. Test 12's unrestricted scale invariance conflicts with the fixed 12 m/s exclusion. Synthetic counterexample: reference players 2 m/s, gap players 1 m/s => stoppage; multiply all by ten => all 20 m/s reference values are discarded while 10 m/s gap values remain, so no defined reference and no stoppage. Approved resolution: keep the fixed cap; limit invariance to positive common multipliers that preserve cap eligibility.
+2. The named probe-results.json is absent beside the addenda and no matching file was found below that supplied folder. The user explicitly approved using the written aggregates. Their missing underlying receipt is not claimed verified and the probes will not be rerun.
+
+## Sequential experiment gates
+
+First implement/test both independent pure inference changes, then freeze and run gap-rule 4a before any amended-touch candidate evaluation. 4a has exactly 30 control evaluations (15 matches × natural/masked) and 30 paired gap-rule evaluations. Reproduce natural primary .551816 before any gap-rule score; control masked .469149 is also checked. These are a new experiment, not reuse or restart of the exhausted old touch budget. Equal-provider primary uses 13 fitting-disjoint cases; two DFL overlaps are secondary. Natural nonregression limits are inclusive -.005 primary and -.01 per provider. Masked is reported and never gates. No new grid.
+
+Gate failure is terminal for this gap experiment: retain controls, report and stop dependent Metrica/challenge/release execution. The observed-touch code amendment can be completed independently, but its new evaluation is deferred at the gap gate for the user's next direction.
+
+Each later source-acquisition/evaluation stage has a separate prospective source/input seal and exclusive phase claims. Rule source/settings remain immutable after 4a. Metrica event-reference rule is committed before sample scoring: action team owns from an on-ball event until the next action team's change or a stop; same-team on-ball events chain. BALL OUT, a goal, or a foul starts D until the next SET PIECE. Before first supported action, after the covered event span, and across unsupported/ambiguous mappings use X, never inferred human labels. Exact source-type normalization/alignment is specified from the public documentation and tested before 4b scoring; no score informs mapping choices.
+
+4c only follows successful harm gates and returns aggregates, not arrays. 4d/release require the handoff's separate user go-ahead and prospective ship decision. No submission or publication is authorized.
