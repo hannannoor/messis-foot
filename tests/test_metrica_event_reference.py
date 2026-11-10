@@ -58,9 +58,9 @@ class MetricaReference(unittest.TestCase):
     def test_card_is_inert_even_with_spurious_stop_tokens(self):
         labels,_=r.build_reference([self.event(1,1),self.event(3,4,team='A',kind='CARD',tokens=('GOAL','FAULT')),self.event(6,7)],[1]*9)
         self.assertEqual(labels[3:6],('H',)*3)
-    def test_goal_only_stops_declared_goal_event_kinds(self):
+    def test_goal_on_non_card_recovery_stops_per_user_brief(self):
         labels,_=r.build_reference([self.event(1,1),self.event(3,4,team='A',kind='RECOVERY',tokens=('GOAL',)),self.event(6,7,team='A')],[1]*9)
-        self.assertEqual(labels[4:6],('A','A'))
+        self.assertEqual(labels[4:6],('D','D'))
     def test_unknown_team_and_period_gap_clipping(self):
         labels,_=r.build_reference([self.event(0,4),self.event(5,8,team='',period=2)],[1]*3+[0]*2+[2]*5)
         self.assertEqual(labels[3:5],('X','X'));self.assertEqual(labels[5:9],('X',)*4)

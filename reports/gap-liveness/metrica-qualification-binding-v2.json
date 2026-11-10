@@ -1,0 +1,1 @@
+{"model_inference_calls":0,"qualification_sha256":"a07fdb361a68f86e751f8e78e1d9995a635e65c8351077cf25685f29ebe006c4","schema_version":2,"scoring_calls":0,"source_sha256":{"metrica_event_reference.py":"e5e7352e6af2d857583ea12f4c0b545861f46f224956740acb04d19ca64bc31f","metrica_sample_adapter.py":"7cf72d33d3d5fbb16e55c434bc1e08630210830517051b0641d9e17fa3406706"}}

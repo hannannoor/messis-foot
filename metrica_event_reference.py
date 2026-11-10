@@ -65,8 +65,7 @@ def build_reference(events,periods):
             used.add(j);clipped+=int(e.start<first or e.end>=stop)
             if e.kind=='CARD':continue
             start=max(first,e.start);end=min(stop-1,e.end)
-            is_stop=(e.kind in ('BALL OUT','FAULT RECEIVED') or 'FAULT' in e.subtypes
-                or e.kind in ('SHOT','BALL LOST','BALL OUT') and 'GOAL' in e.subtypes)
+            is_stop=(e.kind in ('BALL OUT','FAULT RECEIVED') or bool({'FAULT','GOAL'}.intersection(e.subtypes)))
             if e.kind in ACTIONS:points[start].append(('owner',e.team))
             if e.kind=='SET PIECE':points[start].append(('restart',e.team))
             if e.kind=='CHALLENGE' and not is_stop:

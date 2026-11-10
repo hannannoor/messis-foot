@@ -13,8 +13,8 @@ PRIVATE=gap.PRIVATE/'metrica/evaluation'
 SOURCE=gap.PRIVATE/'metrica/source'
 MANIFEST=ROOT/'reports/gap-liveness/metrica-source-freeze.json'
 ACQUISITION=ROOT/'reports/gap-liveness/metrica-acquisition.json'
-QUALIFICATION=ROOT/'reports/gap-liveness/metrica-format-qualification-v2.json'
-BINDING=ROOT/'reports/gap-liveness/metrica-qualification-binding-v2.json'
+QUALIFICATION=ROOT/'reports/gap-liveness/metrica-format-qualification-v3.json'
+BINDING=ROOT/'reports/gap-liveness/metrica-qualification-binding-v3.json'
 SPEC=ROOT/'docs/superpowers/specs/2026-11-10-gap-metrica-check-design.md'
 GAMES=('Sample_Game_1','Sample_Game_2','Sample_Game_3')
 LIMITS=dict(control=3,rule=3)
