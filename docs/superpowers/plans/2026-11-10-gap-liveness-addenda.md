@@ -31,15 +31,15 @@
 
 **Files:** Create gap_liveness.py and tests/test_gap_liveness.py.
 **Interfaces:** player_speed_statistics(frames)->tuple[float|None]; long_gaps(frames)->tuple[(start,stop)]; apply_gap_rule(frames,control_labels)->GapApplication(labels,summary,stoppage_gaps,extensions).
-- [ ] Write exact synthetic tests for all 15 addendum checks plus strict reference tie, cap cutoff, ids, no reference and restart termination cases.
-- [ ] Run red, implement minimal deterministic standard-library functions, run green, commit.
+- [x] Write exact synthetic tests for all 15 addendum checks plus strict reference tie, cap cutoff, ids, no reference and restart termination cases.
+- [x] Run red, implement minimal deterministic standard-library functions, run green, commit.
 
 ### Task 2: Observed-only touch amendment
 
 **Files:** Create observed_touch.py and tests/test_observed_touch.py.
 **Interfaces:** detect_observed_touches(frames,theta); observed_evidence_rows(rows,periods,usable,observed,events,beta,c_touch); predict_observed_touch(frames,theta,beta,c_touch).
-- [ ] Write failing tests: no reacquisition event regardless of new position; kink after five observed intervals detected; missing emissions exactly neutral; no owner resumes after gap without new touch; repeated touch-gap parity; no-events/zero-effects release-fixture parity; existing tie/finite/period behavior preserved.
-- [ ] Run red, implement beside archived code, run green, commit. No new touch scientific scores yet.
+- [x] Write failing tests: no reacquisition event regardless of new position; kink after five observed intervals detected; missing emissions exactly neutral; no owner resumes after gap without new touch; repeated touch-gap parity; no-events/zero-effects release-fixture parity; existing tie/finite/period behavior preserved.
+- [x] Run red, implement beside archived code, run green, commit. No new touch scientific scores yet.
 
 ### Task 3: Prospective external harm protocol and execution
 

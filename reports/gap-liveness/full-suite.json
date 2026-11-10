@@ -1,0 +1,24 @@
+{
+  "context": "normal Windows permissions; source held fixed; temporary fixtures outside source checkout where supported",
+  "elapsed_seconds": 925.1446205000011,
+  "errors": 0,
+  "failed_tests": [],
+  "failures": 0,
+  "groups": {
+    "addenda": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "total": 46
+    },
+    "baseline": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 21,
+      "total": 608
+    }
+  },
+  "passed": true,
+  "skipped": 21,
+  "total": 654
+}
