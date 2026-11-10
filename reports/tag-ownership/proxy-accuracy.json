@@ -1,0 +1,215 @@
+{
+ "control_primary_spell_f1": 0.5518160816768707,
+ "control_provider_spell_f1": {
+  "dfl": 0.5536652409632008,
+  "skillcorner": 0.5965665778742927,
+  "wcsf": 0.5052164261931187
+ },
+ "control_reproduced": true,
+ "gate_threshold": 0.75,
+ "matches": {
+  "dfl-J03WN1": {
+   "confident_accuracy": 0.924266061551553,
+   "confident_known": 21153,
+   "control": {
+    "accuracy": 0.9213625221635903,
+    "macro_f1": 0.8926984383820785,
+    "n_gt": 500,
+    "n_pred": 338,
+    "spell_f1": 0.5288782816229116
+   },
+   "provider": "dfl",
+   "role": "fit-disjoint"
+  },
+  "dfl-J03WOH": {
+   "confident_accuracy": 0.9315578346635789,
+   "confident_known": 24181,
+   "control": {
+    "accuracy": 0.9259915169006078,
+    "macro_f1": 0.9067981260114849,
+    "n_gt": 402,
+    "n_pred": 307,
+    "spell_f1": 0.5799717912552891
+   },
+   "provider": "dfl",
+   "role": "fitting-overlap"
+  },
+  "dfl-J03WOY": {
+   "confident_accuracy": 0.9076634535700266,
+   "confident_known": 22927,
+   "control": {
+    "accuracy": 0.9160562945501487,
+    "macro_f1": 0.8969439432458014,
+    "n_gt": 456,
+    "n_pred": 327,
+    "spell_f1": 0.5435504469987229
+   },
+   "provider": "dfl",
+   "role": "fitting-overlap"
+  },
+  "dfl-J03WR9": {
+   "confident_accuracy": 0.9581467581208749,
+   "confident_known": 38635,
+   "control": {
+    "accuracy": 0.9351951501941285,
+    "macro_f1": 0.9213272068866981,
+    "n_gt": 370,
+    "n_pred": 289,
+    "spell_f1": 0.5784522003034901
+   },
+   "provider": "dfl",
+   "role": "fit-disjoint"
+  },
+  "skillcorner-1874553": {
+   "confident_accuracy": 0.9564283668989214,
+   "confident_known": 41908,
+   "control": {
+    "accuracy": 0.9042356824155002,
+    "macro_f1": 0.5988825204979721,
+    "n_gt": 250,
+    "n_pred": 325,
+    "spell_f1": 0.6615652173913044
+   },
+   "provider": "skillcorner",
+   "role": "fit-disjoint"
+  },
+  "skillcorner-1886347": {
+   "confident_accuracy": 0.9677016809806944,
+   "confident_known": 27246,
+   "control": {
+    "accuracy": 0.8868967241810453,
+    "macro_f1": 0.5895580546029155,
+    "n_gt": 237,
+    "n_pred": 310,
+    "spell_f1": 0.6705667276051188
+   },
+   "provider": "skillcorner",
+   "role": "fit-disjoint"
+  },
+  "skillcorner-2007448": {
+   "confident_accuracy": 0.9318497171523108,
+   "confident_known": 18738,
+   "control": {
+    "accuracy": 0.8772083475880944,
+    "macro_f1": 0.5848530348633609,
+    "n_gt": 226,
+    "n_pred": 285,
+    "spell_f1": 0.5886497064579256
+   },
+   "provider": "skillcorner",
+   "role": "fit-disjoint"
+  },
+  "skillcorner-2007721": {
+   "confident_accuracy": 0.9506167624197364,
+   "confident_known": 23672,
+   "control": {
+    "accuracy": 0.886521848528055,
+    "macro_f1": 0.5910232178786232,
+    "n_gt": 248,
+    "n_pred": 320,
+    "spell_f1": 0.6049295774647887
+   },
+   "provider": "skillcorner",
+   "role": "fit-disjoint"
+  },
+  "skillcorner-2010085": {
+   "confident_accuracy": 0.9629725447078227,
+   "confident_known": 30923,
+   "control": {
+    "accuracy": 0.8861206885898244,
+    "macro_f1": 0.5865111683209171,
+    "n_gt": 232,
+    "n_pred": 295,
+    "spell_f1": 0.5889943074003796
+   },
+   "provider": "skillcorner",
+   "role": "fit-disjoint"
+  },
+  "skillcorner-2011166": {
+   "confident_accuracy": 0.9331641024053493,
+   "confident_known": 32303,
+   "control": {
+    "accuracy": 0.8374743795803412,
+    "macro_f1": 0.5562127845360353,
+    "n_gt": 271,
+    "n_pred": 357,
+    "spell_f1": 0.5388535031847134
+   },
+   "provider": "skillcorner",
+   "role": "fit-disjoint"
+  },
+  "skillcorner-2013725": {
+   "confident_accuracy": 0.9100332092180738,
+   "confident_known": 19874,
+   "control": {
+    "accuracy": 0.847318733543125,
+    "macro_f1": 0.5649152961474337,
+    "n_gt": 306,
+    "n_pred": 365,
+    "spell_f1": 0.5991058122205664
+   },
+   "provider": "skillcorner",
+   "role": "fit-disjoint"
+  },
+  "skillcorner-2015213": {
+   "confident_accuracy": 0.8835203714964895,
+   "confident_known": 18089,
+   "control": {
+    "accuracy": 0.8488701122649084,
+    "macro_f1": 0.5644706044591263,
+    "n_gt": 296,
+    "n_pred": 392,
+    "spell_f1": 0.5813953488372092
+   },
+   "provider": "skillcorner",
+   "role": "fit-disjoint"
+  },
+  "skillcorner-2016236": {
+   "confident_accuracy": 0.9240633575135164,
+   "confident_known": 36807,
+   "control": {
+    "accuracy": 0.8532499386804022,
+    "macro_f1": 0.5685946829825054,
+    "n_gt": 300,
+    "n_pred": 366,
+    "spell_f1": 0.5927927927927927
+   },
+   "provider": "skillcorner",
+   "role": "fit-disjoint"
+  },
+  "skillcorner-2017461": {
+   "confident_accuracy": 0.940806775128148,
+   "confident_known": 22435,
+   "control": {
+    "accuracy": 0.837651170919259,
+    "macro_f1": 0.5535096185300915,
+    "n_gt": 283,
+    "n_pred": 374,
+    "spell_f1": 0.5388127853881278
+   },
+   "provider": "skillcorner",
+   "role": "fit-disjoint"
+  },
+  "wcsf-used-match": {
+   "confident_accuracy": 0.6433828194391574,
+   "confident_known": 47286,
+   "control": {
+    "accuracy": 0.7095169908846436,
+    "macro_f1": 0.7072464532563515,
+    "n_gt": 411,
+    "n_pred": 490,
+    "spell_f1": 0.5052164261931187
+   },
+   "provider": "wcsf",
+   "role": "fit-disjoint"
+  }
+ },
+ "passed": true,
+ "proxy_accuracy_by_provider": {
+  "dfl": 0.941206409836214,
+  "skillcorner": 0.9361156887921063,
+  "wcsf": 0.6433828194391574
+ },
+ "proxy_accuracy_primary": 0.8402349726891591,
+ "scoring_calls": 15
+}
