@@ -1,0 +1,28 @@
+# Metrica sample harm check — prospective reference and source protocol
+
+Stage4a passed with natural primary delta -.000940075 and every provider within .01 loss. Rule source/settings at freeze549d42b remain immutable. No new grid or tweak is allowed. This stage evaluates the three pinned public Metrica samples once, control versus the identical gap rule, natural input only. It is a clear-harm check: stop if equal-match mean spell F1 declines. No formal dataset licence is asserted; acknowledge Metrica Sports and its request for responsible use. Manually corrected tracking and dead-play ball absence make the test partly circular.
+
+## Source and canonical geometry
+
+Repository metrica-sports/sample-data at e706dd506b360d69d9d123d5b8026e7294b13996;11 assets and their Git blob hashes/sizes were committed at24a8636 before acquisition. All acquired bytes matched. Raw assets remain under private workspace storage, never in Git. Source README, event definitions PDF and schema/enum/clock aggregates were read before coding reference normalization; no prediction or score informed these choices.
+
+All games use25Hz. CSV frame ids start at1 and time=frame/25; events have the same clock (all frame-minus-rounded-time*25 deltas were0). Canonical index=source frame-1; never fit a time shift. Game3 periods and varying player-slot layouts come from the XML's declared ranges/channel references. CSV roles Home/Away map to H/A. Game3 XML's first/second teams (Team A/Team B) map to H/A, and JSON team ids must match. Source normalized positions map to the existing canonical105.3x68m feature space, consistently with the frozen external adapters; source metadata reports105x68m. No orientation flip is fitted. Stable source player ids provide speed correspondences. Geometry inference receives no event-derived hints.
+
+## Fixed event reference (committed before any sample score)
+
+Normalize source type/subtype names by uppercasing/whitespace stripping. CSV hyphen-separated subtype components and JSON subtype dictionaries/lists become exact tokens: GOAL is distinct from GOAL KICK; FAULT is distinct from ADVANTAGE. Supported source kinds are PASS,CARRY,RECOVERY,SHOT,SET PIECE,BALL LOST,BALL OUT,FAULT RECEIVED,CHALLENGE,CARD; unknown kinds fail source qualification rather than being silently guessed.
+
+- PASS,CARRY,RECOVERY,SHOT,BALL LOST and BALL OUT establish their named action team at the start frame. Successive same-team actions retain one continuous possession. SHOT/BALL LOST/BALL OUT with GOAL ends live play at its end frame. BALL OUT always starts D at its end frame, when its documented out-of-bounds action ends.
+- FAULT RECEIVED and any FAULT subtype start D at the event's end frame. ADVANTAGE alone does not stop play. Once D starts, ordinary actions do not end it; only the next SET PIECE does, literally as the approved brief requires.
+- SET PIECE establishes its team at its start frame and clears D. If a stop and restart share a frame, restart wins because D ends when that restart occurs.
+- A CHALLENGE with WON establishes the named team at the end; LOST establishes the opponent at the end, per the event definitions. A challenge with neither result is unknown at its end. Fault overrides a challenge ownership result. CARD is ignored as it supplies no ball-control evidence.
+- Simultaneous conflicting owners produce X until the next unambiguous supported action; unknown team mappings produce X. Stops take priority over ordinary actions, restarts take priority over stops. Neither team is selected by a tie-break or by a model prediction.
+- State resets at every contiguous period boundary. Before the first supported action and after the maximum event endpoint within that period, the reference is X; unsupported periods are X. Events are clipped to their declared period bounds; wholly out-of-period events are counted and ignored. No possession is invented from tracking or missingness.
+
+This is a deterministic sparse-event convention, not independently adjudicated possession ground truth. Loose balls and event annotation timing can disagree with physical control. Only this frozen reference is used; no remapping after scores.
+
+## Tests, seals and execution
+
+Synthetic tests pin CSV/JSON token and clock normalization, dynamic XML channels/players/periods, role mapping, team-side ball consistency, possession chaining, stops/goals/fouls/advantage, challenge outcomes, conflict X, period reset, support bounds and deterministic reproduction. All source/input identities, this document and executable source are prospectively sealed and committed before any sample score. Exclusive claims allow3 control and3 gap scores, exactly once. Every completed aggregate is retained privately before validation; public receipts contain counts/hashes only. Verify all source files before loading and after computation. A negative mean delta terminates dependent challenge/release execution; do not change the gap rule or reference.
+
+Duplicate CSV ball streams must agree when both are present; if either side is missing, treat the ball as missing. Reject a finite disagreement instead of choosing a side. Native CSV/metadata player identities are kept; no point correspondence or role assignment is fitted from the event reference. This normalization is fixed before source qualification and scoring.
