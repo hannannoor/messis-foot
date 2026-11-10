@@ -24,6 +24,16 @@ python -I gap_release.py --prefix "<dir>/BAR-ATH_tactical" --tags "<dir>/BAR-ATH
 
 Expected `submission.csv` SHA-256: `31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963` (199,319 rows; two independent runs were byte-identical; the official `validate_submission.py` passes).
 
+## Alternative candidate, 10 November: observed-touch decoding (stoppage-regime test)
+
+`touch_release.py` decodes the frozen control's emissions with observed-touch evidence (`predict_observed_touch(frames, 3, 2, 8)`), then applies the gap rule and the kickoff patch. The current candidate (`gap_release.py`, CSV `31b947d3…f963`) is unchanged and remains available. Results, regimes and limits: [DESIGN.md](DESIGN.md).
+
+```powershell
+python -I touch_release.py --prefix "<dir>/BAR-ATH_tactical" --tags "<dir>/BAR-ATH_tactical_smart_tagging.xml" --out <new-dir>
+```
+
+Expected `submission.csv` SHA-256: `1de96acb8ac2198c960637f6b20c2438c9ff142e76a9ab463c384b52814b8d14` (199,319 rows; two runs byte-identical; official validator passes). The user decides which file is submitted.
+
 ## What happened
 
 - Full automatic camera processing produced no bounded clock alignment, so camera fusion was paused.
