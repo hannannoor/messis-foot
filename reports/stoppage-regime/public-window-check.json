@@ -1,0 +1,15 @@
+{
+ "accuracy": 0.7432,
+ "csv_sha256": "1de96acb8ac2198c960637f6b20c2438c9ff142e76a9ab463c384b52814b8d14",
+ "macro_f1": 0.683,
+ "note": "Official scorer, run once on the public five-minute window; scorer outputs removed from the official repository. A pipeline-defect check only (home share error 0.019, H/A F1 0.82/0.73).",
+ "predicted_spells": 23,
+ "reference_current_candidate": {
+  "accuracy": 0.734,
+  "macro_f1": 0.677,
+  "predicted_spells": 25,
+  "spell_f1": 0.362
+ },
+ "reference_spells": 17,
+ "spell_f1": 0.43
+}
