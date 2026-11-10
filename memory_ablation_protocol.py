@@ -123,6 +123,7 @@ def source_paths(root):
                         if candidate.is_file():pending.append(candidate)
     extras=tuple(PROTECTED)+('requirements-training.txt','requirements-memory-ablation.lock','benchmark/provenance.json',
         'docs/superpowers/specs/2026-11-09-memory-ablation-preflight-recovery.md',
+        'docs/superpowers/specs/2026-11-09-memory-ablation-cache-frame-amendment.md',
         'reports/ball-gap/comparison-freeze.json','reports/ownership-path/2026-11-09-natural-v2/freeze.json',
         'reports/wcsf-transfer-v2/acquisition.json','reports/wcsf-transfer-v2/geometry.json','reports/wcsf-transfer-v2/predictions-seal.json','reports/wcsf-transfer-v2/results.json')
     for name in extras:

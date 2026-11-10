@@ -5,7 +5,8 @@ import json
 import numpy as np
 
 from gap_solver.selection import ball_mask,mask_frames,export_tree
-from memory_ablation import prepare_inputs,transform_matrix,predict_supports,MODEL_SHA,MODES
+from memory_ablation import transform_matrix,predict_supports,MODEL_SHA,MODES
+from gap_solver.tactical import feature_rows
 
 TRAIN_MATCHES=('J03WOH','J03WOY','J03WPY','J03WMX')
 
@@ -52,11 +53,12 @@ def prepare_training(groups):
             raise ValueError('Invalid training reference dimensions/codes')
         if not np.array_equal(periods,[frame.period for frame in frames]) or not np.isin(periods,[1,2]).all():
             raise ValueError('Training period structure differs')
+        if any(f.dead_evidence or f.dead_source or f.tag_team or f.restart_hint for f in frames):raise ValueError('Geometry-only training frames required')
         take=(np.arange(len(frames))%5==0)&(target<3);selected=np.flatnonzero(take)
         if not len(selected):raise ValueError('Training group has no selected known rows')
         for regime,rate in enumerate((0.,.3)):
             inputs=frames if rate==0 else mask_frames(frames,ball_mask(periods,rate,1729+group_index))
-            matrix=prepare_inputs(inputs).matrix
+            matrix=transform_matrix(list(feature_rows(inputs)),'control')
             matrices.append(matrix[take]);targets.append(target[take])
             weights.append(np.full(len(selected),1./len(selected),dtype=np.float64))
             identities.append(np.column_stack((np.full(len(selected),group_index),np.full(len(selected),regime),selected)))

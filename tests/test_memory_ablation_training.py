@@ -42,6 +42,15 @@ class MemoryTraining(unittest.TestCase):
         self.assertEqual(data.matrix[7,0],0.) # Seed1730 masks original row10, unlike seed1729.
         with self.assertRaises(ValueError):data.matrix[0,0]=99
 
+    def test_original_cache_frames_need_features_without_motion_eligibility(self):
+        from gap_solver.core import Frame
+        groups=self.groups()
+        for group in groups:group['frames']=[Frame(period=1,ball_x=52.65,ball_y=34.,home_distance=1.,away_distance=4.) for _ in range(11)]
+        data=training.prepare_training(groups)
+        np.testing.assert_array_equal(data.matrix[0],[1,1,1,1,4,3,1,0,0,0,0,0,0,1,4,0,0,10])
+        np.testing.assert_array_equal(data.matrix[1,13:],[1,4,1,0,0])
+        self.assertEqual(data.row_identity[:2].tolist(),[[0,0,0],[0,0,10]])
+
     def test_reference_changes_only_selection_targets_not_generated_features(self):
         groups=self.groups();before=training.prepare_training(groups);groups[0]['reference'][5]=2
         after=training.prepare_training(groups)

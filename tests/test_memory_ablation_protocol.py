@@ -274,4 +274,31 @@ class MemoryProtocol(unittest.TestCase):
             with self.assertRaises(ValueError):s.retire_preflight('new-run')
 
 
+    def test_approved_cache_frame_retirement_keeps_both_generations_and_global_budget(self):
+        with fixture() as (root,_,__,___):
+            old=runner.AblationSession('2026-11-09-v1',root=root);old.freeze()
+            protocol.store_exact(old.private/'fit-request.incomplete',dict(utc=protocol.utc()))
+            for name in ('execution-error-fit-worker.log','execution-error-fit.log'):(old.private/name).write_text('synthetic original failure')
+            old.retire_preflight('2026-11-09-v2')
+            second=runner.AblationSession('2026-11-09-v2',root=root);second.freeze()
+            for name in ('fit-request.incomplete','fit.incomplete'):protocol.store_exact(second.private/name,dict(utc=protocol.utc()))
+            second._event('training_reference_cache_entry',reference_container_parsed=True)
+            (second.private/'execution-error-fit-worker.log').write_text("AttributeError: 'Frame' object has no attribute 'geometry_valid'\n")
+            (second.private/'execution-error-fit.log').write_text('synthetic parent failure')
+            original={str(p):p.read_bytes() for p in (old.public/'freeze.json',second.public/'freeze.json',second._owner_path(),old.budget/'experiment-owner.json')}
+            with self.assertRaises(ValueError):second.retire_cache_preflight('unapproved')
+            second._claim('fit','control')
+            with self.assertRaises(ValueError):second.retire_cache_preflight('2026-11-09-v3')
+            # Synthetic-only fixture can remove its fake claim; real code never resets claims.
+            (second.budget/'claims/fit--control.json').unlink()
+            (second.private/'access.jsonl').write_bytes(protocol.canonical(dict(event='frozen'))+protocol.canonical(dict(event='training_reference_cache_entry',reference_container_parsed=True)))
+            second.retire_cache_preflight('2026-11-09-v3')
+            third=runner.AblationSession('2026-11-09-v3',root=root);third.freeze();third.fit();third.seal();third.evaluate();third.summarize()
+            self.assertEqual(third.verify()['scorings'],60)
+            for name,data in original.items():self.assertEqual(Path(name).read_bytes(),data)
+            self.assertTrue((second.private/'fit.incomplete').exists())
+            with self.assertRaises((ValueError,FileExistsError)):runner.AblationSession('2026-11-09-v4',root=root).freeze()
+            with self.assertRaises(ValueError):third.retire_cache_preflight('2026-11-09-v4')
+
+
 if __name__=='__main__':unittest.main()

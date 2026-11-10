@@ -92,6 +92,17 @@ class AblationSession:
         return successor if successor.is_file() else self.budget/'experiment-owner.json'
 
     def _continuation(self,require_empty=False):
+        amendment=self.budget/'cache-frame-successor.json'
+        if amendment.is_file() and self.run_id=='2026-11-09-v3':
+            link=p.read(amendment);prior=AblationSession('2026-11-09-v2',root=self.root)
+            if link['prior_run_id']!=prior.run_id or link['successor_run_id']!=self.run_id or link['prior_certificate_sha256']!=prior._continuation():raise ValueError('Approved amendment lineage differs')
+            if link['owner_sha256']!=p.sha(prior._owner_path()) or p.read(prior._owner_path())!=prior._expected_owner():raise ValueError('Prior generation owner differs')
+            status=p.read(prior.public/'preflight-status.json')
+            if link['status_sha256']!=p.sha(prior.public/'preflight-status.json') or p.read(prior.private/'retired-preflight.json')!=dict(status_sha256=link['status_sha256']):raise ValueError('Amendment retirement anchor differs')
+            if status['freeze_sha256']!=p.sha(prior.public/'freeze.json') or (status['fits'],status['inference_entries'],status['scorings'])!=(0,0,0) or status['successor_run_id']!=self.run_id:raise ValueError('Amendment identity differs')
+            if status['error_log_sha256']!=p.hashes({name:prior.private/name for name in ('execution-error-fit-worker.log','execution-error-fit.log')}):raise ValueError('Amendment failure evidence changed')
+            if require_empty and any((self.budget/'claims').iterdir()):raise ValueError('Scientific attempts cannot be retired/reset')
+            return p.sha(amendment)
         link_path=self.budget/'preflight-successor.json'
         if not link_path.is_file():raise FileExistsError('Experiment owner already exists')
         link=p.read(link_path);original=p.read(self.budget/'experiment-owner.json')
@@ -135,6 +146,29 @@ class AblationSession:
         p.store_exact(self.private/'retired-preflight.json',dict(status_sha256=p.sha(self.public/'preflight-status.json')))
         p.store_exact(self.budget/'preflight-successor.json',dict(prior_run_id=self.run_id,successor_run_id=successor_run_id,
             owner_sha256=p.sha(self.budget/'experiment-owner.json'),status_sha256=p.sha(self.public/'preflight-status.json')))
+        return dict(status=value['status'],fits=0,inference_entries=0,scorings=0,successor_run_id=successor_run_id)
+
+    def retire_cache_preflight(self,successor_run_id):
+        if (self.run_id,successor_run_id)!=('2026-11-09-v2','2026-11-09-v3') or (self.budget/'cache-frame-successor.json').exists():raise ValueError('Only the explicitly approved final cache-frame continuation is permitted')
+        certificate=self._continuation(require_empty=True)
+        if p.read(self._owner_path())!=self._expected_owner():raise ValueError('Prior generation ownership differs')
+        anchor=p.read(self.private/'freeze-anchor.json')
+        if anchor!=dict(freeze_sha256=p.sha(self.public/'freeze.json'),owner_sha256=p.sha(self._owner_path()),environment_map_sha256=p.sha(self.private/'environment-map.json')):raise ValueError('Prior generation anchor differs')
+        if {path.name for path in self.public.iterdir()}!={'freeze.json'}:raise ValueError('Preparation has result artifacts')
+        allowed={'environment-map.json','input-map.json','freeze-anchor.json','access.jsonl','fit-request.incomplete','fit.incomplete',
+            'execution-error-fit-worker.log','execution-error-fit.log','training-worker.stdout.log','training-worker.stderr.log'}
+        if not {path.name for path in self.private.iterdir()}<=allowed or not all((self.private/name).is_file() for name in ('fit-request.incomplete','fit.incomplete')):raise ValueError('Preparation contains unexpected scientific work')
+        events=[json.loads(line) for line in (self.private/'access.jsonl').read_text(encoding='utf-8').splitlines()]
+        if [event['event'] for event in events]!=['frozen','training_reference_cache_entry'] or events[1].get('reference_container_parsed') is not True:raise ValueError('Preparation chronology differs')
+        errors={name:self.private/name for name in ('execution-error-fit-worker.log','execution-error-fit.log')}
+        if not all(path.is_file() for path in errors.values()) or errors['execution-error-fit-worker.log'].read_text(encoding='utf-8').splitlines()[-1]!="AttributeError: 'Frame' object has no attribute 'geometry_valid'":raise ValueError('Exact completed cache-frame failure required')
+        value=dict(schema_version=1,status='retired_before_scientific_entry',reason='cache_frame_contract',reference_container_parsed=True,
+            prior_run_id=self.run_id,successor_run_id=successor_run_id,fits=0,inference_entries=0,scorings=0,
+            freeze_sha256=p.sha(self.public/'freeze.json'),owner_sha256=p.sha(self._owner_path()),error_log_sha256=p.hashes(errors),created_utc=p.utc())
+        p.assert_public_report(value);p.store_exact(self.public/'preflight-status.json',value)
+        p.store_exact(self.private/'retired-preflight.json',dict(status_sha256=p.sha(self.public/'preflight-status.json')))
+        p.store_exact(self.budget/'cache-frame-successor.json',dict(prior_run_id=self.run_id,successor_run_id=successor_run_id,
+            prior_certificate_sha256=certificate,owner_sha256=p.sha(self._owner_path()),status_sha256=p.sha(self.public/'preflight-status.json')))
         return dict(status=value['status'],fits=0,inference_entries=0,scorings=0,successor_run_id=successor_run_id)
 
     def freeze(self):
@@ -364,15 +398,16 @@ class AblationSession:
 
 
 def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('command',choices=('freeze','fit','seal','evaluate','summarize','verify','retire-preflight'));parser.add_argument('--run-id',required=True)
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('command',choices=('freeze','fit','seal','evaluate','summarize','verify','retire-preflight','retire-cache-preflight'));parser.add_argument('--run-id',required=True)
     parser.add_argument('--successor-run-id')
     parser.add_argument('--training-worker',action='store_true',help=argparse.SUPPRESS)
     args=parser.parse_args();session=AblationSession(args.run_id)
     try:
         if args.training_worker and args.command!='fit':raise ValueError('Invalid training worker command')
-        if args.command=='retire-preflight':
+        if args.command in ('retire-preflight','retire-cache-preflight'):
             if not args.successor_run_id:raise ValueError('Successor ID required')
-            result=session.retire_preflight(args.successor_run_id)
+            method=session.retire_preflight if args.command=='retire-preflight' else session.retire_cache_preflight
+            result=method(args.successor_run_id)
         else:result=session._fit_worker() if args.training_worker else getattr(session,args.command)()
         print(json.dumps(result,sort_keys=True));return 0
     except Exception:
