@@ -1,0 +1,36 @@
+{
+ "bonus_share_of_graded": 0.3925291299722392,
+ "changed_by_pair": {
+  "A->H": 4652,
+  "D->A": 127,
+  "D->H": 18,
+  "H->A": 4340
+ },
+ "current": {
+  "counts": {
+   "A": 37073,
+   "D": 65860,
+   "H": 55924,
+   "X": 0
+  },
+  "median_spell": 124,
+  "spells": 434,
+  "spells_under_25": 29
+ },
+ "current_final_labels_sha256": "bc7b78668039d3830bceadea5d120bd0b4cf05a7baddcfae6e009fd166d29bba",
+ "frames_changed": 9137,
+ "graded_changed_share": 0.057517138054980266,
+ "touches_detected": 698,
+ "with_touch": {
+  "counts": {
+   "A": 36888,
+   "D": 65715,
+   "H": 56254,
+   "X": 0
+  },
+  "median_spell": 135,
+  "spells": 383,
+  "spells_under_25": 32
+ },
+ "with_touch_final_labels_sha256": "ff5819a5dfc5cacb75b524cb726d5dd28a61419f5d42f84cf474489f76d230a3"
+}

@@ -1,0 +1,9 @@
+{
+ "command": "python -I touch_release.py --prefix <tactical prefix> --tags <prefix>_smart_tagging.xml --out <new dir>",
+ "csv_sha256": "1de96acb8ac2198c960637f6b20c2438c9ff142e76a9ab463c384b52814b8d14",
+ "current_candidate_csv_sha256": "31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963",
+ "public_window_opened_for_this_file": false,
+ "recommendation": "ship control decoded with observed-touch evidence (theta 3, beta 2, c_touch 8) plus gap rule plus kickoff patch, if the user chooses it over the current candidate",
+ "rows": 199319,
+ "utc": "2026-11-10T14:40:40.023855+00:00"
+}
