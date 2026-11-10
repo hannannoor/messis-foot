@@ -112,3 +112,26 @@ The preceding zero-call statement describes the pre-score checkpoint. After the 
 The strict nondecline gate passes. Long-gap/stoppage counts were91/85,95/89,99/97; candidate D masks covered54710,56194,45380 frames, with zero restart-extension frames. These are sample-only observations. Tracking is manually corrected and ball absence is mostly dead play, making this check partly circular; sparse-event possession labels are approximate. This does not measure the expected challenge-match gain.
 
 A read-only audit verified the complete source/input/freeze identities, six claims, retained provisionals, private prediction hashes and reconstructed result summary, with zero additional inference or scoring. The authorized aggregate-only challenge check may now proceed under its separate prospective freeze. No release or public-window check has been authorized.
+
+## Stage4c completed — PASS; recommendation recorded before any public check
+
+The full suite passed708 collected tests (687 executed,21 skipped, zero failures), with source held fixed and the original release artifact hash unchanged. The4c prospective freeze was committed as923597fedfebe7cebfb3d150ece5fa7fc598fbb3 before its sole paired inference attempt. This stage ran zero scoring calls, generated no submission CSV and accessed no challenge reference labels. The control label hash exactly matches both historical frozen-control reproductions.
+
+| Aggregate on158857 graded frames | Control | Control plus gap rule |
+|---|---:|---:|
+| D frames | 4755 | 63273 |
+| D share | 2.9933% | 39.8302% |
+| H/A possession spells | 327 | 435 |
+| Set-piece starts at/within3s after D | 1/58 (1.7241%) | 45/58 (77.5862%) |
+
+Of133 long gaps,113 were selected and20 were not selected (including possibly insufficient-statistic cases; these are not verified live gaps). Long gaps covered65929 frames; selected gaps59659 frames. A total58518 labels changed toD because some selected frames were alreadyD. Restart-extension frames were0. The computed player reference speed was1.6227307080888567m/s, with30390 defined sampled statistics. These are bounded self-consistency observations, not accuracy measurements.
+
+The candidate D share is below the fixed60% stop threshold and stoppage selection is nonzero. All internal counts, patch parity, source/input identities and saved control parity reconcile. The read-only audit passes with zero additional inference or scoring.
+
+The initial second-half interval requested by4c has length0: the first frame in that structural block already has an observed ball under the frozen loader. Both H/A/D/X count tables are consequently allzero. This provides no evidence about the full pre-kickoff dead-ball interval and is not a substitute for the separate Stage5 kickoff audit. No kickoff override or hard-coded frame was added.
+
+The written addenda's raw-probe aggregates are contextual, not an exact reconciliation target for this run. The unchanged release loader first applies homography quality and anonymous association; anonymous_motion.py clears ball/player geometry on rejected frames. Therefore its effective ball-observation gaps can differ from raw tracking availability (the current65929 long-gap frames exceed the supplied64643 total raw missing frames). The missing probe receipt prevents an independent exact comparison; no Stage0 probe was rerun, and neither earlier receipt nor the supplied numbers was rewritten.
+
+Recommendation: ship the unchanged control plus the fixed gap rule, conditional on the user's separate Stage5 go-ahead and release correctness checks. External natural harm limits passed despite a small negative delta; random-mask deterioration remains material and nongating. The Metrica gain is partly circular, and there is no clean labelled validation of the challenge's long-gap behavior. Expected challenge improvement is argued from label-free evidence, not measured against its truth.
+
+The ship-decision receipt fixes this recommendation and candidate label hash before any public-window access. No release generation, public-window check, push, merge or promotion has occurred. The observed-only touch amendment is implemented and tested, but its separately frozen scientific evaluation and budget remain pending user direction; the original rejected experiment and exhausted budget remain intact.
