@@ -97,3 +97,18 @@ The Metrica check is partly circular because tracking is manually corrected and 
 One fresh-context review of the new Metrica subproject found integrity, preservation and scope issues. The single pre-score fix pass binds qualification/source/sequence hashes, retains returned aggregates before validation, uses a strictly nondeclining mean gate, holds CARD inert, verifies source inventory/runtime after computation, keeps detailed per-case scores private, and reconstructs the entire final authorized summary. Thirty-six targeted Metrica tests pass.
 
 A draft three-kind GOAL whitelist was too narrow for the addendum's rule that any goal starts D: Game3 includes a RECOVERY/GOAL annotation. This was discovered without any model inference or score. The final rule treats an exact GOAL subtype on any supported non-card event as a stop. All intermediate reference code, qualification versions and bounded sequence witnesses are preserved. Qualification-v3 reproduces the original qualified reference sequences exactly in all three games (zero changed labels, same SHA-256), while strengthening future-edge handling. It has141398,139015 and141346 known rows respectively. The source-count qualification and model scoring are separate; zero sample predictions/scores have run so far.
+
+## Stage4b completed — PASS
+
+The preceding zero-call statement describes the pre-score checkpoint. After the full suite passed690 collected tests (669 executed,21 skipped, zero failures), the prospective Metrica freeze was committed as0b9ea445cfe11874aa75f076d68a900ec3c0a94b. Exactly three control and three gap-rule scores were then completed, with no rerun or tuning.
+
+| Sample | Control spell F1 | Gap-rule spell F1 | Delta |
+|---|---:|---:|---:|
+| Game1 | 0.443845 | 0.567704 | +0.123859 |
+| Game2 | 0.441356 | 0.542012 | +0.100656 |
+| Game3 | 0.454936 | 0.525599 | +0.070663 |
+| Equal-game mean | 0.446712 | 0.545105 | +0.098393 |
+
+The strict nondecline gate passes. Long-gap/stoppage counts were91/85,95/89,99/97; candidate D masks covered54710,56194,45380 frames, with zero restart-extension frames. These are sample-only observations. Tracking is manually corrected and ball absence is mostly dead play, making this check partly circular; sparse-event possession labels are approximate. This does not measure the expected challenge-match gain.
+
+A read-only audit verified the complete source/input/freeze identities, six claims, retained provisionals, private prediction hashes and reconstructed result summary, with zero additional inference or scoring. The authorized aggregate-only challenge check may now proceed under its separate prospective freeze. No release or public-window check has been authorized.
