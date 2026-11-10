@@ -141,4 +141,56 @@ class RunProtocol(unittest.TestCase):
         with self.assertRaises(ValueError):check.validate_aggregate(row)
 
 
+class IdentityProtocol(unittest.TestCase):
+    def test_checked_accepts_frozen_fixture_and_rejects_identity_drift(self):
+        from contextlib import ExitStack
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);public=root/'public';private=root/'private'
+            public.mkdir();private.mkdir()
+            handling=root/'handling.json';handling.write_text('{}')
+            rule=root/'gap_liveness.py';rule.write_text('# fixed rule')
+            spec=root/'spec.md';spec.write_text('fixed protocol')
+            paths={key:root/key for key in ('metadata','tracking','homography','automatic_tags')}
+            for path in paths.values():path.write_text('synthetic input')
+            sources={'module.py':'a'*64};prior=dict(external='pass',metrica='pass')
+            value=dict(source_commit='source',source_sha256=sources,document_sha256={'spec.md':check.gap.sha(spec)},runtime={'python':'fixed'},
+                limits=dict(paired_inference=1,scoring=0),prerequisites=prior,input_sha256=check.input_hashes(paths),handling_sha256=check.gap.sha(handling),
+                rule_source_sha256=check.gap.sha(rule),baseline_labels_sha256='baseline')
+            check.write_new(public/'freeze.json',value)
+            check.write_new(private/'input-map.json',{k:str(p.resolve()) for k,p in paths.items()})
+            check.gap.bind_freeze_identity(public,private,'source')
+            def git_output(args,**kwargs):
+                if args[:2]==['git','show']:
+                    return (public/'freeze.json').read_bytes() if args[2].endswith('freeze.json') else spec.read_bytes()
+                if args[:2]==['git','log']:return 'freezecommit\n'
+                if args[:2]==['git','ls-files']:return '' if '--others' in args else 'module.py\n'
+                raise AssertionError(args)
+            with ExitStack() as stack:
+                for key,v in dict(ROOT=root,PUBLIC=public,PRIVATE=private,HANDLING=handling).items():stack.enter_context(patch.object(check,key,v))
+                stack.enter_context(patch.object(check,'input_paths',return_value=({},paths)))
+                stack.enter_context(patch.object(check,'baseline_receipts',return_value={'labels_sha256':'baseline'}))
+                prior_mock=stack.enter_context(patch.object(check,'prerequisites',return_value=prior))
+                stack.enter_context(patch.object(check.subprocess,'check_output',side_effect=git_output))
+                ancestry=stack.enter_context(patch.object(check.subprocess,'run',return_value=Frame(returncode=0)))
+                hashes=stack.enter_context(patch.object(check.gap,'source_hashes',return_value=sources))
+                runtime=stack.enter_context(patch.object(check.gap,'runtime',return_value={'python':'fixed'}))
+                stack.enter_context(patch.object(check.gap,'preservation',return_value={'unchanged':True}))
+                self.assertEqual(check.checked()[1],'freezecommit')
+                for path in (handling,paths['tracking'],spec,rule,private/'input-map.json'):
+                    old=path.read_bytes();path.write_bytes(old+b' ')
+                    with self.subTest(path=path.name),self.assertRaises(ValueError):check.checked()
+                    path.write_bytes(old)
+                runtime.return_value={'python':'changed'}
+                with self.assertRaises(ValueError):check.checked()
+                runtime.return_value={'python':'fixed'}
+                prior_mock.return_value={'external':'changed'}
+                with self.assertRaises(ValueError):check.checked()
+                prior_mock.return_value=prior
+                hashes.return_value={'shadow.py':'b'*64}
+                with self.assertRaises(ValueError):check.checked()
+                hashes.return_value=sources;ancestry.return_value=Frame(returncode=1)
+                with self.assertRaises(ValueError):check.checked()
+                self.assertFalse((private/'run-entry.json').exists())
+
+
 if __name__=='__main__':unittest.main()
