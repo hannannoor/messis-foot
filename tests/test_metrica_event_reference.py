@@ -54,3 +54,22 @@ class MetricaReference(unittest.TestCase):
         self.assertTrue(event.missing_end)
         labels,summary=r.build_reference([event],[1]*30)
         self.assertEqual(labels[25],'A');self.assertEqual(summary['missing_end_events'],1)
+
+    def test_card_is_inert_even_with_spurious_stop_tokens(self):
+        labels,_=r.build_reference([self.event(1,1),self.event(3,4,team='A',kind='CARD',tokens=('GOAL','FAULT')),self.event(6,7)],[1]*9)
+        self.assertEqual(labels[3:6],('H',)*3)
+    def test_goal_only_stops_declared_goal_event_kinds(self):
+        labels,_=r.build_reference([self.event(1,1),self.event(3,4,team='A',kind='RECOVERY',tokens=('GOAL',)),self.event(6,7,team='A')],[1]*9)
+        self.assertEqual(labels[4:6],('A','A'))
+    def test_unknown_team_and_period_gap_clipping(self):
+        labels,_=r.build_reference([self.event(0,4),self.event(5,8,team='',period=2)],[1]*3+[0]*2+[2]*5)
+        self.assertEqual(labels[3:5],('X','X'));self.assertEqual(labels[5:9],('X',)*4)
+    def test_missing_end_non_restart_is_rejected(self):
+        row=dict(Team='Home',Type='SHOT',Subtype='',Period='1',**{'Start Frame':'26','Start Time [s]':'1.04','End Frame':'0','End Time [s]':'0'})
+        with self.assertRaises(ValueError):r.normalize_csv(row)
+
+    def test_card_cannot_extend_reference_coverage(self):
+        ordinary=[self.event(1,3)]
+        a,_=r.build_reference(ordinary,[1]*10)
+        b,_=r.build_reference(ordinary+[self.event(8,9,kind='CARD')],[1]*10)
+        self.assertEqual(a,b)

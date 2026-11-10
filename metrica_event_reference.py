@@ -57,11 +57,16 @@ def build_reference(events,periods):
         while i<n and periods[i]==period:i+=1
         stop=i;selected=[(j,e) for j,e in enumerate(events) if e.period==period and e.end>=first and e.start<stop]
         if not selected:continue
-        coverage_end=max(min(e.end,stop-1) for _,e in selected);points=defaultdict(list)
+        used.update(j for j,e in selected)
+        meaningful=[(j,e) for j,e in selected if e.kind!='CARD']
+        if not meaningful:continue
+        coverage_end=max(min(e.end,stop-1) for _,e in meaningful);points=defaultdict(list)
         for j,e in selected:
             used.add(j);clipped+=int(e.start<first or e.end>=stop)
+            if e.kind=='CARD':continue
             start=max(first,e.start);end=min(stop-1,e.end)
-            is_stop=e.kind in ('BALL OUT','FAULT RECEIVED') or bool({'GOAL','FAULT'}.intersection(e.subtypes))
+            is_stop=(e.kind in ('BALL OUT','FAULT RECEIVED') or 'FAULT' in e.subtypes
+                or e.kind in ('SHOT','BALL LOST','BALL OUT') and 'GOAL' in e.subtypes)
             if e.kind in ACTIONS:points[start].append(('owner',e.team))
             if e.kind=='SET PIECE':points[start].append(('restart',e.team))
             if e.kind=='CHALLENGE' and not is_stop:
@@ -85,6 +90,6 @@ def build_reference(events,periods):
                 teams=set(owners);owner=next(iter(teams)) if len(teams)==1 and '' not in teams else 'X'
                 conflicts+=int(owner=='X')
             labels[at]=owner
-    summary=dict(events=len(events),missing_end_events=sum(e.missing_end for e in events),outside_events=len(events)-len(used),clipped_events=clipped,conflict_frames=conflicts,
+    summary=dict(events=len(events),ignored_card_events=sum(e.kind=='CARD' for e in events),missing_end_events=sum(e.missing_end for e in events),outside_events=len(events)-len(used),clipped_events=clipped,conflict_frames=conflicts,
         known_frames=sum(v!='X' for v in labels),label_counts={v:labels.count(v) for v in 'HADX'})
     return tuple(labels),summary

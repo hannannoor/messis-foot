@@ -1,0 +1,7 @@
+# Metrica check pre-score review
+
+One fresh-context gpt-6-astra reviewer inspected the new sample acquisition/adapter/reference/runner subproject at36cd2f0, separately from the completed4a review. It read source, tests and bounded receipts, not raw match rows, and performed no inference or scoring.
+
+The single pre-score fix pass addressed unused qualification bindings, eager validation losing completed aggregates, a numerical allowance at the strict zero-loss gate, GOAL/CARD reference scope, executable inventory/post-computation identity, public receipt scope and incomplete summary reconstruction. Failing-first regressions cover each. Card coverage beyond supported actions and canonical label encoding were also verified with new failing-first tests. Additional tests cover one-sided ball absence, unknown team, malformed XML references, clipping and invalid non-restart ends. No important issue is deferred; no minor is deferred.
+
+Thirty-six Metrica targeted tests pass. Original source-format failure and its corrected diagnosis remain preserved. The prior event reference is compared with the corrected reference using sequence hashes/changed-frame counts, without predictions or scoring. Qualification-v2 is separately sealed; no prior qualification record is overwritten. Whole-suite verification follows with source held fixed before the first sample scientific claim.

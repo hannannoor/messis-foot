@@ -59,3 +59,12 @@ class MetricaAdapter(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=Path.cwd()/'.tmp') as d:
             root=Path(d);xml_fixture(root/'meta.xml');s=(root/'meta.xml').read_text().replace('<FrameRate>25</FrameRate>','<FrameRate>10</FrameRate>');(root/'meta.xml').write_text(s)
             with self.assertRaises(ValueError):a.load_epts_tracking(root/'meta.xml',root/'missing')
+
+    def test_one_sided_ball_missing_is_missing(self):
+        with tempfile.TemporaryDirectory(dir=Path.cwd()/'.tmp') as d:
+            root=Path(d);csv_side(root/'h','Home',1,[None]);csv_side(root/'a','Away',1,[(.5,.5)])
+            self.assertFalse(a.load_csv_tracking(root/'h',root/'a')[0].ball_observed)
+    def test_broken_xml_pair_reference_rejected(self):
+        with tempfile.TemporaryDirectory(dir=Path.cwd()/'.tmp') as d:
+            root=Path(d);xml_fixture(root/'meta.xml');s=(root/'meta.xml').read_text().replace('playerChannelId="h1y"','playerChannelId="a1y"');(root/'meta.xml').write_text(s)
+            with self.assertRaises(ValueError):a.load_epts_tracking(root/'meta.xml',root/'missing')
