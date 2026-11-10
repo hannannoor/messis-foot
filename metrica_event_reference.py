@@ -18,7 +18,7 @@ class Event:
 
 def _index(frame,time):
     frame=int(frame);time=float(time)
-    if frame<1 or not isfinite(time) or frame!=round(time*25):raise ValueError('Event frame/time clock disagreement')
+    if frame<0 or not isfinite(time) or frame!=round(time*25):raise ValueError('Event frame/time clock disagreement')
     return frame-1
 
 
@@ -45,7 +45,7 @@ def build_reference(events,periods):
     n=len(periods)
     if any(type(p) is not int or p not in (0,1,2) for p in periods):raise ValueError('Invalid reference periods')
     for e in events:
-        if (e.period not in (1,2) or type(e.start) is not int or type(e.end) is not int or not 0<=e.start<=e.end
+        if (e.period not in (1,2) or type(e.start) is not int or type(e.end) is not int or not -1<=e.start<=e.end
             or e.team not in ('H','A','') or e.kind not in KINDS):raise ValueError('Invalid normalized event')
     labels=['X']*n;i=0;used=set();clipped=conflicts=0
     while i<n:

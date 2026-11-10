@@ -39,3 +39,10 @@ class MetricaReference(unittest.TestCase):
         with self.assertRaises(ValueError):r.normalize_json(js,{'one':'H'})
         js['type']['name']='PASS';js['start']['time']=10
         with self.assertRaises(ValueError):r.normalize_json(js,{'one':'H'})
+
+    def test_pretracking_frame_zero_event_is_clipped_not_rejected(self):
+        row=dict(Team='Home',Type='SET PIECE',Subtype='KICK OFF',Period='1',**{'Start Frame':'0','Start Time [s]':'0','End Frame':'0','End Time [s]':'0'})
+        event=r.normalize_csv(row)
+        self.assertEqual(event.start,-1)
+        labels,summary=r.build_reference([event,self.event(1,3)],[1]*5)
+        self.assertEqual(labels,tuple('XHHHX'));self.assertEqual(summary['outside_events'],1)
