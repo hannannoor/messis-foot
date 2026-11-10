@@ -7,6 +7,9 @@ from dataclasses import dataclass
 import hashlib
 import json
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python -I omits the script directory
 
 from gap_liveness import apply_gap_rule
 from kickoff_patch import apply_kickoff_patch, kickoff_starts

@@ -1,0 +1,9 @@
+{
+ "command": "python -I gap_release.py --prefix <tactical prefix> --tags <prefix>_smart_tagging.xml --out <new dir>",
+ "csv_sha256": "31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963",
+ "decision": "ship control plus gap rule plus kickoff patch",
+ "fallback": "frozen control, artifact sha256 e8d35e15be9524270bed82352791dc2849087b49b4c2b59c191023954b19eddb",
+ "public_window_opened": false,
+ "rows": 199319,
+ "utc": "2026-11-10T12:16:18.603131+00:00"
+}
