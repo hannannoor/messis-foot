@@ -1,0 +1,9 @@
+{
+ "accuracy": 0.734,
+ "csv_sha256": "31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963",
+ "macro_f1": 0.677,
+ "note": "Values transcribed from the release worker's report of 10 November 2026 (public five-minute window, official scorer, run once). They were not re-run for this record.",
+ "predicted_spells": 25,
+ "reference_spells": 17,
+ "spell_f1": 0.362
+}
