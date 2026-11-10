@@ -1,0 +1,24 @@
+{
+  "elapsed_seconds": 995.7272126999997,
+  "errors": 0,
+  "failed_tests": [],
+  "failures": 0,
+  "groups": {
+    "baseline_and_gap": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 21,
+      "total": 654
+    },
+    "metrica": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "total": 36
+    }
+  },
+  "passed": true,
+  "skipped": 21,
+  "source_held_fixed": true,
+  "total": 690
+}

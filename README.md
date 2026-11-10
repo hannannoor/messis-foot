@@ -12,6 +12,18 @@ Existing standalone source version: `2026.11.06-temporal-research`. The existing
 
 Read [RULES.md](RULES.md) before processing competition inputs. [CHANGELOG.md](CHANGELOG.md) explains what changed and why; [FOUR_GOALS.md](FOUR_GOALS.md) records reasoning, results, regressions and limitations.
 
+## Submission candidate, 10 November: control + gap rule + kickoff patch
+
+`gap_release.py` is the current submission entry point. It runs the unchanged frozen control (`w0-c32-neutral-missing`, artifact SHA-256 `e8d35e15be9524270bed82352791dc2849087b49b4c2b59c191023954b19eddb`, still the fallback), applies `gap_liveness.apply_gap_rule`, then `kickoff_patch.py`. Details, evidence and limitations: [DESIGN.md](DESIGN.md).
+
+Regenerate the submission (new, nonexistent output directory; Python 3.14.5, standard library only):
+
+```powershell
+python -I gap_release.py --prefix "<dir>/BAR-ATH_tactical" --tags "<dir>/BAR-ATH_tactical_smart_tagging.xml" --out <new-dir>
+```
+
+Expected `submission.csv` SHA-256: `31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963` (199,319 rows; two independent runs were byte-identical; the official `validate_submission.py` passes).
+
 ## What happened
 
 - Full automatic camera processing produced no bounded clock alignment, so camera fusion was paused.

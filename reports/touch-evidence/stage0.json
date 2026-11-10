@@ -1,0 +1,66 @@
+{
+  "ball_diameter_px": {
+    "q25": 2.083657955295427,
+    "q5": 1.5097886764298298,
+    "q50": 2.735956867301198,
+    "q75": 3.4986933218707836,
+    "q95": 4.899806345502026
+  },
+  "ball_runs": {
+    "count": 149,
+    "histogram": {
+      "1": 0,
+      "125": 30,
+      "25": 4,
+      "250": 27,
+      "5": 0,
+      "over250": 88
+    },
+    "quantiles_frames": {
+      "q25": 137.0,
+      "q5": 40.0,
+      "q50": 345.0,
+      "q75": 758.0,
+      "q95": 2266.7999999999993
+    },
+    "total_frames": 94214
+  },
+  "gaps": {
+    "count": 150,
+    "histogram": {
+      "1": 2,
+      "125": 1,
+      "25": 3,
+      "250": 53,
+      "5": 12,
+      "over250": 79
+    },
+    "quantiles_frames": {
+      "q25": 152.25,
+      "q5": 2.0,
+      "q50": 268.0,
+      "q75": 526.5,
+      "q95": 1269.9
+    },
+    "total_frames": 64643
+  },
+  "graded_frames": 158857,
+  "input_sha256": {
+    "homography": "421c81abe16f0912dc45c2541f9bf19dd5660066397a3dcc043038a1b61c28c3",
+    "metadata": "327e35e32e46a647389b88f883d4f9a2ab931e3e6148aef2fcf8f22b1e93c43a",
+    "tracking": "f130e350d2bfdf734b7e32f072931fccc6d015c1e837d082064875fe0a700431"
+  },
+  "observed_frames": 94214,
+  "observed_near_player_share": 0.5911011102383934,
+  "player_height_px": {
+    "q25": 17.04811054332622,
+    "q5": 12.35281644351679,
+    "q50": 22.385101641555252,
+    "q75": 28.625672633488232,
+    "q95": 40.089324645016575
+  },
+  "player_samples": 3254570,
+  "pose_decision": "considered_and_dropped",
+  "scale_limitation": "Planar pitch-width Jacobian proxy, not a measured vertical body projection.",
+  "schema_version": 1
+}

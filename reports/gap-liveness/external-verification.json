@@ -1,0 +1,1 @@
+{"claims":{"control":30,"rule":30},"decision":"Pass external harm gate","extra_inference_or_scoring_calls":0,"freeze_commit":"549d42b6f4ee465a84096c0f7e08c96242a090a9","preservation":{"base":"a5d5aa3c7da86837ec0f0a750f8e1996b66e639a","changed_paths":[],"files":854,"unchanged":true},"verified":true}
