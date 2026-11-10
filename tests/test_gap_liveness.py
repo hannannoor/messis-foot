@@ -106,3 +106,12 @@ class GapLiveness(unittest.TestCase):
             if isinstance(node,ast.Constant) and type(node.value) is int:self.assertLessEqual(node.value,1000)
     def test_frozen_release_hash(self):
         self.assertEqual(hashlib.sha256(Path('competition_release.py').read_bytes()).hexdigest(),'e8d35e15be9524270bed82352791dc2849087b49b4c2b59c191023954b19eddb')
+
+    def test_unassociated_players_are_excluded_not_fatal(self):
+        f=fixture(n=30,gaps=(),players=12)
+        f=[replace(v,home_ids=(None,)+v.home_ids[1:]) for v in f]
+        self.assertAlmostEqual(g.player_speed_statistics(f)[25],2.)
+    def test_player_order_does_not_define_correspondence(self):
+        f=fixture(n=30,gaps=())
+        f[25]=replace(f[25],home_xy=tuple(reversed(f[25].home_xy)),home_ids=tuple(reversed(f[25].home_ids)))
+        self.assertAlmostEqual(g.player_speed_statistics(f)[25],2.)

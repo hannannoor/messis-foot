@@ -29,9 +29,10 @@ def _players(frame):
         if not ids:continue
         if len(ids)!=len(points):raise ValueError('Player identity dimensions differ')
         for identifier,point in zip(ids,points):
+            if identifier is None:continue
             try:key=(side,identifier);duplicate=key in result
             except TypeError:raise ValueError('Invalid player identity') from None
-            if identifier is None or duplicate:raise ValueError('Missing/duplicate player identity')
+            if duplicate:raise ValueError('Duplicate associated player identity')
             result[key]=point
     return result
 

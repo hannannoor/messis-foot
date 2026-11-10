@@ -66,3 +66,74 @@ class GapProtocol(unittest.TestCase):
             (public/'control/key.json').write_text('{}')
             with self.assertRaises(ValueError):x.seal_phase(public,private,'control','control-result.json',['key'],'a'*40)
     def test_budget_fixed_no_grid(self):self.assertEqual(x.LIMITS,dict(control=30,rule=30))
+
+    def test_provider_only_limit_can_fail_while_primary_passes(self):
+        a={r:{p:.55 for p in ('skillcorner','dfl','wcsf')} for r in x.REGIMES}
+        b={r:dict(v) for r,v in a.items()};b['natural']['dfl']=.54
+        self.assertTrue(x.harm_gate(a,b)['passed'])
+        b['natural']['dfl']=.539999
+        result=x.harm_gate(a,b)
+        self.assertTrue(result['primary_pass']);self.assertFalse(result['provider_pass']['dfl'])
+    def test_freeze_and_map_identity_cannot_be_rebound(self):
+        with tempfile.TemporaryDirectory(dir=Path.cwd()/'.tmp') as directory:
+            public=Path(directory)/'public';private=Path(directory)/'private'
+            x.write_new(public/'freeze.json',dict(source_commit='a'*40))
+            x.write_new(private/'input-map.json',dict(example='path'))
+            x.bind_freeze_identity(public,private,'a'*40)
+            x.verify_freeze_identity(public,private,x.read(public/'freeze.json'))
+            (private/'input-map.json').write_text('{}')
+            with self.assertRaises(ValueError):x.verify_freeze_identity(public,private,x.read(public/'freeze.json'))
+            (public/'freeze.json').write_text('{"source_commit":"b"}')
+            with self.assertRaises(ValueError):x.verify_freeze_identity(public,private,x.read(public/'freeze.json'))
+    def test_cache_sidecars_must_share_actual_prefix(self):
+        root=Path('C:/synthetic-cache')
+        files={'features':root/'one.features.npz','metadata':root/'one.metadata.json','reference':root/'one.reference.npz'}
+        x.check_binding_layout('dfl-synthetic',dict(files=files))
+        files['features']=root/'other.features.npz'
+        with self.assertRaises(ValueError):x.check_binding_layout('dfl-synthetic',dict(files=files))
+    def test_committed_documents_are_bound(self):
+        import hashlib
+        with patch.object(x.subprocess,'check_output',return_value=b'original'):
+            with self.assertRaises(ValueError):x.check_committed_documents('commit',{'doc.md':'0'*64})
+            x.check_committed_documents('commit',{'doc.md':hashlib.sha256(b'original').hexdigest()})
+    def test_completed_provisional_receipt_survives_following_error(self):
+        with tempfile.TemporaryDirectory(dir=Path.cwd()/'.tmp') as directory:
+            private=Path(directory)
+            result=dict(completed_score=.5)
+            x.store_provisional(private,'control','case-natural',result)
+            try:raise ValueError('synthetic later failure')
+            except ValueError:pass
+            self.assertEqual(x.read(private/'provisional/control/case-natural.json'),result)
+            with self.assertRaises(FileExistsError):x.store_provisional(private,'control','case-natural',result)
+    def label_fixture(self,private,matches):
+        rows=[]
+        for cid,provider,role in matches:
+            for regime in x.REGIMES:
+                key=cid+'-'+regime;path=private/'control-labels'/(key+'.labels');path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(b'HHHHHH')
+                rows.append(dict(case_id=cid,provider=provider,role=role,regime=regime,labels_sha256=x.sha(path),control=dict(support=dict(frames=6))))
+        return rows
+    def test_missing_last_label_stops_rule_before_any_claim(self):
+        with tempfile.TemporaryDirectory(dir=Path.cwd()/'.tmp') as directory:
+            private=Path(directory)/'private';public=Path(directory)/'public';rows=self.label_fixture(private,x.MATCHES)
+            last=rows[-1];(private/'control-labels'/(last['case_id']+'-'+last['regime']+'.labels')).unlink()
+            frozen=dict(input_sha256={cid:{} for cid,_,_ in x.MATCHES});bindings={cid:dict(files={}) for cid,_,_ in x.MATCHES}
+            with patch.object(x,'PRIVATE',private),patch.object(x,'PUBLIC',public),patch.object(x,'checked',return_value=(frozen,bindings,'a'*40)),patch.object(x,'verify_control',return_value=rows),patch('memory_ablation_run.load_evaluation',side_effect=AssertionError('data load must not happen')):
+                with self.assertRaises(ValueError):x.rule()
+            self.assertFalse((private/'rule-entry.json').exists());self.assertFalse((private/'claims/rule').exists())
+    def test_synthetic_rule_stage_seals_exact_paired_cases(self):
+        import numpy as np
+        from gap_solver.motion import motion_frame
+        matches=tuple((p+'-synthetic',p,'fit-disjoint') for p in ('skillcorner','dfl','wcsf'))
+        frames=[motion_frame(1,(0,0),((0,0),),((10,0),)) for _ in range(6)]
+        baseline=x.score(np.zeros(6,dtype=np.uint8),tuple('HHHHHH'),frames)
+        with tempfile.TemporaryDirectory(dir=Path.cwd()/'.tmp') as directory:
+            private=Path(directory)/'private';public=Path(directory)/'public';rows=self.label_fixture(private,matches)
+            for row in rows:row['control']=baseline
+            x.write_new(public/'freeze.json',{'synthetic':True})
+            frozen=dict(input_sha256={cid:{} for cid,_,_ in matches});bindings={cid:dict(files={}) for cid,_,_ in matches}
+            case=dict(frames=frames,reference=lambda:np.zeros(6,dtype=np.uint8))
+            with patch.object(x,'MATCHES',matches),patch.object(x,'PRIVATE',private),patch.object(x,'PUBLIC',public),patch.object(x,'checked',return_value=(frozen,bindings,'a'*40)),patch.object(x,'verify_control',return_value=rows),patch('memory_ablation_run.load_evaluation',return_value=case):
+                result=x.rule()
+                self.assertTrue(result['gate']['passed']);self.assertEqual(result['scoring_calls'],6)
+                self.assertEqual(len(list((private/'claims/rule').glob('*.json'))),6)
+                self.assertTrue((private/'rule-seal.json').is_file())
