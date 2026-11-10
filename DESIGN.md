@@ -48,3 +48,28 @@ Standard-library Python package, raw ATD/Smart Tagging adapter, evidence CSV int
 **Limitations.** There is no labelled validation of the gap rule on this kind of data. The random-mask result shows that the rule relabels live play when gaps are unrelated to stoppages. 20 long gaps keep the control's labels. The rule's "restart extension" (keep `D` while a reappeared ball is stationary) is inactive: it compares the first reappeared frame with the last pre-gap position, a large jump, so it produced 0 frames in every run; it was left unchanged so the checks above stay valid. Smart Tagging is automatic and can be wrong; a tag window starts before the true kickoff, so the patch can leave up to the tag's lead (82 frames on the second half) with the candidate's labels. The first-half tag lies before the graded block, so the first half is unchanged.
 
 **Reproduce.** See the README command; expected CSV SHA-256 `31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963`. Label hashes (frame labels concatenated, SHA-256): control `8d233ff1...a847`, control + gap rule `17bad133...a5c4`.
+
+
+## Stoppage-regime test and observed-touch candidate (10 November)
+
+**Why.** On the provided match the ball is missing on 41% of graded frames in long blocks, which label-free evidence ties to stoppages. External matches do not look like that (DFL keeps a frozen ball during dead ball), so the gap rule had never been scored where it could help or hurt. `stoppage_regime.py` removes the ball from five labelled matches (`dfl-J03WN1`, `dfl-J03WR9`, `wcsf-used-match` primary; `dfl-J03WOH`, `dfl-J03WOY` secondary) from their own reference labels: selected dead runs of 76 or more frames lose the ball from up to 2 s after play stops until up to 2 s after the restart, plus 268-frame live blocks. Regimes: `natural`, `stop100` (all long dead runs), `stop75` (75% of them plus live blocks equal to one third of the removed dead frames; the primary challenge-like regime), `stop50`, `stop75-jitter`. Protocol: [docs/stoppage-regime-protocol.md](docs/stoppage-regime-protocol.md). Results: `reports/stoppage-regime/results.json`. 75 scores, one run.
+
+**Results** (spell F1, primary mean of the two primary DFL matches and the WCSF match):
+
+| Regime | control | candidate (gap rule) | candidate + touch | candidate - control | touch - candidate |
+|---|---|---|---|---|---|
+| natural | 0.5294 | 0.5294 | 0.6381 | +0.0000 | +0.1087 |
+| stop100 | 0.4813 | 0.5360 | 0.6280 | +0.0547 | +0.0920 |
+| stop75 | 0.4443 | 0.4552 | 0.5362 | +0.0110 | +0.0810 |
+| stop50 | 0.4013 | 0.4018 | 0.4697 | +0.0005 | +0.0679 |
+| stop75-jitter | 0.3438 | 0.4013 | 0.4777 | +0.0575 | +0.0764 |
+
+In `stop75` dead-ball recall is 0.576 (control), 0.898 (candidate), 0.890 (candidate + touch). The gap rule relabelled 98% of long gaps in `stop100`, 70% in `stop75` (95% of gaps from dead blocks, 33% of gaps from live blocks) and 41% in `stop50`; the provided match's own rate is 85%, between `stop75` and `stop100`. The gap rule was safe in every regime (no loss against the control).
+
+**Decisions fixed in advance.** 7.1 (candidate must not lose more than 0.005 to the control in `stop75`): passed. 7.2 (touch evidence replaces the candidate only if +0.04 in `stop75`, not negative in `stop75-jitter`, not below -0.005 in `natural`, dead-ball recall within 0.02, no primary match losing more than 0.02 in `stop75`): all five conditions passed.
+
+**Provided match (aggregates only).** 698 touches detected; 39.3% of graded frames carry a touch bonus; 9,137 frames (5.8% of graded) differ from the current candidate (`A->H` 4,652, `H->A` 4,340, `D->A` 127, `D->H` 18); spells 434 -> 383, median spell 124 -> 135 frames, spells under 25 frames 29 -> 32. CSV SHA-256 `1de96acb8ac2198c960637f6b20c2438c9ff142e76a9ab463c384b52814b8d14`; two runs byte-identical; the official validator passes. Public five-minute window (run once, pipeline-defect check only): spell F1 0.430, macro F1 0.683, accuracy 0.743, 23 predicted against 17 reference spells (current candidate: 0.362 / 0.677 / 0.734, 25 predicted).
+
+**Limits.** These matches have been scored before; `dfl-J03WN1` was in the development set that selected the touch setting (3, 2, 8); the primary set is three matches; re-testing touch evidence after an earlier rejection is post-hoc; the regimes are built from reference labels and are a model of the provided match, not a measurement of it; the touch gain is also large with the ball present (`natural`, +0.109), so it is not specific to stoppages; the earlier version of touch evidence lost on SkillCorner, whose reference is least like the challenge's, and SkillCorner was not part of this test; the public window holds 17 reference spells, so its numbers carry large uncertainty.
+
+**Reproduce.** `python -I touch_release.py --prefix <prefix> --tags <prefix>_smart_tagging.xml --out <new dir>`; CSV SHA-256 as above. With touches disabled the pipeline reproduces the current candidate (`31b947d3…f963`).
