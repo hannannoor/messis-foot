@@ -1,0 +1,56 @@
+{
+ "schema_version": 1,
+ "date": "2026-11-10",
+ "scope": "label-free aggregates from the challenge tactical tracking, homography and automatic Smart Tagging; no ground truth, no per-frame data",
+ "official_revision": "f8f2629ff1e0985f81d7e59d8413678514ee1530",
+ "project_revision": "431d1ec556ef77a46d76e8227eba9690c07d08e5",
+ "probe_size": {
+  "ball_observed_share_graded": 0.5931,
+  "est_player_height_px": {"5": 39.17, "25": 45.6, "50": 51.3, "75": 58.92, "95": 71.54},
+  "est_ball_diameter_px": {"5": 4.56, "25": 5.39, "50": 6.29, "75": 7.62, "95": 9.23},
+  "player_samples": 620122,
+  "players_projecting_inside_image_share": 0.9527,
+  "ball_runs": {"count": 149, "frames_quantiles": {"5": 40, "25": 137, "50": 345, "75": 758, "95": 2318}, "share_runs_under_11_frames": 0.0},
+  "ball_gaps": {"count": 150, "frames_quantiles": {"5": 2, "25": 152, "50": 268, "75": 528, "95": 1278}},
+  "observed_frames_with_player_within_2p5m": 0.5911
+ },
+ "probe_gaps": {
+  "missing_frames": 64643,
+  "missing_share_by_gap_length": {"<=1s": 0.0012, "1-3s": 0.0, "3-10s": 0.1464, ">10s": 0.8524},
+  "gap_count": 150,
+  "long_gaps_over_3s": {"n": 131,
+   "last_seen_distance_to_boundary_m": {"10": -1.0, "25": 0.86, "50": 5.56, "75": 13.04, "90": 21.99},
+   "share_last_seen_within_3m_of_boundary": 0.344,
+   "reappear_distance_to_boundary_m": {"10": -4.77, "25": 0.29, "50": 6.13, "75": 13.33, "90": 24.35},
+   "share_reappear_within_3m_of_boundary": 0.336},
+  "note": "the player-speed fields of this probe returned no samples (ids are empty before association); probe_gaprule.py measures speed correctly"
+ },
+ "probe_sp": {
+  "long_gaps": 133,
+  "graded_share_in_gap_zone": 0.4656,
+  "set_piece_tags": 58,
+  "set_piece_starts_in_gap_zone": 0.7931,
+  "long_gaps_with_set_piece_tag": 0.3383,
+  "other_codes_start_in_gap_zone_n_share": {
+   "ATTACKING TRANSITION": [24, 0.167], "BALL IN FINAL THIRD": [88, 0.455], "BALL IN THE BOX": [70, 0.471],
+   "BUILD UP": [22, 0.5], "CREATING CHANCES": [30, 0.467], "DEFENDING IN ATTACKING THIRD": [22, 0.5],
+   "DEFENDING IN DEFENSIVE THIRD": [30, 0.467], "DEFENDING IN MIDDLE THIRD": [66, 0.167],
+   "DEFENSIVE TRANSITION": [24, 0.167], "GOALS": [4, 0.75], "LONG BALL": [28, 0.393],
+   "PLAYERS IN THE BOX": [83, 0.337], "PROGRESSION": [66, 0.167]}
+ },
+ "probe_gaprule": {
+  "long_gaps": 133,
+  "gap_frames": 65929,
+  "control_label_share": {"gap": {"A": 0.5246, "D": 0.0407, "H": 0.4347}, "observed_or_short": {"A": 0.3844, "D": 0.0223, "H": 0.5933}},
+  "gap_label_sets": {"H": 68, "A": 61, "AH": 2, "D": 2},
+  "gaps_bridged_by_one_owner_label": 127,
+  "median_player_speed_mps": {
+   "frames_outside_gaps": {"10": 0.96, "25": 1.25, "50": 1.65, "75": 2.62, "90": 3.46},
+   "per_gap_with_set_piece_tag": {"10": 0.59, "25": 0.74, "50": 1.03, "75": 1.19, "90": 1.33},
+   "per_gap_without_tag": {"10": 0.71, "25": 0.97, "50": 1.26, "75": 1.57, "90": 2.52}},
+  "n_tagged": 44, "n_untagged": 86,
+  "share_gaps_slow_under_1p5": {"tagged": 0.977, "untagged": 0.721, "frames_outside": 0.41},
+  "gap_seconds": {"tagged": {"10": 9.56, "25": 12.44, "50": 23.08, "75": 31.16, "90": 44.96}, "untagged": {"10": 5.44, "25": 6.36, "50": 9.16, "75": 16.24, "90": 24.12}},
+  "last_seen_within_3m_of_boundary": {"tagged": 0.523, "untagged": 0.244}
+ }
+}
