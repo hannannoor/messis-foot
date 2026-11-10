@@ -239,5 +239,39 @@ class MemoryProtocol(unittest.TestCase):
         self.assertTrue(required<=set(paths),required-set(paths))
         for name in protocol.ENTRIES:ast.parse((ROOT/name).read_text(encoding='utf-8'),feature_version=(3,9))
 
+    def test_training_worker_observes_the_fixed_scoring_interpreter(self):
+        training_python=ROOT/'.superpowers/memory-ablation/venv/Scripts/python.exe'
+        if not training_python.is_file():self.skipTest('Provision the approved pinned training environment')
+        scoring=str(Path('C:/Python314/python.exe'))
+        if not Path(scoring).is_file():self.skipTest('This reference Windows runtime is unavailable')
+        threads=protocol.runtime_info()['threads']
+        code=('import json,memory_ablation_protocol as p;v=p.environments(p.ROOT,scoring_python='+repr(scoring)+
+            ',scoring_threads='+repr(threads)+');print(json.dumps({k:v[k]["python"] for k in ("training","scoring")}))')
+        result=subprocess.run([str(training_python),'-c',code],cwd=ROOT,env=protocol.thread_environment(),capture_output=True,text=True)
+        self.assertEqual(result.returncode,0,result.stderr)
+        self.assertEqual(json.loads(result.stdout),dict(training='3.12.13',scoring='3.14.5'))
+
+    def test_zero_entry_preflight_retirement_preserves_owner_and_shared_budget(self):
+        with fixture() as (root,_,__,___):
+            old=runner.AblationSession('preflight-failed',root=root);old.freeze();original_owner=(old.budget/'experiment-owner.json').read_bytes()
+            with self.assertRaises(ValueError):old.retire_preflight('successor')
+            protocol.store_exact(old.private/'fit-request.incomplete',dict(utc=protocol.utc()))
+            for name in ('execution-error-fit-worker.log','execution-error-fit.log'):(old.private/name).write_text('synthetic terminated worker preflight')
+            old.retire_preflight('successor')
+            self.assertEqual((old.budget/'experiment-owner.json').read_bytes(),original_owner)
+            self.assertTrue((old.private/'fit-request.incomplete').exists())
+            self.assertTrue((old.public/'preflight-status.json').is_file())
+            new=runner.AblationSession('successor',root=root);new.freeze();new.fit();new.seal();new.evaluate();new.summarize()
+            verified=new.verify();self.assertEqual((verified['fits'],verified['scorings']),(2,60))
+            with self.assertRaises((ValueError,FileExistsError)):new.retire_preflight('third')
+            with self.assertRaises((ValueError,FileExistsError)):runner.AblationSession('third',root=root).freeze()
+
+    def test_preflight_retirement_refuses_any_consumed_scientific_entry(self):
+        with fixture() as (root,_,__,___):
+            s=runner.AblationSession('consumed',root=root);s.freeze()
+            for name in ('execution-error-fit-worker.log','execution-error-fit.log'):(s.private/name).write_text('synthetic failure')
+            s._claim('fit','control')
+            with self.assertRaises(ValueError):s.retire_preflight('new-run')
+
 
 if __name__=='__main__':unittest.main()

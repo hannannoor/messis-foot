@@ -1,0 +1,11 @@
+# Memory ablation execution correction: zero-entry preflight recovery
+
+The approved experiment, feature block, training recipe, matches, gates and maximum **two real fits / sixty variant evaluations** remain unchanged.
+
+The first generation `2026-11-09-v1`, prospectively frozen at `338af5e`, stopped in the Python3.12 worker's environment check. It incorrectly described the running training interpreter as the scoring interpreter. Its only access event is `frozen`; its global claims directory is empty; no training arrays, fit artifacts, models or evaluation cases were created. Parent and worker error logs establish that the worker returned. No candidate or control fitting outcome was opened.
+
+Correct the runtime binding to probe the frozen scoring executable separately and restore its recorded thread settings. Remove inherited Python-prefix variables when crossing interpreter boundaries: the managed Python3.12 launcher sets PYTHONHOME inside its process, which must not direct Python3.14 to a Python3.12 standard library. Each actual computation still checks its own executing runtime against the frozen role.
+
+A narrowly guarded preflight-retirement operation may authorize exactly one prospective successor generation `2026-11-09-v2`. It must require the original owner and freeze/environment anchors to match, both completed error logs to exist, exactly the original `frozen` access event, zero global scientific claims, and no prepared training arrays, fit-in-progress marker, model, fit receipt or cases. It preserves every old file and marker, adds a bounded retirement certificate, and uses the **same global claims directory**, without deleting or resetting it. Retirement must refuse if even one fit/inference/scoring claim exists. No later generation may retire/reset the productive successor.
+
+This is a repair before any scientific attempt, within the user's existing implementation authorization. It grants no extra fit, score, parameter choice or candidate. The original design/plan remain unchanged; this correction, its tests, both prospective source freezes and all consumed counts are reported together. If the successor consumes scientific attempts and then fails, the original stop/amendment rule applies.

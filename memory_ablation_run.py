@@ -77,18 +77,75 @@ class AblationSession:
         for group in bindings.values():
             for binding in group.values():
                 if not binding['files'] or p.hashes(binding['files'])!=binding['expected']:raise ValueError('Frozen input identity differs')
-        env=p.environments(self.root)
+        existing=self.private/'environment-map.json'
+        if existing.is_file():
+            recorded=p.read(existing)
+            env=p.environments(self.root,scoring_python=recorded['scoring_python'],scoring_threads=recorded['scoring']['threads'])
+        else:env=p.environments(self.root)
         return sources,bindings,env
 
     def _event(self,event,**fields):
         with (self.private/'access.jsonl').open('ab') as handle:handle.write(p.canonical(dict(event=event,utc=p.utc(),**fields)))
 
+    def _owner_path(self):
+        successor=self.budget/('generation-owner--'+self.run_id+'.json')
+        return successor if successor.is_file() else self.budget/'experiment-owner.json'
+
+    def _continuation(self,require_empty=False):
+        link_path=self.budget/'preflight-successor.json'
+        if not link_path.is_file():raise FileExistsError('Experiment owner already exists')
+        link=p.read(link_path);original=p.read(self.budget/'experiment-owner.json')
+        if original!=dict(run_id=link['prior_run_id'],experiment=p.EXPERIMENT,root=str(self.root)) or link['successor_run_id']!=self.run_id or link['owner_sha256']!=p.sha(self.budget/'experiment-owner.json'):
+            raise ValueError('Preflight successor ownership differs')
+        prior=self.budget/'runs'/link['prior_run_id'];public=self.root/'reports/memory-ablation'/link['prior_run_id']
+        if p.read(prior/'retired-preflight.json')!=dict(status_sha256=p.sha(public/'preflight-status.json')) or link['status_sha256']!=p.sha(public/'preflight-status.json'):
+            raise ValueError('Preflight retirement certificate changed')
+        status=p.read(public/'preflight-status.json')
+        if status['freeze_sha256']!=p.sha(public/'freeze.json') or (status['fits'],status['inference_entries'],status['scorings'])!=(0,0,0) or status['successor_run_id']!=self.run_id:
+            raise ValueError('Preflight retirement identity differs')
+        if status['error_log_sha256']!=p.hashes({name:prior/name for name in ('execution-error-fit-worker.log','execution-error-fit.log')}):raise ValueError('Preflight failure evidence changed')
+        if require_empty and any((self.budget/'claims').iterdir()):raise ValueError('Scientific attempts cannot be retired/reset')
+        return p.sha(link_path)
+
+    def _expected_owner(self):
+        value=dict(run_id=self.run_id,experiment=p.EXPERIMENT,root=str(self.root))
+        if self._owner_path().name!='experiment-owner.json':value['preflight_certificate_sha256']=self._continuation()
+        return value
+
+    def retire_preflight(self,successor_run_id):
+        p.safe_run_id(successor_run_id)
+        if successor_run_id==self.run_id:raise ValueError('A successor requires a new generation')
+        original=p.read(self.budget/'experiment-owner.json')
+        if original!=dict(run_id=self.run_id,experiment=p.EXPERIMENT,root=str(self.root)) or (self.budget/'preflight-successor.json').exists():raise ValueError('Only the original empty preflight may be retired once')
+        anchor=p.read(self.private/'freeze-anchor.json')
+        if anchor!=dict(freeze_sha256=p.sha(self.public/'freeze.json'),owner_sha256=p.sha(self.budget/'experiment-owner.json'),environment_map_sha256=p.sha(self.private/'environment-map.json')):raise ValueError('Original preflight anchor differs')
+        if any((self.budget/'claims').iterdir()):raise ValueError('A scientific claim prevents preflight retirement')
+        if {path.name for path in self.public.iterdir()}!={'freeze.json'}:raise ValueError('Preflight has result artifacts')
+        allowed={'environment-map.json','input-map.json','freeze-anchor.json','access.jsonl','fit-request.incomplete',
+            'execution-error-fit-worker.log','execution-error-fit.log','training-worker.stdout.log','training-worker.stderr.log'}
+        if not {path.name for path in self.private.iterdir()}<=allowed or not (self.private/'fit-request.incomplete').is_file():raise ValueError('Preflight contains prepared or incomplete scientific work')
+        events=[json.loads(line) for line in (self.private/'access.jsonl').read_text(encoding='utf-8').splitlines()]
+        if [event['event'] for event in events]!=['frozen']:raise ValueError('Training/evaluation acquisition already entered')
+        errors={name:self.private/name for name in ('execution-error-fit-worker.log','execution-error-fit.log')}
+        if not all(path.is_file() for path in errors.values()):raise ValueError('Completed worker/parent failure evidence required')
+        value=dict(schema_version=1,status='retired_before_scientific_entry',prior_run_id=self.run_id,successor_run_id=successor_run_id,
+            fits=0,inference_entries=0,scorings=0,freeze_sha256=p.sha(self.public/'freeze.json'),owner_sha256=p.sha(self.budget/'experiment-owner.json'),
+            error_log_sha256=p.hashes(errors),created_utc=p.utc())
+        p.assert_public_report(value);p.store_exact(self.public/'preflight-status.json',value)
+        p.store_exact(self.private/'retired-preflight.json',dict(status_sha256=p.sha(self.public/'preflight-status.json')))
+        p.store_exact(self.budget/'preflight-successor.json',dict(prior_run_id=self.run_id,successor_run_id=successor_run_id,
+            owner_sha256=p.sha(self.budget/'experiment-owner.json'),status_sha256=p.sha(self.public/'preflight-status.json')))
+        return dict(status=value['status'],fits=0,inference_entries=0,scorings=0,successor_run_id=successor_run_id)
+
     def freeze(self):
-        if (self.budget/'experiment-owner.json').exists():raise FileExistsError('This experiment already has an owner; a new checkout/run ID cannot reset its budget')
+        successor=(self.budget/'experiment-owner.json').exists()
+        certificate=self._continuation(require_empty=True) if successor else None
         sources,bindings,env=self._current()
         self.budget.mkdir(parents=True,exist_ok=True)
         owner=dict(run_id=self.run_id,experiment=p.EXPERIMENT,root=str(self.root))
-        p.store_exact(self.budget/'experiment-owner.json',owner)
+        if successor:owner['preflight_certificate_sha256']=certificate
+        owner_path=self.budget/('generation-owner--'+self.run_id+'.json') if successor else self.budget/'experiment-owner.json'
+        p.store_exact(owner_path,owner)
         self.private.mkdir(parents=True,exist_ok=False);p.store_exact(self.private/'freeze.incomplete',dict(utc=p.utc()))
         self.public.mkdir(parents=True,exist_ok=False)
         value=dict(schema_version=1,run_id=self.run_id,created_utc=p.utc(),protocol=p.protocol(),source_sha256=p.hashes(sources),
@@ -97,17 +154,17 @@ class AblationSession:
         p.assert_public_report(value);p.store_exact(self.public/'freeze.json',value)
         p.store_exact(self.private/'environment-map.json',env)
         p.store_exact(self.private/'input-map.json',{category:{cid:{key:str(path.resolve()) for key,path in b['files'].items()} for cid,b in group.items()} for category,group in bindings.items()})
-        p.store_exact(self.private/'freeze-anchor.json',dict(freeze_sha256=p.sha(self.public/'freeze.json'),owner_sha256=p.sha(self.budget/'experiment-owner.json'),environment_map_sha256=p.sha(self.private/'environment-map.json')))
-        (self.budget/'claims').mkdir();self._event('frozen');(self.private/'freeze.incomplete').unlink()
+        p.store_exact(self.private/'freeze-anchor.json',dict(freeze_sha256=p.sha(self.public/'freeze.json'),owner_sha256=p.sha(owner_path),environment_map_sha256=p.sha(self.private/'environment-map.json')))
+        (self.budget/'claims').mkdir(exist_ok=successor);self._event('frozen');(self.private/'freeze.incomplete').unlink()
         return dict(status='frozen',cases=30,max_fits=2,max_scorings=60,freeze_sha256=p.sha(self.public/'freeze.json'))
 
     def _frozen(self):
         if (self.private/'freeze.incomplete').exists() or not (self.private/'freeze-anchor.json').is_file():raise ValueError('Missing/incomplete generation freeze')
         anchor=p.read(self.private/'freeze-anchor.json')
-        if anchor!=dict(freeze_sha256=p.sha(self.public/'freeze.json'),owner_sha256=p.sha(self.budget/'experiment-owner.json'),environment_map_sha256=p.sha(self.private/'environment-map.json')):
+        if anchor!=dict(freeze_sha256=p.sha(self.public/'freeze.json'),owner_sha256=p.sha(self._owner_path()),environment_map_sha256=p.sha(self.private/'environment-map.json')):
             raise ValueError('Private freeze/owner anchor differs')
-        owner=p.read(self.budget/'experiment-owner.json')
-        if owner!=dict(run_id=self.run_id,experiment=p.EXPERIMENT,root=str(self.root)):raise ValueError('Global experiment owner differs')
+        owner=p.read(self._owner_path())
+        if owner!=self._expected_owner():raise ValueError('Global experiment owner differs')
         freeze=p.read(self.public/'freeze.json');sources,bindings,env=self._current()
         if freeze['protocol']!=p.protocol() or freeze['source_sha256']!=p.hashes(sources) or freeze['environment']!=p.public_environment(env) or freeze['run_id']!=self.run_id:
             raise ValueError('Source/protocol/runtime freeze changed')
@@ -307,12 +364,16 @@ class AblationSession:
 
 
 def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('command',choices=('freeze','fit','seal','evaluate','summarize','verify'));parser.add_argument('--run-id',required=True)
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('command',choices=('freeze','fit','seal','evaluate','summarize','verify','retire-preflight'));parser.add_argument('--run-id',required=True)
+    parser.add_argument('--successor-run-id')
     parser.add_argument('--training-worker',action='store_true',help=argparse.SUPPRESS)
     args=parser.parse_args();session=AblationSession(args.run_id)
     try:
         if args.training_worker and args.command!='fit':raise ValueError('Invalid training worker command')
-        result=session._fit_worker() if args.training_worker else getattr(session,args.command)()
+        if args.command=='retire-preflight':
+            if not args.successor_run_id:raise ValueError('Successor ID required')
+            result=session.retire_preflight(args.successor_run_id)
+        else:result=session._fit_worker() if args.training_worker else getattr(session,args.command)()
         print(json.dumps(result,sort_keys=True));return 0
     except Exception:
         if session.private.is_dir():

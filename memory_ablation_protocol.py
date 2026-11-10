@@ -64,11 +64,12 @@ def runtime_info(training=False):
 
 def thread_environment():
     env=__import__('os').environ.copy()
+    for key in ('PYTHONHOME','PYTHONPATH','PYTHONEXECUTABLE','__PYVENV_LAUNCHER__'):env.pop(key,None)
     env.update(OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',MKL_NUM_THREADS='1',PYTHONDONTWRITEBYTECODE='1')
     return env
 
 
-def environments(root):
+def environments(root,scoring_python=None,scoring_threads=None):
     root=Path(root);python=root/'.superpowers/memory-ablation/venv/Scripts/python.exe'
     if not python.is_file():raise ValueError('Pinned local training environment missing')
     code='import json,memory_ablation_protocol as p;print(json.dumps(p.runtime_info(training=True)))'
@@ -79,8 +80,18 @@ def environments(root):
     provenance=root/'.superpowers/memory-ablation/environment-provenance.json'
     prov=read(provenance)
     if prov['requirements_lock_sha256']!=sha(root/'requirements-memory-ablation.lock'):raise ValueError('Environment lock changed')
-    return dict(training=trained,scoring=runtime_info(),training_python=str(python.resolve()),
-        scoring_python=str(Path(sys.executable).resolve()),lock_sha256=sha(root/'requirements-memory-ablation.lock'),provenance_sha256=sha(provenance))
+    scoring_python=Path(scoring_python or sys.executable).resolve()
+    scoring_env=__import__('os').environ.copy()
+    for key in ('PYTHONHOME','PYTHONPATH','PYTHONEXECUTABLE','__PYVENV_LAUNCHER__'):scoring_env.pop(key,None)
+    if scoring_threads is not None:
+        for key,value in scoring_threads.items():
+            if key not in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS'):raise ValueError('Unexpected scoring thread setting')
+            if value is None:scoring_env.pop(key,None)
+            else:scoring_env[key]=value
+    score_code='import json,memory_ablation_protocol as p;print(json.dumps(p.runtime_info()))'
+    scoring=json.loads(subprocess.check_output([str(scoring_python),'-c',score_code],cwd=root,env=scoring_env,text=True))
+    return dict(training=trained,scoring=scoring,training_python=str(python.resolve()),
+        scoring_python=str(scoring_python),lock_sha256=sha(root/'requirements-memory-ablation.lock'),provenance_sha256=sha(provenance))
 
 
 def public_environment(value):return {key:v for key,v in value.items() if not key.endswith('_python')}
@@ -111,6 +122,7 @@ def source_paths(root):
                     for candidate in (stem.with_suffix('.py'),stem/'__init__.py'):
                         if candidate.is_file():pending.append(candidate)
     extras=tuple(PROTECTED)+('requirements-training.txt','requirements-memory-ablation.lock','benchmark/provenance.json',
+        'docs/superpowers/specs/2026-11-09-memory-ablation-preflight-recovery.md',
         'reports/ball-gap/comparison-freeze.json','reports/ownership-path/2026-11-09-natural-v2/freeze.json',
         'reports/wcsf-transfer-v2/acquisition.json','reports/wcsf-transfer-v2/geometry.json','reports/wcsf-transfer-v2/predictions-seal.json','reports/wcsf-transfer-v2/results.json')
     for name in extras:
