@@ -60,3 +60,11 @@ class TouchPhysics(unittest.TestCase):
             with self.assertRaises(ValueError):p.detect_touches([f],3)
         for theta in (-1,float('nan'),float('inf')):
             with self.assertRaises(ValueError):p.detect_touches(track(),theta)
+
+    def test_provider_float32_coordinates(self):
+        import numpy as np
+        frames=[replace(f,ball_x=np.float32(f.ball_x),ball_y=np.float32(f.ball_y),
+            home_xy=tuple(tuple(np.float32(v) for v in point) for point in f.home_xy),
+            away_xy=tuple(tuple(np.float32(v) for v in point) for point in f.away_xy)) for f in track(kink=40)]
+        events=p.detect_touches(frames,3)
+        self.assertEqual(len(events),1);self.assertEqual(events[0].team,'H')

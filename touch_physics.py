@@ -1,6 +1,7 @@
 """Deterministic geometry-only touch detection on canonical 25 Hz tracks."""
 from dataclasses import dataclass
 from math import hypot,isfinite
+from numbers import Real
 
 FPS=25
 WINDOW=5
@@ -18,11 +19,11 @@ def validate_frames(frames):
     for frame in frames:
         if type(frame.period) is not int or frame.period not in (0,1,2):raise ValueError('Invalid period')
         ball=(frame.ball_x,frame.ball_y)
-        if any(x is not None and (not isinstance(x,(float,int)) or not isfinite(x)) for x in ball):
+        if any(x is not None and (not isinstance(x,Real) or not isfinite(x)) for x in ball):
             raise ValueError('Nonfinite ball coordinates')
         if (ball[0] is None)!=(ball[1] is None):raise ValueError('Partial ball coordinate')
         for points in (frame.home_xy,frame.away_xy):
-            if any(len(point)!=2 or not all(isinstance(x,(float,int)) and isfinite(x) for x in point) for point in points):
+            if any(len(point)!=2 or not all(isinstance(x,Real) and isfinite(x) for x in point) for point in points):
                 raise ValueError('Invalid player coordinates')
 
 
