@@ -68,3 +68,8 @@ class TouchPhysics(unittest.TestCase):
             away_xy=tuple(tuple(np.float32(v) for v in point) for point in f.away_xy)) for f in track(kink=40)]
         events=p.detect_touches(frames,3)
         self.assertEqual(len(events),1);self.assertEqual(events[0].team,'H')
+
+    def test_flat_surprise_plateau_has_one_earliest_peak(self):
+        frames=[motion_frame(1,(i*i*.03125,0.),((i*i*.03125+.5,0.),),((10000.,0.),)) for i in range(60)]
+        events=p.detect_touches(frames,3)
+        self.assertEqual([(v.frame_index,v.team,v.kind) for v in events],[(5,'H','kink')])

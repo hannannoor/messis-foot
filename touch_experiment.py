@@ -5,7 +5,8 @@ from dataclasses import replace
 from datetime import datetime,timezone
 import hashlib
 import json
-from math import fsum,hypot
+from math import fsum,hypot,isclose,ulp
+from fractions import Fraction
 from pathlib import Path
 import platform
 import random
@@ -62,10 +63,14 @@ def claim(directory,phase,key):
         json.dump(dict(key=key,utc=datetime.now(timezone.utc).isoformat()),handle,sort_keys=True)
 
 
+def inclusive_ge(a,b):
+    return a>=b or isclose(a,b,rel_tol=0,abs_tol=4*max(ulp(a),ulp(b)))
+
+
 def classify(means,safeguards_pass,provider_natural_pass):
     gain=means['natural']['candidate']-means['natural']['control']
     if gain<=0 or not safeguards_pass:return 'Reject'
-    if gain>=.04 and all(means[r]['candidate']>means[r]['control'] for r in REGIMES[1:]) and provider_natural_pass:
+    if inclusive_ge(gain,.04) and all(means[r]['candidate']>means[r]['control'] for r in REGIMES[1:]) and provider_natural_pass:
         return 'Accept'
     return 'Inconclusive'
 
@@ -77,18 +82,19 @@ def safeguards(rows):
         control,candidate=row['control'],row['candidate']
         if any(candidate['predicted_on_known'][t]<=0 for t in ('H','A')):failures.append(dict(case_id=cid,regime=regime,gate='both_owners'))
         if cohort in ('dfl','wcsf'):
-            a,b=control['dead']['recall'],candidate['dead']['recall']
-            if a is None or b is None or b<a-.02:failures.append(dict(case_id=cid,regime=regime,gate='dead_recall'))
+            a,b=control['dead'],candidate['dead']
+            failed=(a['n_gt']<=0 or b['n_gt']<=0 or Fraction(b['n_matched'],b['n_gt'])-Fraction(a['n_matched'],a['n_gt']) < -Fraction(1,50))
+            if failed:failures.append(dict(case_id=cid,regime=regime,gate='dead_recall'))
         for variant in ('control','candidate'):
             spells=row[variant]['spells'];gt=spells['n_gt']
             if gt<=0:failures.append(dict(case_id=cid,regime=regime,gate='spell_support'));continue
-            ratios[(cohort,regime)][variant].append(spells['n_pred']/gt)
+            ratios[(cohort,regime)][variant].append(Fraction(spells['n_pred'],gt))
     provider_ratios=[]
     for (cohort,regime),values in sorted(ratios.items()):
-        means={v:fsum(a)/len(a) for v,a in values.items() if a}
+        means={v:sum(a,Fraction(0))/len(a) for v,a in values.items() if a}
         if set(means)!={'control','candidate'} or abs(means['candidate']-1)>abs(means['control']-1):
             failures.append(dict(provider=cohort,regime=regime,gate='spell_count_ratio'))
-        provider_ratios.append(dict(provider=cohort,regime=regime,**means))
+        provider_ratios.append(dict(provider=cohort,regime=regime,**{k:float(v) for k,v in means.items()}))
     return dict(passed=not failures,failures=failures,provider_spell_ratios=provider_ratios)
 
 
@@ -97,6 +103,7 @@ def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def write_new(path,value):
     path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
     with path.open('xb') as handle:handle.write(canonical(value))
+    if path.read_bytes()!=canonical(value):raise ValueError('Persisted bytes differ')
 def read(path):return json.loads(Path(path).read_text(encoding='utf-8'))
 def config_id(config):return 't'+str(config['theta'])+'-b'+str(config['beta'])+'-c'+str(config['c_touch'])
 
@@ -115,12 +122,63 @@ def source_hashes():
     return {name:sha(ROOT/name) for name in names}
 
 
+def committed_sources(commit):
+    names=subprocess.check_output(['git','ls-tree','-r','--name-only',commit],cwd=ROOT,text=True).splitlines()
+    return {name:hashlib.sha256(subprocess.check_output(['git','show',commit+':'+name],cwd=ROOT)).hexdigest()
+            for name in names if name.endswith('.py')}
+
+
+def source_identity(commit):
+    current=source_hashes()
+    if current!=committed_sources(commit):raise ValueError('Source bytes absent from committed revision')
+    return current
+
+
+def check_case_input(cid,binding,frozen):
+    expected=frozen['input_sha256'][cid]
+    if set(binding['files'])!=set(expected) or {k:sha(v) for k,v in binding['files'].items()}!=expected:
+        raise ValueError('Case input identity changed')
+
+
+def phase_keys(ids,configs=None):
+    return sorted(cid+'-'+regime+('' if config is None else '-'+config_id(config))
+        for cid in ids for regime in REGIMES for config in ([None] if configs is None else configs))
+
+
+def seal_phase(public,private,phase,summary,keys,freeze_commit,create=False):
+    public,private=Path(public),Path(private)
+    expected={key+'.json' for key in keys}
+    files={path.name:path for path in (public/phase).glob('*.json')}
+    claims={path.name:path for path in (private/'claims'/phase).glob('*.json')}
+    if set(files)!=expected or set(claims)!=expected:raise ValueError('Phase receipt/claim inventory differs')
+    identity=dict(freeze_commit=freeze_commit,freeze_sha256=sha(public/'freeze.json'))
+    for path in [*files.values(),public/summary]:
+        row=read(path)
+        if any(row.get(k)!=v for k,v in identity.items()):raise ValueError('Phase freeze identity differs')
+    value=dict(identity,summary=summary,summary_sha256=sha(public/summary),
+        receipts={name:sha(path) for name,path in sorted(files.items())},
+        claims={name:sha(path) for name,path in sorted(claims.items())})
+    seal=private/(phase+'-seal.json')
+    if create:write_new(seal,value)
+    elif read(seal)!=value:raise ValueError('Phase receipt or summary changed')
+    return [read(files[name]) for name in sorted(files)]
+
+
+def development_reject(public,selection):
+    write_new(Path(public)/'decision.json',dict(schema_version=1,decision='Reject',selected=None,
+        reason='No development configuration met masked and jitter nonregression',
+        freeze_commit=selection['freeze_commit'],freeze_sha256=selection['freeze_sha256'],
+        confirmation_scoring_calls=0,fresh_holdout=False,automatic_promotion=False))
+
+
 def freeze():
     import memory_ablation_protocol as p
     from memory_ablation_metrics import MATCHES
     preservation=preserved_sources()
     if not preservation['unchanged']:raise ValueError('Preserved sources changed')
     if PRIVATE.exists() or (PUBLIC/'freeze.json').exists():raise FileExistsError('Touch experiment already exists')
+    head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+    source_identity(head)
     bindings=p.input_bindings(ROOT)['evaluation']
     for binding in bindings.values():
         if p.hashes(binding['files'])!=binding['expected']:raise ValueError('External input identity differs')
@@ -153,13 +211,15 @@ def checked_freeze():
     committed=subprocess.check_output(['git','show','HEAD:reports/touch-evidence/freeze.json'],cwd=ROOT)
     if committed!=(PUBLIC/'freeze.json').read_bytes():raise ValueError('Freeze not committed before scoring')
     commit=subprocess.check_output(['git','log','-1','--format=%H','--','reports/touch-evidence/freeze.json'],cwd=ROOT,text=True).strip()
+    if source_identity(commit)!=frozen['source_sha256']:raise ValueError('Freeze commit source bytes differ')
     from memory_ablation_metrics import MATCHES
     if frozen['grid']!=list(GRID) or frozen['limits']!=LIMITS:raise ValueError('Protocol changed')
     files=read(PRIVATE/'input-map.json')
+    if set(files)!=set(frozen['input_sha256']):raise ValueError('Frozen case inventory differs')
     bindings={cid:dict(files={k:Path(v) for k,v in paths.items()}) for cid,paths in files.items()}
     import memory_ablation_protocol as p
     for cid,b in bindings.items():
-        if p.hashes(b['files'])!=frozen['input_sha256'][cid]:raise ValueError('Frozen external input changed')
+        check_case_input(cid,b,frozen)
     import numpy,pandas
     runtime=dict(python=platform.python_version(),numpy=numpy.__version__,pandas=pandas.__version__,executable_sha256=sha(sys.executable))
     if runtime!=frozen['runtime']:raise ValueError('Frozen runtime changed')
@@ -179,13 +239,49 @@ def regimes(frames):
 def score(reference,labels,frames):
     from memory_ablation_metrics import score_variant
     from memory_ablation_protocol import validate_score
-    result=score_variant(reference,labels,[f.period for f in frames],[f.ball_observed for f in frames])
+    from ownership_diagnosis import _codes
+    result=score_variant(reference,_codes(labels),[f.period for f in frames],[f.ball_observed for f in frames])
     validate_score(result)
     return result
 
 
 def means_for(records,ids,variant):
-    return {r:provider_mean({x['case_id']:x[variant]['metrics']['spell_f1_mean'] for x in records if x['regime']==r and x['case_id'] in ids}) for r in REGIMES}
+    expected={(cid,r) for cid in ids for r in REGIMES}
+    actual=[(row['case_id'],row['regime']) for row in records]
+    if len(actual)!=len(expected) or set(actual)!=expected:raise ValueError('Exact aggregate case inventory required')
+    return {r:provider_mean({x['case_id']:x[variant]['metrics']['spell_f1_mean'] for x in records if x['regime']==r}) for r in REGIMES}
+
+
+def subset(records,ids):return [row for row in records if row['case_id'] in ids]
+
+
+def control_summary(records,frozen,commit):
+    from memory_ablation_metrics import MATCHES
+    primary=[cid for cid,_,role in MATCHES if role=='fit-disjoint']
+    means=means_for(subset(records,primary),primary,'control')
+    passed=all(round(means[r],6)==frozen['expected_control'][r] for r in REGIMES[:2])
+    return dict(freeze_commit=commit,freeze_sha256=sha(PUBLIC/'freeze.json'),means=means,
+        expected=frozen['expected_control'],passed=passed,scoring_calls=len(records))
+
+
+def verify_control(frozen,commit):
+    from memory_ablation_metrics import MATCHES
+    ids=[cid for cid,_,_ in MATCHES]
+    records=seal_phase(PUBLIC,PRIVATE,'control','control-reproduction.json',phase_keys(ids),commit)
+    expected=control_summary(records,frozen,commit)
+    if read(PUBLIC/'control-reproduction.json')!=expected or not expected['passed']:raise ValueError('Control gate not proven')
+    return records
+
+
+def selection_summary(records,controls,frozen,commit):
+    ids=frozen['development'];summaries=[]
+    for config in GRID:
+        rows=[r for r in records if r['config']==config]
+        summaries.append(dict(config=config,means=means_for(rows,ids,'candidate')))
+    if len(records)!=len(ids)*len(REGIMES)*len(GRID):raise ValueError('Development inventory differs')
+    control=means_for(subset(controls,ids),ids,'control');selected=select_config(summaries,control)
+    return dict(freeze_commit=commit,freeze_sha256=sha(PUBLIC/'freeze.json'),control=control,configurations=summaries,selected=selected,
+        decision='Reject' if selected is None else 'selected_for_single_confirmation',scoring_calls=len(records),fresh_holdout=False)
 
 
 def control_run():
@@ -197,24 +293,25 @@ def control_run():
     write_new(PRIVATE/'control-entry.json',dict(freeze_commit=commit))
     records=[]
     for cid,_,_ in MATCHES:
-        case=load_evaluation(cid,bindings[cid]);natural=case['frames']
+        check_case_input(cid,bindings[cid],frozen)
+        case=load_evaluation(cid,bindings[cid]);natural=case['frames'];pending=[]
         for regime,frames in regimes(natural):
             key=cid+'-'+regime;claim(PRIVATE,'control',key)
             prediction=predict_selected(frames)
             result=score(case['reference'](),prediction.labels,frames)
             row=dict(case_id=cid,regime=regime,control=result,freeze_commit=commit,freeze_sha256=sha(PUBLIC/'freeze.json'))
-            write_new(PUBLIC/'control'/f'{key}.json',row);records.append(row)
+            pending.append((key,row));records.append(row)
             print(json.dumps(dict(phase='control',completed=len(records),maximum=45,case_id=cid,regime=regime)),flush=True)
-    primary=[cid for cid,_,role in MATCHES if role=='fit-disjoint']
-    means=means_for(records,primary,'control')
-    passed=all(round(means[r],6)==frozen['expected_control'][r] for r in REGIMES[:2])
-    receipt=dict(freeze_commit=commit,means=means,expected=frozen['expected_control'],passed=passed,scoring_calls=len(records))
+        check_case_input(cid,bindings[cid],frozen)
+        for key,row in pending:write_new(PUBLIC/'control'/f'{key}.json',row)
+    receipt=control_summary(records,frozen,commit)
     write_new(PUBLIC/'control-reproduction.json',receipt)
-    if not passed:raise ValueError('Control reproduction gate failed')
+    seal_phase(PUBLIC,PRIVATE,'control','control-reproduction.json',phase_keys([cid for cid,_,_ in MATCHES]),commit,create=True)
+    if not receipt['passed']:raise ValueError('Control reproduction gate failed')
     return receipt
 
 
-def candidate_phase(phase,configs,ids,bindings,commit):
+def candidate_phase(phase,configs,ids,bindings,commit,frozen):
     from memory_ablation_run import load_evaluation
     from touch_evidence import prepare_evidence,evidence_rows
     from touch_physics import detect_touches
@@ -223,7 +320,8 @@ def candidate_phase(phase,configs,ids,bindings,commit):
     records=[]
     write_new(PRIVATE/(phase+'-entry.json'),dict(configs=configs,ids=ids,freeze_commit=commit))
     for cid in ids:
-        case=load_evaluation(cid,bindings[cid])
+        check_case_input(cid,bindings[cid],frozen)
+        case=load_evaluation(cid,bindings[cid]);pending=[]
         for regime,frames in regimes(case['frames']):
             base,costs,periods,usable,_=prepare_evidence(frames,[],0,32)
             events={theta:detect_touches(frames,theta) for theta in sorted({c['theta'] for c in configs})}
@@ -237,43 +335,47 @@ def candidate_phase(phase,configs,ids,bindings,commit):
                 row=dict(case_id=cid,regime=regime,config=config,control=control,candidate=result,freeze_commit=commit,
                     freeze_sha256=sha(PUBLIC/'freeze.json'),touch_counts={kind:{team:sum(e.kind==kind and e.team==team for e in events[config['theta']]) for team in ('H','A','')} for kind in ('kink','reacquire')},
                     labels_sha256=hashlib.sha256(''.join(labels).encode()).hexdigest())
-                write_new(PUBLIC/phase/(key+'.json'),row);records.append(row)
+                pending.append((key,row));records.append(row)
                 print(json.dumps(dict(phase=phase,completed=len(records),maximum=LIMITS[phase],case_id=cid,regime=regime,config=config)),flush=True)
+        check_case_input(cid,bindings[cid],frozen)
+        for key,row in pending:write_new(PUBLIC/phase/(key+'.json'),row)
     return records
 
 
 def development_run():
     frozen,bindings,commit=checked_freeze()
-    if not read(PUBLIC/'control-reproduction.json')['passed']:raise ValueError('Control reproduction gate required')
-    ids=frozen['development'];controls=[read(p) for p in sorted((PUBLIC/'control').glob('*.json'))]
-    records=candidate_phase('development',GRID,ids,bindings,commit)
-    summaries=[]
-    for config in GRID:
-        rows=[r for r in records if r['config']==config]
-        summaries.append(dict(config=config,means=means_for(rows,ids,'candidate')))
-    control=means_for(controls,ids,'control');selected=select_config(summaries,control)
-    receipt=dict(freeze_commit=commit,control=control,configurations=summaries,selected=selected,
-        decision='Reject' if selected is None else 'selected_for_single_confirmation',scoring_calls=len(records),fresh_holdout=False)
+    controls=verify_control(frozen,commit)
+    ids=frozen['development']
+    records=candidate_phase('development',GRID,ids,bindings,commit,frozen)
+    receipt=selection_summary(records,controls,frozen,commit)
     write_new(PUBLIC/'selection.json',receipt)
+    seal_phase(PUBLIC,PRIVATE,'development','selection.json',phase_keys(ids,GRID),commit,create=True)
+    if receipt['selected'] is None:development_reject(PUBLIC,receipt)
     return receipt
 
 
 def confirmation_run():
-    frozen,bindings,commit=checked_freeze();selection=read(PUBLIC/'selection.json');selected=selection['selected']
+    frozen,bindings,commit=checked_freeze()
+    controls=verify_control(frozen,commit)
+    development=seal_phase(PUBLIC,PRIVATE,'development','selection.json',phase_keys(frozen['development'],GRID),commit)
+    selection=selection_summary(development,controls,frozen,commit)
+    if read(PUBLIC/'selection.json')!=selection:raise ValueError('Selected configuration not derived from frozen development')
+    selected=selection['selected']
     if selected is None:raise ValueError('Development rejected; confirmation prohibited')
-    ids=frozen['confirmation'];records=candidate_phase('confirmation',[selected],ids,bindings,commit)
+    ids=frozen['confirmation'];records=candidate_phase('confirmation',[selected],ids,bindings,commit,frozen)
     means={r:dict(control=means_for(records,ids,'control')[r],candidate=means_for(records,ids,'candidate')[r]) for r in REGIMES}
     safeguards_result=safeguards(records)
     providers=[]
     for cohort in ('skillcorner','dfl','wcsf'):
         subset=[cid for cid in ids if cid.startswith(cohort+'-')]
-        a=means_for(records,subset,'control');b=means_for(records,subset,'candidate')
+        a=means_for([row for row in records if row['case_id'] in subset],subset,'control');b=means_for([row for row in records if row['case_id'] in subset],subset,'candidate')
         providers.extend(dict(provider=cohort,regime=r,control=a[r],candidate=b[r],delta=b[r]-a[r]) for r in REGIMES)
     no_decline=all(r['delta']>=0 for r in providers if r['regime']=='natural')
-    receipt=dict(freeze_commit=commit,selected=selected,means=means,providers=providers,safeguards=safeguards_result,
+    receipt=dict(freeze_commit=commit,freeze_sha256=sha(PUBLIC/'freeze.json'),selected=selected,means=means,providers=providers,safeguards=safeguards_result,
         natural_provider_no_decline=no_decline,decision=classify(means,safeguards_result['passed'],no_decline),
         scoring_calls=len(records),fresh_holdout=False,automatic_promotion=False)
     write_new(PUBLIC/'decision.json',receipt)
+    seal_phase(PUBLIC,PRIVATE,'confirmation','decision.json',phase_keys(ids,[selected]),commit,create=True)
     return receipt
 
 

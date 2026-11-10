@@ -197,3 +197,9 @@ Budget:
 - The 15-match control reproduction is separate from candidate scoring; candidates are scored only for the six development and seven confirmation matches allowed by the split. The two overlap matches remain historical secondary evidence, not additional candidate calls. Development maximum 216 candidate scorings, confirmation maximum 21. Control maximum 45 case/regime scorings (including jitter); counts are separate.
 - Probe A is a planar apparent-size proxy, not a physical vertical-body projection: use the image Jacobian in the pitch-width direction, in pixels/metre, at player coordinates; multiply by 1.8 and 0.22. This limitation must accompany results.
 - New source files only; every pre-existing tracked file must remain byte-identical to base. Existing local checkout stays in place to preserve sibling-store paths; a separate branch isolates commits. Never push or merge.
+
+## Pre-freeze numerical and receipt verification
+
+Dead recall and provider spell-count ratio safeguards compare exact fractions reconstructed from integer counts. Inclusive floating score thresholds permit only four units in the last binary place to avoid representing an exact .04 gain as slightly smaller; this is rounding treatment, not a scientific nonregression slack. Selection tie order and strict masked/jitter gains remain unchanged.
+
+Each phase has an exclusive entry record and fixed claim inventory. A private exclusive seal binds the exact public case/summary hashes to the committed freeze. Later phases validate the seal and reconstruct control reproduction/selection from the exact receipt inventory. Source hashes must match the actual Git freeze commit, not just the working tree. Input identity is checked before loading and after computation for each match, before its results are persisted.
