@@ -14,8 +14,10 @@ Important: development rejection lacked a terminal decision file. A Reject decis
 
 Minor coverage notes were addressed with a binary-exact surprise plateau and a direct assertion that jitter receives the historical masked sequence. The first plateau fixture used decimal .02 and was not numerically flat; .03125 produces a binary-exact plateau. No detector threshold or scientific parameter was altered.
 
-All 43 targeted tests pass after this single pre-score fix pass. The reviewer was not rerun. Whole-suite evidence and scientific results remain pending.
+All 43 targeted tests pass after this single pre-score fix pass. The reviewer was not rerun. The subsequent fixed-source full suite passed: 608 tests, 21 environment skips, 587 executed, zero failures/errors; all 43 new tests execute. Scientific results remain pending.
 
 ## Verification process correction
 
 The first baseline command was interrupted after providing no detailed progress. A verbose diagnostic run later observed errors in historical source-hash audit tests while new Python files were being added concurrently. That run is invalid as a clean baseline and was interrupted, not called passing. An isolated unchanged WCSF test subsequently passed in 96.327 seconds. Original logs are retained under .superpowers/touch-*.log. The stable full-suite run separates the 565 original tests from the new tests and runs without source mutation. This process mistake did not consume a scientific fit, inference or score.
+
+The restricted fixed-source run encountered an existing Windows folder-link permission failure. The isolated test passed with normal permissions, as did the complete suite. Its 565 original tests retain the recorded 21 skips and zero failures. This environment correction changed no source or scientific protocol.

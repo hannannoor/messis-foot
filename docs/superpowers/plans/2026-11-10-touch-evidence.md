@@ -30,27 +30,27 @@
 
 **Files:** Create touch_probes.py, tests/test_touch_probes.py, reports/touch-evidence/stage0.json and baseline.json.
 **Interfaces:** probe(frames, homographies) -> bounded dict; no references or video.
-- [ ] Run full baseline suite, save log, record counts/runtime and release hash.
-- [ ] Write synthetic homography scale/run/gap tests, run red, implement numeric Jacobian and run aggregates, run green.
-- [ ] Verify raw input paths and hashes against retained release freeze locally; run probes once, read only aggregate JSON. Record pose rule (<100 px median drops pose).
-- [ ] Commit source, tests and bounded probe receipts; report stage boundary.
+- [x] Run full baseline suite, save log, record counts/runtime and release hash.
+- [x] Write synthetic homography scale/run/gap tests, run red, implement numeric Jacobian and run aggregates, run green.
+- [x] Verify raw input paths and hashes against retained release freeze locally; run probes once, read only aggregate JSON. Record pose rule (<100 px median drops pose).
+- [x] Commit source, tests and bounded probe receipts; report stage boundary.
 
 ### Task 2: Detector (Stage 1)
 
 **Files:** Create touch_physics.py and tests/test_touch_physics.py.
 **Interfaces:** detect_touches(frames, theta) -> list[TouchEvent]; TouchEvent(frame_index, team, kind).
-- [ ] Write synthetic tests 1–10 in design: straight/decelerating, attributed/remote/contested kink, sigma .05 jitter at both theta values, on/off-line reacquisition, period reset, H/A mirror, invalid input. Add plateau/partial-coordinate tests.
-- [ ] Run unittest discovery for this file; expect missing module/API failure before implementation.
-- [ ] Implement deterministic pure standard-library functions; no I/O/references.
-- [ ] Run targeted tests and commit; if declared jitter test fails, preserve it and stop.
+- [x] Write synthetic tests 1–10 in design: straight/decelerating, attributed/remote/contested kink, sigma .05 jitter at both theta values, on/off-line reacquisition, period reset, H/A mirror, invalid input. Add plateau/partial-coordinate tests.
+- [x] Run unittest discovery for this file; expect missing module/API failure before implementation.
+- [x] Implement deterministic pure standard-library functions; no I/O/references.
+- [x] Run targeted tests and commit; if declared jitter test fails, preserve it and stop.
 
 ### Task 3: Evidence and decoder (Stage 2)
 
 **Files:** Create touch_decoder.py, touch_evidence.py, tests/test_touch_evidence.py.
 **Interfaces:** decode_variable(emissions, periods, usable, costs) -> labels; evidence_rows(rows,periods,usable,events,beta,c_touch) -> (rows,costs); predict_touch(frames,theta,beta,c_touch,events=None) -> ReleasePrediction.
-- [ ] Write tests 11–18: >=200 randomized constant-cost parity cases including ties/splits, release-fixture full parity, exact expiry/reset/missing bonus, H–A–H mechanism, invalid parameters/finite rows, import isolation, determinism, release hash preservation.
-- [ ] Run targeted tests red, implement new modules without editing incumbent, run green.
-- [ ] Run whole suite; executed count must equal baseline plus all new executed tests. Commit and report stage boundary.
+- [x] Write tests 11–18: >=200 randomized constant-cost parity cases including ties/splits, release-fixture full parity, exact expiry/reset/missing bonus, H–A–H mechanism, invalid parameters/finite rows, import isolation, determinism, release hash preservation.
+- [x] Run targeted tests red, implement new modules without editing incumbent, run green.
+- [x] Run whole suite; executed count must equal baseline plus all new executed tests. Commit and report stage boundary.
 
 ### Task 4: Frozen external protocol and evaluation (Stage 3)
 

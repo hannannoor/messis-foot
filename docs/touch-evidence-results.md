@@ -23,4 +23,8 @@ Ten synthetic detector tests pass, including straight/decelerating tracks, attri
 
 Twelve evidence/decoder tests pass, including 250 seeded constant-cost parity sequences and all three existing synthetic release fixtures. Both no-events and beta=0/c_touch=32 match full incumbent prediction objects. A synthetic H–A–H sequence demonstrates the intended mechanism. Its initial H emission margin was corrected from .1 to .5 so its 20-frame total exceeds the declared touch switch cost 8; the original failure is retained. The first fixture run also hit a Windows temporary-folder permission error; the test now uses the workspace temporary directory. No scientific run was involved.
 
-The existing frozen release artifact retains SHA-256 e8d35e15be9524270bed82352791dc2849087b49b4c2b59c191023954b19eddb. Whole-suite baseline remains pending; no completion or promotion is claimed.
+The existing frozen release artifact retains SHA-256 e8d35e15be9524270bed82352791dc2849087b49b4c2b59c191023954b19eddb. The stable full suite passed: 608 collected, 21 environment skips, 587 executed, zero failures/errors. The original 565-test group has 544 executed and 21 skips, matching the handoff; all 43 new tests execute. Every one of the 551 base tracked files remains byte-identical. No scientific score or promotion has yet occurred.
+
+## Pre-score verification
+
+All 15 external cases and 54 required files exist and match their recorded hashes. The original restricted runs are retained and do not count as a passing baseline. Normal Windows permissions were required for existing folder-link tests; the stable full run took 905.84 seconds. It held source fixed throughout. See native-suite.json and the pre-score review record.

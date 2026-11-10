@@ -1,0 +1,24 @@
+{
+  "elapsed_seconds": 905.8373035999994,
+  "errors": 0,
+  "failed_tests": [],
+  "failures": 0,
+  "groups": {
+    "new": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "total": 43
+    },
+    "original": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 21,
+      "total": 565
+    }
+  },
+  "passed": true,
+  "permission_context": "normal Windows permissions; synthetic test data in workspace .tmp",
+  "skipped": 21,
+  "total": 608
+}
