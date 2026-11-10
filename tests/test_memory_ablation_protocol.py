@@ -33,6 +33,7 @@ ROOT=Path(__file__).resolve().parents[1]
 def fixture():
     with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
         root=Path(tmp)/'code';root.mkdir()
+        stack.enter_context(patch.object(protocol,'BUDGET_ROOT',root.parent/'memory-ablation-reference'/protocol.EXPERIMENT))
         release=json.loads((ROOT/'release/manifest.json').read_text(encoding='utf-8'))
         names=set(release['sources'])|{'competition_release.py',*protocol.PROTECTED}
         for name in names:
@@ -44,9 +45,10 @@ def fixture():
             for cid in ids:
                 path=root/(category+'-'+cid+'.bin');path.write_bytes(('synthetic '+category+cid).encode())
                 bindings[category][cid]=dict(files={category+'/'+cid:path},expected={category+'/'+cid:hashlib.sha256(path.read_bytes()).hexdigest()},parity={regime:None for regime in REGIMES})
-        runtime=protocol.runtime_info(training=True)
-        env=dict(training=runtime,scoring=protocol.runtime_info(),training_python=str(Path(__import__('sys').executable)),
+        runtime=protocol.runtime_info(training=True,integrity=False)
+        env=dict(training=runtime,scoring=protocol.runtime_info(integrity=False),training_python=str(Path(__import__('sys').executable)),
                  scoring_python=str(Path(__import__('sys').executable)),lock_sha256='a'*64,provenance_sha256='b'*64)
+        stack.enter_context(patch.object(protocol,'runtime_info',side_effect=lambda training=False:runtime if training else env['scoring']))
         data=TrainingData(np.zeros((6,18),dtype=np.float32),np.asarray([0,1,2]*2,dtype=np.uint8),np.full(6,1/6),np.column_stack([np.zeros(6),np.zeros(6),np.arange(6)]).astype(np.int64),())
         candidate=dict(feature_names=list(FEATURE_NAMES),children_left=[-1],children_right=[-1],feature=[-2],threshold=[-2.],probabilities=[[.4,.3,.3]])
         def fitted(data,on_fit_entry,expected_control_sha=None):
@@ -230,7 +232,8 @@ class MemoryProtocol(unittest.TestCase):
             with self.assertRaises(ValueError):protocol.read(link/'value.json')
             root=base/'code';root.mkdir();outside=base/'outside';outside.mkdir()
             linked_directory(base/'memory-ablation-reference',outside)
-            with self.assertRaises(ValueError):runner.AblationSession('linked-root',root=root)
+            with patch.object(protocol,'BUDGET_ROOT',base/'memory-ablation-reference'/protocol.EXPERIMENT),self.assertRaises(ValueError):
+                runner.AblationSession('linked-root',root=root)
 
     def test_actual_dependency_inventory_and_python39_grammar(self):
         paths=protocol.source_paths(ROOT)

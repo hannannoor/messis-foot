@@ -24,6 +24,7 @@ from memory_ablation_metrics import MATCHES,REGIMES,MODES
 ROOT=Path(__file__).resolve().parent
 BASE='b5878dd19ae3313803329f32482c2d500246ab39'
 EXPERIMENT='control-memory-2026-11-09'
+BUDGET_ROOT=Path.home()/"Documents/ChatGPT/MESSI's FOOT/memory-ablation-reference"/EXPERIMENT
 ENTRIES=('memory_ablation.py','memory_ablation_training.py','memory_ablation_metrics.py','memory_ablation_protocol.py','memory_ablation_run.py')
 PROTECTED={**legacy.PROTECTED,
  'docs/superpowers/specs/2026-11-09-control-memory-ablation-design.md':'7fd441b06233cd705556fcc9a53173c0a56b29762a980ea5a59875c93275fd00',
@@ -52,14 +53,52 @@ def store_exact(path,value):
 def hashes(paths):return {key:sha(path) for key,path in sorted(paths.items())}
 
 
-def runtime_info(training=False):
+def record_identity(record,location):
+    import base64,csv
+    record=Path(record).resolve();location=Path(location).resolve();rows=[]
+    for name,expected,size in csv.reader(record.read_text(encoding='utf-8').splitlines()):
+        if not expected:continue
+        target=(location/name).resolve()
+        if not (target.is_relative_to(location) or target.parent in (location.parent/'Scripts',location.parent.parent/'Scripts')):
+            raise ValueError('Installed record escapes its distribution location')
+        algorithm,encoded=expected.split('=',1)
+        if algorithm!='sha256' or not target.is_file():raise ValueError('Unsupported/missing installed component')
+        actual=hashlib.sha256(target.read_bytes()).hexdigest()
+        if base64.urlsafe_b64encode(bytes.fromhex(actual)).decode().rstrip('=')!=encoded or target.stat().st_size!=int(size):raise ValueError('Installed component differs from wheel RECORD')
+        rows.append((name,actual))
+    if not rows:raise ValueError('Empty installed component inventory')
+    return dict(record_sha256=sha(record),files_sha256=digest(sorted(rows)),hashed_files=len(rows))
+
+
+def binary_identity(packages):
+    base=Path(getattr(sys,'_base_executable',sys.executable)).resolve()
+    library=base.parent/('python'+str(sys.version_info.major)+str(sys.version_info.minor)+'.dll')
+    if not library.is_file():raise ValueError('This replay requires the recorded Windows interpreter library')
+    distributions={}
+    for name,version in packages.items():
+        if version is None:continue
+        dist=importlib.metadata.distribution(name);records=[f for f in dist.files or () if str(f).endswith('.dist-info/RECORD')]
+        if len(records)!=1:raise ValueError('Installed wheel record is missing/ambiguous')
+        distributions[name]=record_identity(dist.locate_file(records[0]),dist.locate_file(''))
+    return dict(base_executable_sha256=sha(base),interpreter_library_sha256=sha(library),distributions=distributions)
+
+
+def validate_training_binaries(runtime,provenance):
+    value=runtime['binary_identity']
+    if value['base_executable_sha256']!=provenance['interpreter_sha256'] or value['interpreter_library_sha256']!=provenance['dll_sha256']:
+        raise ValueError('Training interpreter/library differs from recorded provenance')
+
+
+def runtime_info(training=False,integrity=True):
     packages={}
     for name in ('numpy','pandas')+(('scipy','scikit-learn','joblib','threadpoolctl') if training else ()):
         try:packages[name]=importlib.metadata.version(name)
         except importlib.metadata.PackageNotFoundError:packages[name]=None
-    return dict(python=platform.python_version(),platform=platform.platform(),sqlite=sqlite3.sqlite_version,
+    value=dict(python=platform.python_version(),platform=platform.platform(),sqlite=sqlite3.sqlite_version,
         executable_sha256=sha(sys.executable),packages=packages,
         threads={key:__import__('os').environ.get(key) for key in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS')})
+    if integrity:value['binary_identity']=binary_identity(packages)
+    return value
 
 
 def thread_environment():
@@ -80,6 +119,7 @@ def environments(root,scoring_python=None,scoring_threads=None):
     provenance=root/'.superpowers/memory-ablation/environment-provenance.json'
     prov=read(provenance)
     if prov['requirements_lock_sha256']!=sha(root/'requirements-memory-ablation.lock'):raise ValueError('Environment lock changed')
+    validate_training_binaries(trained,prov)
     scoring_python=Path(scoring_python or sys.executable).resolve()
     scoring_env=__import__('os').environ.copy()
     for key in ('PYTHONHOME','PYTHONPATH','PYTHONEXECUTABLE','__PYVENV_LAUNCHER__'):scoring_env.pop(key,None)
@@ -95,6 +135,41 @@ def environments(root,scoring_python=None,scoring_threads=None):
 
 
 def public_environment(value):return {key:v for key,v in value.items() if not key.endswith('_python')}
+
+
+def historical_sources(root,commit,expected):
+    if not isinstance(commit,str) or not re.fullmatch('[0-9a-f]{40}',commit):raise ValueError('Full historical commit required')
+    actual={}
+    for name in expected:
+        path=Path(name)
+        if path.is_absolute() or '..' in path.parts or not name.endswith(('.py','.json','.txt','.lock','.md')):raise ValueError('Invalid historical source key')
+        data=subprocess.check_output(['git','show',commit+':'+name],cwd=root,stderr=subprocess.DEVNULL)
+        actual[name]=hashlib.sha256(data).hexdigest()
+    if actual!=expected:raise ValueError('Frozen sources differ from historical Git objects')
+    return actual
+
+
+def validate_artifact(path,value,schema):
+    legacy._shape(value,schema);assert_public_report(value)
+    def literals(item,shape):
+        if isinstance(shape,dict):
+            for key,child in shape.items():literals(item[key],child)
+        elif isinstance(shape,tuple) and isinstance(shape[0],(dict,list)) and canonical(item)!=canonical(shape[0]):
+            raise ValueError('Typed lifecycle identity differs')
+    literals(value,schema)
+    if Path(path).read_bytes()!=canonical(value):raise ValueError('Noncanonical lifecycle bytes')
+    if 'created_utc' in value:
+        stamp=value['created_utc']
+        if not isinstance(stamp,str) or not re.fullmatch(r'\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,6})?\+00:00',stamp):raise ValueError('Invalid lifecycle timestamp')
+
+
+def validate_retirement(path):
+    value=read(path);safe_run_id(value['prior_run_id']);safe_run_id(value['successor_run_id'])
+    schema=dict(schema_version=(1,),status=('retired_before_scientific_entry',),prior_run_id=(value['prior_run_id'],),successor_run_id=(value['successor_run_id'],),
+        fits=(0,),inference_entries=(0,),scorings=(0,),freeze_sha256='hash',owner_sha256='hash',
+        error_log_sha256={name:'hash' for name in ('execution-error-fit-worker.log','execution-error-fit.log')},created_utc=(value['created_utc'],))
+    if 'reason' in value:schema.update(reason=('cache_frame_contract',),reference_container_parsed=(True,))
+    validate_artifact(path,value,schema);return value
 
 
 def trusted_json(root,name):
@@ -271,6 +346,17 @@ def validate_score(value):
     for key,denom in (('precision',dead['n_pred']),('recall',dead['n_gt'])):
         if not legacy._close(dead[key],dead['n_matched']/denom if denom else None):raise ValueError('D ratio differs')
     if sum(row['known'] for row in value['strata'].values())!=s['known']:raise ValueError('Observation support differs')
+    correct=sum(cm[i][i] for i in range(3));live=s['H']+s['A']
+    from gap_solver.official_metrics import macro_f1
+    expected_metrics=dict(accuracy=correct/s['known'] if s['known'] else None,
+        official_macro_f1=float(macro_f1(np.asarray(cm)[:3])) if s['known'] else None)
+    if any(not legacy._close(value['metrics'][key],expected) for key,expected in expected_metrics.items()):raise ValueError('Frame metrics differ from confusion')
+    if not legacy._close(value['known_live_false_D_rate'],(cm[0][2]+cm[1][2])/live if live else None):raise ValueError('False-D rate differs from confusion')
+    totals=dict(correct=correct,ownership_swaps=cm[0][1]+cm[1][0],false_D=cm[0][2]+cm[1][2],missed_D=s['D']-cm[2][2])
+    for key,total in totals.items():
+        if sum(row[key] for row in value['strata'].values())!=total:raise ValueError('Stratum totals differ from confusion')
+    for row in value['strata'].values():
+        if row['correct']+row['ownership_swaps']+row['false_D']+row['missed_D']>row['known']:raise ValueError('Stratum components exceed support')
     for row in list(value['HA_boundaries'].values())+list(value['all_state_boundaries'].values()):
         if row['n_matched']+row['n_missed']!=row['n_gt'] or row['n_matched']+row['n_spurious']!=row['n_pred'] or row['matched_latency_denominator']!=row['n_matched']:raise ValueError('Boundary counts differ')
     return value

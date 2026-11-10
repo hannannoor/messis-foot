@@ -35,7 +35,7 @@ Private per-frame features, targets, weights, masks, references and predictions 
 With the original retained local stores, the permitted read-only check is:
 
 ```powershell
-python memory_ablation_run.py verify --run-id 2026-11-09-v3
+python memory_ablation_run.py audit --run-id 2026-11-09-v3 --source-commit aa5a2f8d16a42254e5b9fed1cd55a253ae8d61e8
 ```
 
 The experiment budget is exhausted after its declared computation; another run requires a new explicit protocol and authorization. Keep all historical scientific logs, results and selected CSV generations.
@@ -92,3 +92,5 @@ SkillCorner false-D passes all20 comparisons; its largest increase is .001636 on
 ## Interpretation and next decision
 
 The earlier association between memory and wrong-owner emissions was not causal evidence that zeroing the retained-owner block would help. This controlled refit answers that narrower question negatively. The large DFL/WCSF loss, two WCSF D-recall failures and short-spell regressions argue against promoting it even if a selected frame metric or match happened to improve. No follow-up feature, calibration or search was tried. Any next hypothesis needs a separate prospective plan; the existing predictor stays the default.
+
+The [review record](control-memory-ablation-review.md) documents the one material fix pass and explicit historical-source audit. These stronger retrospective checks preserve every original receipt and the negative result; they do not repeat the scientific computation.

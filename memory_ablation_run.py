@@ -62,7 +62,8 @@ def _save_arrays(path,arrays):
 class AblationSession:
     def __init__(self,run_id,root=p.ROOT):
         self.run_id=p.safe_run_id(run_id);self.root=Path(root).resolve()
-        self.budget=self.root.parent/'memory-ablation-reference'/p.EXPERIMENT
+        p.reject_linked_ancestors(p.BUDGET_ROOT)
+        self.budget=p.BUDGET_ROOT.resolve();self._audit_commit=None
         self.private=self.budget/'runs'/run_id;self.public=self.root/'reports/memory-ablation'/run_id
         for path in (self.budget,self.private,self.public):p.reject_linked_ancestors(path)
 
@@ -97,7 +98,7 @@ class AblationSession:
             link=p.read(amendment);prior=AblationSession('2026-11-09-v2',root=self.root)
             if link['prior_run_id']!=prior.run_id or link['successor_run_id']!=self.run_id or link['prior_certificate_sha256']!=prior._continuation():raise ValueError('Approved amendment lineage differs')
             if link['owner_sha256']!=p.sha(prior._owner_path()) or p.read(prior._owner_path())!=prior._expected_owner():raise ValueError('Prior generation owner differs')
-            status=p.read(prior.public/'preflight-status.json')
+            status=p.validate_retirement(prior.public/'preflight-status.json')
             if link['status_sha256']!=p.sha(prior.public/'preflight-status.json') or p.read(prior.private/'retired-preflight.json')!=dict(status_sha256=link['status_sha256']):raise ValueError('Amendment retirement anchor differs')
             if status['freeze_sha256']!=p.sha(prior.public/'freeze.json') or (status['fits'],status['inference_entries'],status['scorings'])!=(0,0,0) or status['successor_run_id']!=self.run_id:raise ValueError('Amendment identity differs')
             if status['error_log_sha256']!=p.hashes({name:prior.private/name for name in ('execution-error-fit-worker.log','execution-error-fit.log')}):raise ValueError('Amendment failure evidence changed')
@@ -111,7 +112,7 @@ class AblationSession:
         prior=self.budget/'runs'/link['prior_run_id'];public=self.root/'reports/memory-ablation'/link['prior_run_id']
         if p.read(prior/'retired-preflight.json')!=dict(status_sha256=p.sha(public/'preflight-status.json')) or link['status_sha256']!=p.sha(public/'preflight-status.json'):
             raise ValueError('Preflight retirement certificate changed')
-        status=p.read(public/'preflight-status.json')
+        status=p.validate_retirement(public/'preflight-status.json')
         if status['freeze_sha256']!=p.sha(public/'freeze.json') or (status['fits'],status['inference_entries'],status['scorings'])!=(0,0,0) or status['successor_run_id']!=self.run_id:
             raise ValueError('Preflight retirement identity differs')
         if status['error_log_sha256']!=p.hashes({name:prior/name for name in ('execution-error-fit-worker.log','execution-error-fit.log')}):raise ValueError('Preflight failure evidence changed')
@@ -200,7 +201,19 @@ class AblationSession:
         owner=p.read(self._owner_path())
         if owner!=self._expected_owner():raise ValueError('Global experiment owner differs')
         freeze=p.read(self.public/'freeze.json');sources,bindings,env=self._current()
-        if freeze['protocol']!=p.protocol() or freeze['source_sha256']!=p.hashes(sources) or freeze['environment']!=p.public_environment(env) or freeze['run_id']!=self.run_id:
+        schema=dict(schema_version=(1,),run_id=(self.run_id,),created_utc=(freeze.get('created_utc'),),
+            protocol=(p.protocol(),),source_sha256={key:'hash' for key in sources},
+            input_sha256={c:{cid:{key:'hash' for key in b['expected']} for cid,b in group.items()} for c,group in bindings.items()},
+            environment=(p.public_environment(env),),baseline_contracts=({cid:b['parity'] for cid,b in bindings['evaluation'].items()},))
+        expected_env=p.public_environment(env)
+        if self._audit_commit:
+            expected_env=__import__('copy').deepcopy(expected_env)
+            for role in ('training','scoring'):
+                if 'binary_identity' not in freeze['environment'][role]:expected_env[role].pop('binary_identity',None)
+            schema['environment']=(expected_env,)
+        p.validate_artifact(self.public/'freeze.json',freeze,schema)
+        source_hashes=p.historical_sources(self.root,self._audit_commit,freeze['source_sha256']) if self._audit_commit else p.hashes(sources)
+        if freeze['protocol']!=p.protocol() or freeze['source_sha256']!=source_hashes or freeze['environment']!=expected_env or freeze['run_id']!=self.run_id:
             raise ValueError('Source/protocol/runtime freeze changed')
         if freeze['input_sha256']!={c:{cid:b['expected'] for cid,b in group.items()} for c,group in bindings.items()} or freeze['baseline_contracts']!={cid:b['parity'] for cid,b in bindings['evaluation'].items()}:
             raise ValueError('Frozen input or baseline contracts changed')
@@ -260,6 +273,11 @@ class AblationSession:
         if not (self.public/'fit.json').is_file() or not (self.private/'fit-anchor.json').is_file():raise ValueError('No completed fitting receipt')
         if p.read(self.private/'fit-anchor.json')!=dict(fit_sha256=p.sha(self.public/'fit.json')):raise ValueError('Fitting anchor changed')
         value=p.read(self.public/'fit.json')
+        stopped=value.get('status')=='stopped_control_mismatch'
+        schema=dict(schema_version=(1,),status=('stopped_control_mismatch',) if stopped else ('complete',),freeze_sha256='hash',fits=(1,) if stopped else (2,),training_semantic_sha256='hash')
+        if stopped:schema.update(control_model_sha256='hash',expected_control_sha256=(p.MODEL_SHA,))
+        else:schema['model_artifact_sha256']={mode:'hash' for mode in MODES}
+        p.validate_artifact(self.public/'fit.json',value,schema)
         if value['freeze_sha256']!=p.sha(self.public/'freeze.json'):raise ValueError('Fitting freeze identity differs')
         return value
 
@@ -282,7 +300,10 @@ class AblationSession:
         if not (self.public/'seal.json').is_file() or not (self.private/'seal-anchor.json').is_file():raise ValueError('Model seal missing')
         if p.read(self.private/'seal-anchor.json')!=dict(seal_sha256=p.sha(self.public/'seal.json')):raise ValueError('Model seal changed')
         seal=p.read(self.public/'seal.json');models=self._models()
+        p.validate_artifact(self.public/'seal.json',seal,dict(schema_version=(1,),freeze_sha256='hash',fit_sha256='hash',
+            model_artifact_sha256={mode:'hash' for mode in MODES},model_sha256={mode:'hash' for mode in MODES},created_utc=(seal.get('created_utc'),)))
         if seal['freeze_sha256']!=p.sha(self.public/'freeze.json') or seal['fit_sha256']!=p.sha(self.public/'fit.json') or seal['model_artifact_sha256']!={mode:p.sha(self.public/'models'/(mode+'.json')) for mode in MODES}:raise ValueError('Sealed identities changed')
+        if seal['model_sha256']!={mode:models[mode]['model_sha256'] for mode in MODES}:raise ValueError('Sealed model digest differs')
         return models,p.sha(self.public/'seal.json')
 
     def evaluate(self):
@@ -361,7 +382,12 @@ class AblationSession:
         self._frozen();value=self._summary();p.assert_public_report(value);p.store_exact(self.public/'summary.json',value)
         return {key:value[key] for key in ('status','decision') if key in value}
 
-    def verify(self):
+    def verify(self,source_commit=None):
+        self._audit_commit=source_commit
+        try:return self._verify_readonly()
+        finally:self._audit_commit=None
+
+    def _verify_readonly(self):
         self._frozen();fit=self._fit_status();stopped=fit['status']=='stopped_control_mismatch'
         expected={'freeze.json','fit.json','summary.json'}
         if not stopped:expected|={'seal.json','models',*(cid+'--'+regime+'.json' for cid,_,_ in MATCHES for regime in REGIMES)}
@@ -398,27 +424,32 @@ class AblationSession:
 
 
 def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('command',choices=('freeze','fit','seal','evaluate','summarize','verify','retire-preflight','retire-cache-preflight'));parser.add_argument('--run-id',required=True)
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('command',choices=('freeze','fit','seal','evaluate','summarize','verify','audit','retire-preflight','retire-cache-preflight'));parser.add_argument('--run-id',required=True)
+    parser.add_argument('--source-commit',help='Historical Git source commit; read-only audit only')
     parser.add_argument('--successor-run-id')
     parser.add_argument('--training-worker',action='store_true',help=argparse.SUPPRESS)
     args=parser.parse_args();session=AblationSession(args.run_id)
     try:
         if args.training_worker and args.command!='fit':raise ValueError('Invalid training worker command')
-        if args.command in ('retire-preflight','retire-cache-preflight'):
+        if args.source_commit and args.command!='audit':raise ValueError('Historical source binding is read-only')
+        if args.command=='audit':
+            if not args.source_commit:raise ValueError('Historical source commit required')
+            result=session.verify(source_commit=args.source_commit)
+        elif args.command in ('retire-preflight','retire-cache-preflight'):
             if not args.successor_run_id:raise ValueError('Successor ID required')
             method=session.retire_preflight if args.command=='retire-preflight' else session.retire_cache_preflight
             result=method(args.successor_run_id)
         else:result=session._fit_worker() if args.training_worker else getattr(session,args.command)()
         print(json.dumps(result,sort_keys=True));return 0
     except Exception:
-        if session.private.is_dir():
+        if args.command not in ('verify','audit') and session.private.is_dir():
             import traceback
             error_path=session.private/('execution-error-'+args.command+('-worker' if args.training_worker else '')+'.log')
             try:
                 p.reject_linked_ancestors(error_path)
                 with error_path.open('x',encoding='utf-8') as handle:handle.write(traceback.format_exc())
             except (OSError,ValueError):pass
-        print('Memory ablation stopped; preserve this generation and inspect private execution logs.',file=sys.stderr);return 1
+        print('Memory ablation verification failed; no files changed.' if args.command in ('verify','audit') else 'Memory ablation stopped; preserve this generation and inspect private execution logs.',file=sys.stderr);return 1
 
 
 if __name__=='__main__':raise SystemExit(main())

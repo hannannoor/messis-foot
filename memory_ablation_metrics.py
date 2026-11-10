@@ -104,10 +104,11 @@ def summarize_cases(case_receipts):
         else:owner_na+=1
     gain=primary['natural']['delta'];masked=primary[REGIMES[1]]['delta']
     changes=[_delta(provider_means['natural']['memory-ablated'][p],provider_means['natural']['control'][p]) for p in PROVIDERS]
-    checks=dict(natural_primary_gain=_check([None if gain is None else gain>EPS]),
+    checks=dict(natural_primary_gain=_check([None if gain is None else primary['natural']['memory-ablated']>primary['natural']['control']+EPS]),
         natural_provider_nonregression=_check([None if d is None else d>=-EPS for d in changes]),
         masked_primary_nonregression=_check([None if masked is None else masked>=-EPS]))
     for name,entries in values.items():checks[name]=_check(entries,short_na if name=='short_spell_safeguard' else owner_na if name=='owner_presence' else 0)
-    decision='fail' if any(c['status']=='fail' for c in checks.values()) else 'unresolved' if any(c['status']=='unresolved' for c in checks.values()) else 'pass'
+    required_unknown=gain is None or masked is None or any(v is None for v in changes) or any(v is None for v in values['D_safeguards'])
+    decision='unresolved' if required_unknown else 'fail' if any(c['status']=='fail' for c in checks.values()) else 'unresolved' if any(c['status']=='unresolved' for c in checks.values()) else 'pass'
     return dict(schema_version=1,case_count=30,primary_matches=13,provider_means=provider_means,primary=primary,
         checks=checks,decision=decision,case_deltas=case_deltas,fresh_holdout=False,automatic_promotion=False)
