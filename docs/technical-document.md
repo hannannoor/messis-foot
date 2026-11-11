@@ -1,4 +1,4 @@
-# MESSI's FOOT â€” possession submission
+# MESSI's FOOT — possession submission
 
 ## 1. Summary
 
@@ -50,15 +50,15 @@ D comes from the tree, gap rule and kickoff patch. After a selected stoppage gap
 
 ## 6. Evidence
 
-Spell F1 is averaged over temporal IoU thresholds 0.3â€“0.7. DFL/WCSF primary means weight the two primary DFL matches one quarter each and WCSF one half. [Committed evidence](https://github.com/hannannoor/messis-foot/tree/codex/restart-release-2026-11-11/reports) contains counts and protocols.
+Spell F1 is averaged over temporal IoU thresholds 0.3–0.7. DFL/WCSF primary means weight the two primary DFL matches one quarter each and WCSF one half. [Committed evidence](https://github.com/hannannoor/messis-foot/tree/13d7e2b45ffba7197e380735e0f8dcfe03438ae7/reports) contains counts and protocols.
 
 | Check | Result | Caveat |
 |---|---|---|
-| Fifteen external matches, natural | Control .551816 â†’ gap .550876. | Equal-provider mean on 13 fitting-disjoint primary matches; two fitting overlaps secondary. Reused matches, little labelled natural-gap support. |
-| Same, random 30% masking | .469149 â†’ .438025; SkillCorner .555155 â†’ .479297. | Gap rule harms when missingness is unrelated to stoppages. |
-| Three Metrica samples | .446712 â†’ .545105. | Partly circular tracking/reference construction. |
-| Stoppage regimes: control â†’ gap | Natural .529441 â†’ .529441; stop100 .481276 â†’ .535956; stop75 .444251 â†’ .455214; stop50 .401310 â†’ .401842; stop75-jitter .343783 â†’ .401270. | No primary-mean loss; WR9 loses .011672 in stop75 and .026738 in stop50. Reference-built masks model, rather than measure, provided missingness. |
-| Touch transfer / restart | Touch failed B/C: thinned SC confirmation âˆ’.014216; primary gain âˆ’.002969. Restart passed E/F/G; gains WN1 +.009363, WR9 +.016101, WCSF +.021546, WOH +.011955, WOY +.011527; SC confirmation .000000. | Post-hoc, reused evidence; two reset-gating matches establish consistency, not population benefit. |
+| Fifteen external matches, natural | Control .551816 → gap .550876. | Equal-provider mean on 13 fitting-disjoint primary matches; two fitting overlaps secondary. Reused matches, little labelled natural-gap support. |
+| Same, random 30% masking | .469149 → .438025; SkillCorner .555155 → .479297. | Gap rule harms when missingness is unrelated to stoppages. |
+| Three Metrica samples | .446712 → .545105. | Partly circular tracking/reference construction. |
+| Stoppage regimes: control → gap | Natural .529441 → .529441; stop100 .481276 → .535956; stop75 .444251 → .455214; stop50 .401310 → .401842; stop75-jitter .343783 → .401270. | No primary-mean loss; WR9 loses .011672 in stop75 and .026738 in stop50. Reference-built masks model, rather than measure, provided missingness. |
+| Touch transfer / restart | Touch failed B/C: thinned SC confirmation −.014216; primary gain −.002969. Restart passed E/F/G; gains WN1 +.009363, WR9 +.016101, WCSF +.021546, WOH +.011955, WOY +.011527; SC confirmation .000000. | Post-hoc, reused evidence; two reset-gating matches establish consistency, not population benefit. |
 | Provided, label-free | Final D 41.458%; 113 of 133 long gaps relabelled; 434 → 415 spells; 388 changed frames (0.244%); 29 → 9 spells under 25 frames; 19 gaps change first owner. | Coverage and fewer spells do not measure correctness. |
 | Public five minutes, once after decision | Spell F1 0.360976, macro F1 0.677701, accuracy 0.734667; 24 predicted / 17 reference spells. Previous candidate: .362 / .677 / .734, 25 / 17 spells. | Pipeline check only; 17 reference spells cannot rank these files. Numbers chose nothing. |
 
@@ -68,15 +68,13 @@ The organisers' published full-match baseline is .2433. Our full-match score is 
 
 Neither the gap rule nor restart has labelled validation on tracking with this exact gap pattern. The rule relabels an entire gap and can erase live play. It has no minimum count of defined speed samples inside a gap: the 113 relabelled gaps have minimum/10th-percentile/median support 24/30/64 samples, none below five; 3 of 20 unclassified gaps have no defined sample. 11 selected gaps are within 10% below the speed threshold, accounting for 4.967% of relabelled frames.
 
-Restart gains are about .01â€“.02 on DFL-type references and zero on the SkillCorner confirmation mean. Tagged set-piece match/mismatch/no-transition counts are 15/9/3 before and 14/10/3 after restart. Corner agreement fell 10/12 → 6/12; goal kicks improved 2/7 → 4/7 among those with a transition, and free kicks 3/5 → 4/5. At corners, the pre-stoppage team usually also takes the restart, so removing continuity can hurt; this is an interpretation, not an independently measured cause.
+Restart gains are about .01–.02 on DFL-type references and zero on the SkillCorner confirmation mean. Tagged set-piece match/mismatch/no-transition counts are 15/9/3 before and 14/10/3 after restart. Corner agreement fell 10/12 → 6/12; goal kicks improved 2/7 → 4/7 among those with a transition, and free kicks 3/5 → 4/5. At corners, the pre-stoppage team usually also takes the restart, so removing continuity can hurt; this is an interpretation, not an independently measured cause.
 
 The gap rule's restart extension is inactive. The kickoff tag starts a few seconds before play; the remaining short interval keeps its earlier labels. The team-role mapping in `gap_solver/input_contract.py` recognises this match's two team names; another match needs its names added. Geometry can be noisy, identities mistaken, or observations stale. All external matches were reused; none is a fresh holdout, and several ideas followed earlier rejections. With more time, we would obtain independent labelled long-gap tracking and test restart ownership by restart type before changing the rule.
 
-Team to confirm: registration/form access, registered team name, and any use or disclosure of provided material outside the recorded local workflow.
-
 ## 8. Reproduction
 
-Use CPython 3.14.5; inference is standard library only and uses no network. Acquire the permitted provided assets locally. Clone after the branch has been published:
+Use CPython 3.14.5; inference is standard library only and uses no network. Acquire the permitted provided assets locally. Clone the repository:
 
 ```powershell
 git clone https://github.com/hannannoor/messis-foot.git messis-foot
@@ -100,4 +98,4 @@ Set `$prefix` to the local tactical filename prefix, `$out` to a nonexistent abs
 python "$official/evaluation/validate_submission.py" "$out/submission.csv"
 ```
 
-[Release tests](https://github.com/hannannoor/messis-foot/blob/30a7ace010e3fc1ece23c440e54151058dbf8b19/tests/test_restart_release.py) cover disabled-path parity, restart behaviour and deterministic output. Code links resolve after this branch is pushed.
+[Release tests](https://github.com/hannannoor/messis-foot/blob/30a7ace010e3fc1ece23c440e54151058dbf8b19/tests/test_restart_release.py) cover disabled-path parity, restart behaviour and deterministic output.

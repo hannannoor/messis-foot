@@ -86,3 +86,14 @@ class SubmissionDocs(unittest.TestCase):
             self.assertNotIn('82 frames', source)
             if name == 'DESIGN.md':
                 self.assertNotIn('safe in every regime', source)
+
+    def test_documents_are_cleanly_encoded_and_free_of_internal_notes(self):
+        # UTF-8 text decoded as cp1252 and saved again shows up as these lead characters followed by a continuation.
+        garbled = re.compile('[\u00c2\u00c3\u00e2][\u0080-\u00bf\u02c6\u02dc\u2018-\u203a\u20ac]')
+        for name in ('README.md', 'DESIGN.md', 'docs/technical-document.md'):
+            source = (self.root/name).read_bytes().decode('utf-8')
+            self.assertIsNone(garbled.search(source), name)
+        document = (self.root/'docs/technical-document.md').read_text(encoding='utf-8')
+        for note in ('Team to confirm', 'is pushed', 'has been published'):
+            self.assertNotIn(note, document)
+        self.assertNotIn('/tree/codex/', document)
