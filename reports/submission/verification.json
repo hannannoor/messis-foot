@@ -48,7 +48,13 @@
  "provided_restart_aggregate_runs": 1,
  "public_window_scoring_attempts": 1,
  "python_version": "3.14.5",
- "rehearsal": "pending",
+ "rehearsal": {
+  "clone_permission_retry": true,
+  "commit": "aa47a81fdaa1709a593b225a213b2331e6201b04",
+  "hash_matched": true,
+  "official_validator_passed": true,
+  "passed": true
+ },
  "release_code_commit": "30a7ace010e3fc1ece23c440e54151058dbf8b19",
  "seconds": 1253.577,
  "single_clean_suite_run": true,
@@ -62,11 +68,19 @@
  "starting_head": "175329e365f02042655b474db62b04cae358e15d",
  "starting_tree_clean": true,
  "synthetic_aggregate_tests": 3,
+ "team_to_confirm": [
+  "Registration and form access",
+  "Registered team name",
+  "Whether any match material was ever shown to a hosted model",
+  "Whether to merge this branch to main"
+ ],
  "technical_document": {
   "all_links_absolute": true,
   "code_links_pinned_to": "30a7ace010e3fc1ece23c440e54151058dbf8b19",
   "prose_words_excluding_tables": 960,
   "sections": 8
  },
- "tests": 780
+ "tests": 780,
+ "upload_folder_created": false,
+ "upload_folder_skipped_reason": "Team name blank in brief"
 }

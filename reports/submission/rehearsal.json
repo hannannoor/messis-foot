@@ -1,0 +1,14 @@
+{
+ "byte_identical_to_release": true,
+ "clone_permission_retry": true,
+ "commit": "aa47a81fdaa1709a593b225a213b2331e6201b04",
+ "csv_sha256": "15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685",
+ "documented_command_matched": true,
+ "local_clone_no_hardlinks": true,
+ "missing_untracked_files": false,
+ "official_validator_passed": true,
+ "python_version": "3.14.5",
+ "rows": 199319,
+ "utc": "2026-11-11T06:36:04.983394+00:00",
+ "validator_exit_code": 0
+}
