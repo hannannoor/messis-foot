@@ -8,7 +8,7 @@ import unittest
 from gap_solver.motion import motion_frame
 from gap_liveness import apply_gap_rule
 from gap_solver.materialization_control import materialize_abstentions
-from observed_touch import detect_observed_touches
+from observed_touch import detect_observed_touches, predict_observed_touch
 from release_runtime import predict_selected
 from touch_decoder import decode_variable
 from touch_evidence import prepare_evidence
@@ -50,6 +50,14 @@ class Profile(unittest.TestCase):
 
 
 class Thinning(unittest.TestCase):
+    def test_reused_emissions_match_public_touch_predictor_and_bonus_count(self):
+        for frames in (track(n=80, kink=40), fixture()):
+            prepared = prepare_evidence(frames, [], 0, 32)
+            events = detect_observed_touches(frames, 3)
+            rows, costs, labels, bonus = r.decode_touch_rows(frames, prepared, events)
+            self.assertEqual(tuple(labels), predict_observed_touch(frames, 3, 2, 8, events=events).labels)
+            self.assertEqual(bonus, p.bonus_statistics(frames, events)['bonus_frames'])
+
     def test_hash_subset_identity_determinism_and_order(self):
         events = [TouchEvent(i, 'HA'[i % 2] if i % 3 else '', 'kink') for i in range(120)]
         self.assertEqual(r.thin_events('m', events, 1., 1000.), events)

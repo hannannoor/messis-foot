@@ -6,7 +6,7 @@ from pathlib import Path
 from gap_liveness import apply_gap_rule
 from gap_solver.materialization_control import materialize_abstentions
 from gap_solver.temporal import mask_motion_frames
-from observed_touch import detect_observed_touches, observed_evidence_rows, predict_observed_touch
+from observed_touch import detect_observed_touches, observed_evidence_rows
 from release_runtime import predict_selected
 from stoppage_regime import h, make_mask
 from touch_decoder import decode_variable
@@ -56,23 +56,32 @@ def restart_decode(frames, rows, periods, usable, costs, labels):
     return apply_gap_rule(frames, materialize_abstentions(latent, periods)), usable2
 
 
+def decode_touch_rows(frames, prepared, events):
+    base, _, periods, usable, _ = prepared
+    rows, costs = observed_evidence_rows(base, periods, usable, [f.ball_observed for f in frames], events, 2, 8)
+    labels = tuple(materialize_abstentions(decode_variable(rows, periods, usable, costs), periods))
+    bonus = sum(p in (1, 2) and a != b for p, a, b in zip(periods, base, rows))
+    return rows, costs, labels, bonus
+
+
 def variant_labels(match_id, frames, rate):
     control = predict_selected(frames).labels
     events = detect_observed_touches(frames, 3)
     minutes = sum(f.period in (1, 2) and f.ball_observed for f in frames) / 1500
     thinned = thin_events(match_id, events, minutes, rate)
-    touch = predict_observed_touch(frames, 3, 2, 8, events=events).labels
-    thin = predict_observed_touch(frames, 3, 2, 8, events=thinned).labels
-    rows, costs, periods, usable, _ = prepare_evidence(frames, [], 0, 32)
+    prepared = prepare_evidence(frames, [], 0, 32)
+    rows, costs, periods, usable, _ = prepared
+    touch_rows, touch_costs, touch, bonus = decode_touch_rows(frames, prepared, events)
+    _, _, thin, thin_bonus = decode_touch_rows(frames, prepared, thinned)
     parity = tuple(materialize_abstentions(decode_variable(rows, periods, usable, costs), periods))
     if parity != tuple(control):
         raise ValueError('Uniform-cost variable decoder differs from control')
-    touch_rows, touch_costs = observed_evidence_rows(rows, periods, usable, [f.ball_observed for f in frames], events, 2, 8)
     reset, _ = restart_decode(frames, rows, periods, usable, costs, control)
     touch_reset, _ = restart_decode(frames, touch_rows, periods, usable, touch_costs, touch)
     return dict(zip(VARIANTS, (control, apply_gap_rule(frames, control).labels,
                               apply_gap_rule(frames, touch).labels, apply_gap_rule(frames, thin).labels,
-                              reset.labels, touch_reset.labels)), _events=events, _thinned=thinned)
+                              reset.labels, touch_reset.labels)), _events=events, _thinned=thinned,
+                _bonus=bonus, _thin_bonus=thin_bonus)
 
 
 def restart_agreement(reference, labels, periods, selected_starts):
@@ -137,7 +146,7 @@ def main():
     import memory_ablation_protocol as protocol
     import gap_liveness_experiment as gap
     from touch_experiment import score
-    from tracking_profile import bonus_statistics, OUT as PROFILE
+    from tracking_profile import OUT as PROFILE
     validate_matches()
     if OUT.exists():
         raise FileExistsError('The single evaluation run already exists')
@@ -184,13 +193,13 @@ def main():
                     raise ValueError('Regime reproduction differs: '+cid+' '+name)
         minutes = profile['matches'][cid][row['regime']]['observed_minutes']
         events, thinned = labels['_events'], labels['_thinned']
+        graded = [i for i, f in enumerate(work) if f.period in (1, 2)]
         row.update(owned_touch_rate=sum(e.team in ('H', 'A') for e in events)/minutes,
                    thinned_owned_touch_rate=sum(e.team in ('H', 'A') for e in thinned)/minutes,
-                   bonus_share=bonus_statistics(work, events)['bonus_share'],
-                   thinned_bonus_share=bonus_statistics(work, thinned)['bonus_share'])
+                   bonus_share=labels['_bonus']/len(graded),
+                   thinned_bonus_share=labels['_thin_bonus']/len(graded))
         if info is not None:
             row['median_surprise_mps'] = profile['matches'][cid]['stop75-jitter']['median_surprise_mps']
-        graded = [i for i, f in enumerate(work) if f.period in (1, 2)]
         for name, base in (('candidate+reset', 'candidate'), ('candidate+touch+reset', 'candidate+touch')):
             reset = dict(delta_spell_f1=row['variants'][name]['spell_f1']-row['variants'][base]['spell_f1'],
                          graded_changed_share=sum(labels[name][i] != labels[base][i] for i in graded)/len(graded))
