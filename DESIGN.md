@@ -1,6 +1,22 @@
 # Missing-ball handling prototype
 
-**11 November decision:** existing `candidate` file is recommended after the fixed touch-transfer test. Decoder restart qualifies: **True**; no reset release has been built. [Results and limits](reports/touch-transfer/report.md). The user makes the final submission choice.
+## Status
+
+Submitted: `restart_release.py`, frozen control → gap rule → decoder restart → gap rule → kickoff patch. Command: `python -I restart_release.py --prefix "$prefix" --tags "${prefix}_smart_tagging.xml" --out "$out"`. Expected CSV SHA-256 `15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685` (199,319 rows). The previous gap candidate, frozen-control fallback and touch alternative are not submitted. [Submission technical document](docs/technical-document.md).
+
+## Decoder restart after stoppage gaps
+
+The old decoder could carry the pre-stoppage owner into restarted play. The release marks the gap rule's stoppage gaps unusable and decodes the same rows/costs again, then applies the gap rule and kickoff patch. It checks parity with the unchanged control and unchanged gap selection. No setting was tuned. Touch evidence stays rejected.
+
+Restart gates E/F/G passed: WR9/WCSF mean spell gain +0.018823, both positive; SkillCorner confirmation change 0.000000; dead-ball recall change 0.000000. Expected transfer remains uncertain on reused, reference-masked data.
+
+Provided-match aggregates: 388 graded frames changed (0.244%); H→A 346, A→H 41, D→H 1. Spells 434 → 415; median length 124 → 137; spells under 25 frames 29 → 9, under 50 frames 94 → 74. First owner differs after 19 of 113 stoppage gaps.
+
+Reporting-only set-piece match/mismatch/no-transition counts: 15/9/3 → 14/10/3. Corners 10/12 → 6/12; goal kicks 2/7 → 4/7 with transitions; free kicks 3/5 → 4/5. Agreement did not improve. These automatic tags do not control restart prediction. Evidence: [restart aggregates](reports/submission/restart-provided.json), [gap support](reports/submission/gap-support.json), [fixed decision](reports/submission/release-decision.json).
+
+## Historical design and experiments
+
+
 
 
 The user authorised implementation of missing-observation handling first. This is a local Python prototype, not a validated competition entry.
@@ -48,9 +64,9 @@ Standard-library Python package, raw ATD/Smart Tagging adapter, evidence CSV int
 | 3 Metrica sample matches | 0.4467 -> 0.5451 (+0.098). Pass; partly circular |
 | Provided match, aggregates only | D share 3.0% -> 39.8%; spells 327 -> 435; 113 of 133 long gaps relabelled; set-piece tags starting on or just after D: 1 of 58 -> 45 of 58 |
 
-**Limitations.** There is no labelled validation of the gap rule on this kind of data. The random-mask result shows that the rule relabels live play when gaps are unrelated to stoppages. 20 long gaps keep the control's labels. The rule's "restart extension" (keep `D` while a reappeared ball is stationary) is inactive: it compares the first reappeared frame with the last pre-gap position, a large jump, so it produced 0 frames in every run; it was left unchanged so the checks above stay valid. Smart Tagging is automatic and can be wrong; a tag window starts before the true kickoff, so the patch can leave up to the tag's lead (82 frames on the second half) with the candidate's labels. The first-half tag lies before the graded block, so the first half is unchanged.
+**Limitations.** There is no labelled validation of the gap rule on this kind of data. The random-mask result shows that the rule relabels live play when gaps are unrelated to stoppages. 20 long gaps keep the control's labels. The rule's "restart extension" (keep `D` while a reappeared ball is stationary) is inactive: it compares the first reappeared frame with the last pre-gap position, a large jump, so it produced 0 frames in every run; it was left unchanged so the checks above stay valid. Smart Tagging is automatic and can be wrong; a tag window starts before the true kickoff, so a short stretch before play keeps its earlier labels. The first-half tag lies before the graded block, so the first half is unchanged.
 
-**Reproduce.** See the README command; expected CSV SHA-256 `31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963`. Label hashes (frame labels concatenated, SHA-256): control `8d233ff1...a847`, control + gap rule `17bad133...a5c4`.
+**Historical reproduction: previous gap candidate, not submitted.** Run `python -I gap_release.py --prefix <prefix> --tags <prefix>_smart_tagging.xml --out <new-dir>`; expected CSV SHA-256 `31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963`. Label hashes (frame labels concatenated, SHA-256): control `8d233ff1...a847`, control + gap rule `17bad133...a5c4`.
 
 
 ## Stoppage-regime test and observed-touch candidate (10 November)
@@ -67,7 +83,7 @@ Standard-library Python package, raw ATD/Smart Tagging adapter, evidence CSV int
 | stop50 | 0.4013 | 0.4018 | 0.4697 | +0.0005 | +0.0679 |
 | stop75-jitter | 0.3438 | 0.4013 | 0.4777 | +0.0575 | +0.0764 |
 
-In `stop75` dead-ball recall is 0.576 (control), 0.898 (candidate), 0.890 (candidate + touch). The gap rule relabelled 98% of long gaps in `stop100`, 70% in `stop75` (95% of gaps from dead blocks, 33% of gaps from live blocks) and 41% in `stop50`; the provided match's own rate is 85%, between `stop75` and `stop100`. The gap rule was safe in every regime (no loss against the control).
+In `stop75` dead-ball recall is 0.576 (control), 0.898 (candidate), 0.890 (candidate + touch). The gap rule relabelled 98% of long gaps in `stop100`, 70% in `stop75` (95% of gaps from dead blocks, 33% of gaps from live blocks) and 41% in `stop50`; the provided match's own rate is 85%, between `stop75` and `stop100`. The gap rule had no loss on the primary mean in any regime. On dfl-J03WR9 it lost 0.011672 in stop75 and 0.026738 in stop50.
 
 **Decisions fixed in advance.** 7.1 (candidate must not lose more than 0.005 to the control in `stop75`): passed. 7.2 (touch evidence replaces the candidate only if +0.04 in `stop75`, not negative in `stop75-jitter`, not below -0.005 in `natural`, dead-ball recall within 0.02, no primary match losing more than 0.02 in `stop75`): all five conditions passed.
 
@@ -75,7 +91,7 @@ In `stop75` dead-ball recall is 0.576 (control), 0.898 (candidate), 0.890 (candi
 
 **Limits.** These matches have been scored before; `dfl-J03WN1` was in the development set that selected the touch setting (3, 2, 8); the primary set is three matches; re-testing touch evidence after an earlier rejection is post-hoc; the regimes are built from reference labels and are a model of the provided match, not a measurement of it; the touch gain is also large with the ball present (`natural`, +0.109), so it is not specific to stoppages; the earlier version of touch evidence lost on SkillCorner, whose reference is least like the challenge's, and SkillCorner was not part of this test; the public window holds 17 reference spells, so its numbers carry large uncertainty.
 
-**Reproduce.** `python -I touch_release.py --prefix <prefix> --tags <prefix>_smart_tagging.xml --out <new dir>`; CSV SHA-256 as above. With touches disabled the pipeline reproduces the current candidate (`31b947d3…f963`).
+**Historical reproduction: rejected touch alternative, not submitted.** `python -I touch_release.py --prefix <prefix> --tags <prefix>_smart_tagging.xml --out <new dir>`; CSV SHA-256 as above. With touches disabled the pipeline reproduces the current candidate (`31b947d3…f963`).
 
 ## Touch-transfer and decoder-restart test (11 November 2026)
 

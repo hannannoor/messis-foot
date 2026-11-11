@@ -1,5 +1,24 @@
 # MESSI's FOOT
 
+## Submission
+
+Submitted pipeline: frozen control → gap rule → decoder restart across stoppage gaps → gap rule → automatic kickoff patch. With `$prefix` set to the local tactical filename prefix and `$out` to a new absolute output directory, run:
+
+```powershell
+python -I restart_release.py --prefix "$prefix" --tags "${prefix}_smart_tagging.xml" --out "$out"
+```
+
+Expected `submission.csv`: 199,319 rows, SHA-256 `15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685`. CPython 3.14.5; standard library only. [Submission technical document](docs/technical-document.md).
+
+Not submitted: `gap_release.py`, the previous gap-rule candidate (retained unchanged).
+
+Not submitted: `competition_release.py`, the frozen-control fallback (retained unchanged).
+
+Not submitted: `touch_release.py`, the rejected touch alternative.
+
+## History
+
+
 **11 November decision:** existing `candidate` file is recommended after the fixed touch-transfer test. Decoder restart qualifies: **True**; no reset release has been built. [Results and limits](reports/touch-transfer/report.md). The user makes the final submission choice.
 
 
