@@ -1,0 +1,30 @@
+{
+ "csv_sha256": "15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685",
+ "current_candidate_recorded": {
+  "accuracy": 0.734,
+  "macro_f1": 0.677,
+  "n_gt_spells": 17,
+  "n_pred_spells": 25,
+  "spell_f1_mean": 0.362
+ },
+ "decision_commit": "08934dbf684de1a002f5e3c36395aad30cfe87fc",
+ "files_written_in_official_repository_removed": 0,
+ "full_match_score_known": false,
+ "metrics": {
+  "accuracy": 0.7346666666666667,
+  "away_frame_f1": 0.7453170028818444,
+  "home_frame_f1": 0.7895512391158741,
+  "macro_f1": 0.6777010798254288,
+  "n_graded": 7500,
+  "n_gt_spells": 17,
+  "n_pred_spells": 24,
+  "spell_f1_mean": 0.36097560975609755
+ },
+ "numbers_choose_nothing": true,
+ "output_location": "private local scratch, not committed",
+ "pipeline_defect": false,
+ "scope": "public five-minute pipeline-defect check only",
+ "scoring_attempts": 1,
+ "status": "complete",
+ "utc": "2026-11-11T06:26:57.088620+00:00"
+}
