@@ -1,3 +1,5 @@
+Historical document for the 9 November frozen-control fallback. The submission document is [technical-document.md](technical-document.md).
+
 # MESSI's FOOT — frozen-control technical document
 
 Candidate: `w0-c32-neutral-missing`, packaged as `competition_release.py`. Exact revision, artifact identity and delivery checks are in [the release decision](competition-release-decision.md). Team registration/name and submission-form logistics remain to be confirmed by the team.

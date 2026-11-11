@@ -1,0 +1,24 @@
+{
+ "long_gaps": 133,
+ "not_relabelled": {
+  "fewer_than_5_samples": 3,
+  "gaps": 20,
+  "median_samples": 34.5,
+  "minimum_samples": 0,
+  "no_samples": 3,
+  "p10_samples": 0
+ },
+ "reference_speed_mps": 1.6227307080888567,
+ "relabelled": {
+  "fewer_than_5_samples": 0,
+  "gaps": 113,
+  "median_samples": 64,
+  "minimum_samples": 24,
+  "near_threshold_frame_share": 0.04966559949043732,
+  "near_threshold_gaps": 11,
+  "no_samples": 0,
+  "p10_samples": 30
+ },
+ "restart_extension_frames": 0,
+ "status": "complete"
+}

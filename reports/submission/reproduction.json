@@ -1,0 +1,73 @@
+{
+ "csv_sha256": "15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685",
+ "python_version": "3.14.5",
+ "rows": 199319,
+ "runs": [
+  {
+   "csv_sha256": "15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685",
+   "receipt": {
+    "control_labels_sha256": "8d233ff132826d1c4eb96f9e43aa0c39f9a1c514cacf3f18edc673810d18a847",
+    "csv_sha256": "15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685",
+    "final_labels_sha256": "7963227f23a7be16f8cc3e33a4d2b3ca21403f54d10ea73da3204aaa939155dd",
+    "first_gap_labels_sha256": "17bad133788026749395c977cd88e1ff9b154db8ef9f948394d2ee643d01a5c4",
+    "gap_summary": {
+     "defined_speed_samples": 30390,
+     "frames_relabelled": 58518,
+     "live_or_unclassified_gaps": 20,
+     "long_gap_frames": 65929,
+     "long_gaps": 133,
+     "reference_speed_mps": 1.6227307080888567,
+     "restart_extension_frames": 0,
+     "stoppage_gap_frames": 59659,
+     "stoppage_gaps": 113
+    },
+    "kickoff_changed": {
+     "1": 0,
+     "2": 2587
+    },
+    "restart_gap_labels_sha256": "c09b5823ed99feb62633d531058d165b5fee68904d4206849e66abfb26b843fe",
+    "rows": 199319,
+    "stoppage_gaps": 113,
+    "use_restart": true,
+    "version": "2026.11.11-stoppage-decoder-restart"
+   },
+   "rows": 199319,
+   "run": "run1",
+   "validator_passed": true
+  },
+  {
+   "csv_sha256": "15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685",
+   "receipt": {
+    "control_labels_sha256": "8d233ff132826d1c4eb96f9e43aa0c39f9a1c514cacf3f18edc673810d18a847",
+    "csv_sha256": "15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685",
+    "final_labels_sha256": "7963227f23a7be16f8cc3e33a4d2b3ca21403f54d10ea73da3204aaa939155dd",
+    "first_gap_labels_sha256": "17bad133788026749395c977cd88e1ff9b154db8ef9f948394d2ee643d01a5c4",
+    "gap_summary": {
+     "defined_speed_samples": 30390,
+     "frames_relabelled": 58518,
+     "live_or_unclassified_gaps": 20,
+     "long_gap_frames": 65929,
+     "long_gaps": 133,
+     "reference_speed_mps": 1.6227307080888567,
+     "restart_extension_frames": 0,
+     "stoppage_gap_frames": 59659,
+     "stoppage_gaps": 113
+    },
+    "kickoff_changed": {
+     "1": 0,
+     "2": 2587
+    },
+    "restart_gap_labels_sha256": "c09b5823ed99feb62633d531058d165b5fee68904d4206849e66abfb26b843fe",
+    "rows": 199319,
+    "stoppage_gaps": 113,
+    "use_restart": true,
+    "version": "2026.11.11-stoppage-decoder-restart"
+   },
+   "rows": 199319,
+   "run": "run2",
+   "validator_passed": true
+  }
+ ],
+ "standard_library_only": true,
+ "two_generations_byte_identical": true
+}

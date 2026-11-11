@@ -1,0 +1,1326 @@
+{
+ "extra_natural_reproduction_scores": 5,
+ "matches": {
+  "dfl-J03WN1": {
+   "bonus_share": 0.3382570058137481,
+   "delta_thin_minus_candidate": -0.010941928480974528,
+   "delta_touch_minus_candidate": 0.09450132391879956,
+   "median_surprise_mps": 1.0666473218901888,
+   "owned_touch_rate": 26.581662974769028,
+   "provider": "dfl",
+   "regime": "stop75-jitter",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.00936337728831571,
+     "graded_changed_share": 0.0023947273613495242,
+     "owner_agreement_with": {
+      "matched": 40,
+      "share": 0.5405405405405406,
+      "total": 74
+     },
+     "owner_agreement_without": {
+      "matched": 34,
+      "share": 0.4594594594594595,
+      "total": 74
+     }
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.01487125591171845,
+     "graded_changed_share": 0.003645071735859453,
+     "owner_agreement_with": {
+      "matched": 35,
+      "share": 0.47297297297297297,
+      "total": 74
+     },
+     "owner_agreement_without": {
+      "matched": 28,
+      "share": 0.3783783783783784,
+      "total": 74
+     }
+    }
+   },
+   "role": "fit-disjoint",
+   "thinned_bonus_share": 0.2680540544358969,
+   "thinned_owned_touch_rate": 9.684477821600302,
+   "variants": {
+    "candidate": {
+     "dead_recall": 0.6465757542632269,
+     "macro_f1": 0.6657776730258368,
+     "n_gt": 500,
+     "n_pred": 324,
+     "spell_f1": 0.3364077669902913
+    },
+    "candidate+reset": {
+     "dead_recall": 0.6465757542632269,
+     "macro_f1": 0.666613116389673,
+     "n_gt": 500,
+     "n_pred": 304,
+     "spell_f1": 0.345771144278607
+    },
+    "candidate+touch": {
+     "dead_recall": 0.6465757542632269,
+     "macro_f1": 0.6885959556975241,
+     "n_gt": 500,
+     "n_pred": 380,
+     "spell_f1": 0.43090909090909085
+    },
+    "candidate+touch+reset": {
+     "dead_recall": 0.6465757542632269,
+     "macro_f1": 0.6898214867471903,
+     "n_gt": 500,
+     "n_pred": 365,
+     "spell_f1": 0.4457803468208093
+    },
+    "candidate+touch-thin": {
+     "dead_recall": 0.6465757542632269,
+     "macro_f1": 0.662062326668945,
+     "n_gt": 500,
+     "n_pred": 305,
+     "spell_f1": 0.32546583850931676
+    },
+    "control": {
+     "dead_recall": 0.0,
+     "macro_f1": 0.3395590138234898,
+     "n_gt": 500,
+     "n_pred": 244,
+     "spell_f1": 0.2532258064516129
+    }
+   }
+  },
+  "dfl-J03WOH": {
+   "bonus_share": 0.35863687378838893,
+   "delta_thin_minus_candidate": -0.035327314251563435,
+   "delta_touch_minus_candidate": 0.05715120641314214,
+   "median_surprise_mps": 1.062326464877707,
+   "owned_touch_rate": 27.025269819253605,
+   "provider": "dfl",
+   "regime": "stop75-jitter",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.011955333808505608,
+     "graded_changed_share": 0.008337341670675003,
+     "owner_agreement_with": {
+      "matched": 59,
+      "share": 0.7972972972972973,
+      "total": 74
+     },
+     "owner_agreement_without": {
+      "matched": 49,
+      "share": 0.6621621621621622,
+      "total": 74
+     }
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.01634118388196104,
+     "graded_changed_share": 0.002732957278411824,
+     "owner_agreement_with": {
+      "matched": 55,
+      "share": 0.7432432432432432,
+      "total": 74
+     },
+     "owner_agreement_without": {
+      "matched": 48,
+      "share": 0.6486486486486487,
+      "total": 74
+     }
+    }
+   },
+   "role": "fitting-overlap",
+   "thinned_bonus_share": 0.287689302840818,
+   "thinned_owned_touch_rate": 9.969225434528195,
+   "variants": {
+    "candidate": {
+     "dead_recall": 0.7488087759886011,
+     "macro_f1": 0.7362447506015689,
+     "n_gt": 402,
+     "n_pred": 288,
+     "spell_f1": 0.4011594202898551
+    },
+    "candidate+reset": {
+     "dead_recall": 0.7488087759886011,
+     "macro_f1": 0.7409453910742471,
+     "n_gt": 402,
+     "n_pred": 269,
+     "spell_f1": 0.4131147540983607
+    },
+    "candidate+touch": {
+     "dead_recall": 0.7488087759886011,
+     "macro_f1": 0.7576146067888933,
+     "n_gt": 402,
+     "n_pred": 332,
+     "spell_f1": 0.4583106267029972
+    },
+    "candidate+touch+reset": {
+     "dead_recall": 0.7488087759886011,
+     "macro_f1": 0.7581598487242864,
+     "n_gt": 402,
+     "n_pred": 316,
+     "spell_f1": 0.47465181058495826
+    },
+    "candidate+touch-thin": {
+     "dead_recall": 0.7488087759886011,
+     "macro_f1": 0.7353980843146921,
+     "n_gt": 402,
+     "n_pred": 277,
+     "spell_f1": 0.36583210603829164
+    },
+    "control": {
+     "dead_recall": 0.0,
+     "macro_f1": 0.37234419571890515,
+     "n_gt": 402,
+     "n_pred": 198,
+     "spell_f1": 0.2846666666666667
+    }
+   }
+  },
+  "dfl-J03WOY": {
+   "bonus_share": 0.39586490430487736,
+   "delta_thin_minus_candidate": 0.0030128035320087787,
+   "delta_touch_minus_candidate": 0.10882702925422333,
+   "median_surprise_mps": 1.0390353351394892,
+   "owned_touch_rate": 25.795593635250917,
+   "provider": "dfl",
+   "regime": "stop75-jitter",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.011526739926739915,
+     "graded_changed_share": 0.002371330751529438,
+     "owner_agreement_with": {
+      "matched": 44,
+      "share": 0.6027397260273972,
+      "total": 73
+     },
+     "owner_agreement_without": {
+      "matched": 40,
+      "share": 0.547945205479452,
+      "total": 73
+     }
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.0056271111409006425,
+     "graded_changed_share": 0.0034447437840264914,
+     "owner_agreement_with": {
+      "matched": 41,
+      "share": 0.5616438356164384,
+      "total": 73
+     },
+     "owner_agreement_without": {
+      "matched": 41,
+      "share": 0.5616438356164384,
+      "total": 73
+     }
+    }
+   },
+   "role": "fitting-overlap",
+   "thinned_bonus_share": 0.3432115395408879,
+   "thinned_owned_touch_rate": 10.979192166462667,
+   "variants": {
+    "candidate": {
+     "dead_recall": 0.6443018867924528,
+     "macro_f1": 0.7015575529301179,
+     "n_gt": 456,
+     "n_pred": 294,
+     "spell_f1": 0.3450666666666667
+    },
+    "candidate+reset": {
+     "dead_recall": 0.6443018867924528,
+     "macro_f1": 0.7024872024235028,
+     "n_gt": 456,
+     "n_pred": 272,
+     "spell_f1": 0.3565934065934066
+    },
+    "candidate+touch": {
+     "dead_recall": 0.6443018867924528,
+     "macro_f1": 0.7215750339900598,
+     "n_gt": 456,
+     "n_pred": 353,
+     "spell_f1": 0.45389369592089
+    },
+    "candidate+touch+reset": {
+     "dead_recall": 0.6443018867924528,
+     "macro_f1": 0.7217352691133166,
+     "n_gt": 456,
+     "n_pred": 337,
+     "spell_f1": 0.45952080706179066
+    },
+    "candidate+touch-thin": {
+     "dead_recall": 0.6443018867924528,
+     "macro_f1": 0.7031279884905262,
+     "n_gt": 456,
+     "n_pred": 299,
+     "spell_f1": 0.34807947019867547
+    },
+    "control": {
+     "dead_recall": 0.0,
+     "macro_f1": 0.37531235191683593,
+     "n_gt": 456,
+     "n_pred": 213,
+     "spell_f1": 0.27443946188340806
+    }
+   }
+  },
+  "dfl-J03WR9": {
+   "bonus_share": 0.44449288195627,
+   "delta_thin_minus_candidate": 0.014161712473171328,
+   "delta_touch_minus_candidate": 0.09557035905807593,
+   "median_surprise_mps": 1.081569770998628,
+   "owned_touch_rate": 28.966953025915913,
+   "provider": "dfl",
+   "regime": "stop75-jitter",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.016100694144416616,
+     "graded_changed_share": 0.003092432395613378,
+     "owner_agreement_with": {
+      "matched": 40,
+      "share": 0.6153846153846154,
+      "total": 65
+     },
+     "owner_agreement_without": {
+      "matched": 28,
+      "share": 0.4307692307692308,
+      "total": 65
+     }
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.006759500471665736,
+     "graded_changed_share": 0.0016483890743137389,
+     "owner_agreement_with": {
+      "matched": 34,
+      "share": 0.5230769230769231,
+      "total": 65
+     },
+     "owner_agreement_without": {
+      "matched": 26,
+      "share": 0.4,
+      "total": 65
+     }
+    }
+   },
+   "role": "fit-disjoint",
+   "thinned_bonus_share": 0.37190927048566175,
+   "thinned_owned_touch_rate": 11.145277465361698,
+   "variants": {
+    "candidate": {
+     "dead_recall": 0.7383809802582366,
+     "macro_f1": 0.7548846494085621,
+     "n_gt": 370,
+     "n_pred": 282,
+     "spell_f1": 0.3914110429447853
+    },
+    "candidate+reset": {
+     "dead_recall": 0.7383809802582366,
+     "macro_f1": 0.7577437488984549,
+     "n_gt": 370,
+     "n_pred": 269,
+     "spell_f1": 0.4075117370892019
+    },
+    "candidate+touch": {
+     "dead_recall": 0.7383809802582366,
+     "macro_f1": 0.7729297548634158,
+     "n_gt": 370,
+     "n_pred": 329,
+     "spell_f1": 0.4869814020028612
+    },
+    "candidate+touch+reset": {
+     "dead_recall": 0.7383809802582366,
+     "macro_f1": 0.7739218291676445,
+     "n_gt": 370,
+     "n_pred": 317,
+     "spell_f1": 0.49374090247452695
+    },
+    "candidate+touch-thin": {
+     "dead_recall": 0.7383809802582366,
+     "macro_f1": 0.7564087926012601,
+     "n_gt": 370,
+     "n_pred": 276,
+     "spell_f1": 0.4055727554179566
+    },
+    "control": {
+     "dead_recall": 0.0,
+     "macro_f1": 0.4172898735388923,
+     "n_gt": 370,
+     "n_pred": 197,
+     "spell_f1": 0.32945326278659615
+    }
+   }
+  },
+  "skillcorner-1874553": {
+   "bonus_share": 0.4804453704563853,
+   "delta_thin_minus_candidate": 0.0026309965501529753,
+   "delta_touch_minus_candidate": -0.014091321622942354,
+   "owned_touch_rate": 21.637317347321094,
+   "provider": "skillcorner",
+   "regime": "natural",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.0011547315527612456,
+     "graded_changed_share": 0.00022560481998062451
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.0011103740490405745,
+     "graded_changed_share": 0.00022560481998062451
+    }
+   },
+   "role": "fit-disjoint",
+   "thinned_bonus_share": 0.4109590859023529,
+   "thinned_owned_touch_rate": 10.52938972516695,
+   "variants": {
+    "candidate": {
+     "dead_recall": null,
+     "macro_f1": 0.5956571404945675,
+     "n_gt": 250,
+     "n_pred": 319,
+     "spell_f1": 0.6558875219683655
+    },
+    "candidate+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5954674962565634,
+     "n_gt": 250,
+     "n_pred": 318,
+     "spell_f1": 0.6570422535211268
+    },
+    "candidate+touch": {
+     "dead_recall": null,
+     "macro_f1": 0.5909150179702496,
+     "n_gt": 250,
+     "n_pred": 329,
+     "spell_f1": 0.6417962003454232
+    },
+    "candidate+touch+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5907248958487422,
+     "n_gt": 250,
+     "n_pred": 328,
+     "spell_f1": 0.6429065743944637
+    },
+    "candidate+touch-thin": {
+     "dead_recall": null,
+     "macro_f1": 0.5903820971403858,
+     "n_gt": 250,
+     "n_pred": 290,
+     "spell_f1": 0.6585185185185185
+    },
+    "control": {
+     "dead_recall": null,
+     "macro_f1": 0.5988825204979721,
+     "n_gt": 250,
+     "n_pred": 325,
+     "spell_f1": 0.6615652173913044
+    }
+   }
+  },
+  "skillcorner-1886347": {
+   "bonus_share": 0.4745471051312277,
+   "delta_thin_minus_candidate": -0.06669828758762608,
+   "delta_touch_minus_candidate": -0.054106430586633,
+   "owned_touch_rate": 20.77394446813764,
+   "provider": "skillcorner",
+   "regime": "natural",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.0
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.0
+    }
+   },
+   "role": "fit-disjoint",
+   "thinned_bonus_share": 0.4143801742476593,
+   "thinned_owned_touch_rate": 10.65632645731858,
+   "variants": {
+    "candidate": {
+     "dead_recall": null,
+     "macro_f1": 0.5924127229107332,
+     "n_gt": 237,
+     "n_pred": 304,
+     "spell_f1": 0.6772643253234751
+    },
+    "candidate+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5924127229107332,
+     "n_gt": 237,
+     "n_pred": 304,
+     "spell_f1": 0.6772643253234751
+    },
+    "candidate+touch": {
+     "dead_recall": null,
+     "macro_f1": 0.5905818123748219,
+     "n_gt": 237,
+     "n_pred": 333,
+     "spell_f1": 0.6231578947368421
+    },
+    "candidate+touch+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5905818123748219,
+     "n_gt": 237,
+     "n_pred": 333,
+     "spell_f1": 0.6231578947368421
+    },
+    "candidate+touch-thin": {
+     "dead_recall": null,
+     "macro_f1": 0.5835832003165166,
+     "n_gt": 237,
+     "n_pred": 293,
+     "spell_f1": 0.610566037735849
+    },
+    "control": {
+     "dead_recall": null,
+     "macro_f1": 0.5895580546029155,
+     "n_gt": 237,
+     "n_pred": 310,
+     "spell_f1": 0.6705667276051188
+    }
+   }
+  },
+  "skillcorner-2007448": {
+   "bonus_share": 0.4529953980545069,
+   "delta_thin_minus_candidate": 0.0213888888888889,
+   "delta_touch_minus_candidate": 0.02864753207218962,
+   "owned_touch_rate": 19.771620681660096,
+   "provider": "skillcorner",
+   "regime": "natural",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.00019289591887348783
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.0001240045192758136
+    }
+   },
+   "role": "fit-disjoint",
+   "thinned_bonus_share": 0.3900562153820717,
+   "thinned_owned_touch_rate": 10.503130071875724,
+   "variants": {
+    "candidate": {
+     "dead_recall": null,
+     "macro_f1": 0.587943071137097,
+     "n_gt": 226,
+     "n_pred": 278,
+     "spell_f1": 0.5944444444444444
+    },
+    "candidate+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.587943071137097,
+     "n_gt": 226,
+     "n_pred": 278,
+     "spell_f1": 0.5944444444444444
+    },
+    "candidate+touch": {
+     "dead_recall": null,
+     "macro_f1": 0.5951199591272922,
+     "n_gt": 226,
+     "n_pred": 285,
+     "spell_f1": 0.6230919765166341
+    },
+    "candidate+touch+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5951199591272922,
+     "n_gt": 226,
+     "n_pred": 285,
+     "spell_f1": 0.6230919765166341
+    },
+    "candidate+touch-thin": {
+     "dead_recall": null,
+     "macro_f1": 0.5872852199082563,
+     "n_gt": 226,
+     "n_pred": 254,
+     "spell_f1": 0.6158333333333333
+    },
+    "control": {
+     "dead_recall": null,
+     "macro_f1": 0.5848530348633609,
+     "n_gt": 226,
+     "n_pred": 285,
+     "spell_f1": 0.5886497064579256
+    }
+   }
+  },
+  "skillcorner-2007721": {
+   "bonus_share": 0.514014014014014,
+   "delta_thin_minus_candidate": 0.02075561606535048,
+   "delta_touch_minus_candidate": 0.017839694777336268,
+   "owned_touch_rate": 20.277492846731093,
+   "provider": "skillcorner",
+   "regime": "natural",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.0
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.0
+    }
+   },
+   "role": "fit-disjoint",
+   "thinned_bonus_share": 0.4363113113113113,
+   "thinned_owned_touch_rate": 10.300707228850618,
+   "variants": {
+    "candidate": {
+     "dead_recall": null,
+     "macro_f1": 0.5873141184088978,
+     "n_gt": 248,
+     "n_pred": 317,
+     "spell_f1": 0.5953982300884956
+    },
+    "candidate+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5873141184088978,
+     "n_gt": 248,
+     "n_pred": 317,
+     "spell_f1": 0.5953982300884956
+    },
+    "candidate+touch": {
+     "dead_recall": null,
+     "macro_f1": 0.5934855660723809,
+     "n_gt": 248,
+     "n_pred": 311,
+     "spell_f1": 0.6132379248658318
+    },
+    "candidate+touch+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5934855660723809,
+     "n_gt": 248,
+     "n_pred": 311,
+     "spell_f1": 0.6132379248658318
+    },
+    "candidate+touch-thin": {
+     "dead_recall": null,
+     "macro_f1": 0.5851834257363937,
+     "n_gt": 248,
+     "n_pred": 272,
+     "spell_f1": 0.616153846153846
+    },
+    "control": {
+     "dead_recall": null,
+     "macro_f1": 0.5910232178786232,
+     "n_gt": 248,
+     "n_pred": 320,
+     "spell_f1": 0.6049295774647887
+    }
+   }
+  },
+  "skillcorner-2010085": {
+   "bonus_share": 0.48454531272256174,
+   "delta_thin_minus_candidate": -0.003713945524145057,
+   "delta_touch_minus_candidate": 0.03029891404652396,
+   "owned_touch_rate": 19.955689191327743,
+   "provider": "skillcorner",
+   "regime": "natural",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.00026453052614443365
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.0005019297162740537
+    }
+   },
+   "role": "fit-disjoint",
+   "thinned_bonus_share": 0.4205764052336347,
+   "thinned_owned_touch_rate": 10.571292926095902,
+   "variants": {
+    "candidate": {
+     "dead_recall": null,
+     "macro_f1": 0.5838504141131328,
+     "n_gt": 232,
+     "n_pred": 291,
+     "spell_f1": 0.5789674952198853
+    },
+    "candidate+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5838504141131328,
+     "n_gt": 232,
+     "n_pred": 291,
+     "spell_f1": 0.5789674952198853
+    },
+    "candidate+touch": {
+     "dead_recall": null,
+     "macro_f1": 0.5853267468184136,
+     "n_gt": 232,
+     "n_pred": 286,
+     "spell_f1": 0.6092664092664093
+    },
+    "candidate+touch+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5853267468184136,
+     "n_gt": 232,
+     "n_pred": 286,
+     "spell_f1": 0.6092664092664093
+    },
+    "candidate+touch-thin": {
+     "dead_recall": null,
+     "macro_f1": 0.5825251845696492,
+     "n_gt": 232,
+     "n_pred": 261,
+     "spell_f1": 0.5752535496957403
+    },
+    "control": {
+     "dead_recall": null,
+     "macro_f1": 0.5865111683209171,
+     "n_gt": 232,
+     "n_pred": 295,
+     "spell_f1": 0.5889943074003796
+    }
+   }
+  },
+  "skillcorner-2011166": {
+   "bonus_share": 0.38881880308437505,
+   "delta_thin_minus_candidate": -0.023112241653418075,
+   "delta_touch_minus_candidate": 0.011504173106646087,
+   "owned_touch_rate": 18.007387646213832,
+   "provider": "skillcorner",
+   "regime": "natural",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.0
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.0
+    }
+   },
+   "role": "fit-disjoint",
+   "thinned_bonus_share": 0.33428904884943095,
+   "thinned_owned_touch_rate": 10.273445516109172,
+   "variants": {
+    "candidate": {
+     "dead_recall": null,
+     "macro_f1": 0.5572342131046883,
+     "n_gt": 271,
+     "n_pred": 354,
+     "spell_f1": 0.5344
+    },
+    "candidate+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5572342131046883,
+     "n_gt": 271,
+     "n_pred": 354,
+     "spell_f1": 0.5344
+    },
+    "candidate+touch": {
+     "dead_recall": null,
+     "macro_f1": 0.5577035507625626,
+     "n_gt": 271,
+     "n_pred": 376,
+     "spell_f1": 0.5459041731066461
+    },
+    "candidate+touch+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5577035507625626,
+     "n_gt": 271,
+     "n_pred": 376,
+     "spell_f1": 0.5459041731066461
+    },
+    "candidate+touch-thin": {
+     "dead_recall": null,
+     "macro_f1": 0.5399205789421178,
+     "n_gt": 271,
+     "n_pred": 358,
+     "spell_f1": 0.5112877583465819
+    },
+    "control": {
+     "dead_recall": null,
+     "macro_f1": 0.5562127845360353,
+     "n_gt": 271,
+     "n_pred": 357,
+     "spell_f1": 0.5388535031847134
+    }
+   }
+  },
+  "skillcorner-2013725": {
+   "bonus_share": 0.47409864700206367,
+   "delta_thin_minus_candidate": -0.00470164917541227,
+   "delta_touch_minus_candidate": -0.009764058464236669,
+   "owned_touch_rate": 20.173528449413862,
+   "provider": "skillcorner",
+   "regime": "natural",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.0
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.0
+    }
+   },
+   "role": "fit-disjoint",
+   "thinned_bonus_share": 0.4094702812348131,
+   "thinned_owned_touch_rate": 10.239081134140426,
+   "variants": {
+    "candidate": {
+     "dead_recall": null,
+     "macro_f1": 0.5640314896641277,
+     "n_gt": 306,
+     "n_pred": 361,
+     "spell_f1": 0.5967016491754122
+    },
+    "candidate+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5640314896641277,
+     "n_gt": 306,
+     "n_pred": 361,
+     "spell_f1": 0.5967016491754122
+    },
+    "candidate+touch": {
+     "dead_recall": null,
+     "macro_f1": 0.5624984003437222,
+     "n_gt": 306,
+     "n_pred": 383,
+     "spell_f1": 0.5869375907111756
+    },
+    "candidate+touch+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5624984003437222,
+     "n_gt": 306,
+     "n_pred": 383,
+     "spell_f1": 0.5869375907111756
+    },
+    "candidate+touch-thin": {
+     "dead_recall": null,
+     "macro_f1": 0.5514018650182613,
+     "n_gt": 306,
+     "n_pred": 319,
+     "spell_f1": 0.592
+    },
+    "control": {
+     "dead_recall": null,
+     "macro_f1": 0.5649152961474337,
+     "n_gt": 306,
+     "n_pred": 365,
+     "spell_f1": 0.5991058122205664
+    }
+   }
+  },
+  "skillcorner-2015213": {
+   "bonus_share": 0.4327038649536579,
+   "delta_thin_minus_candidate": 0.0016999809632590734,
+   "delta_touch_minus_candidate": 0.03120153997672126,
+   "owned_touch_rate": 18.13409033615748,
+   "provider": "skillcorner",
+   "regime": "natural",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.00028713373754640884
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.00034055396778760115
+    }
+   },
+   "role": "fit-disjoint",
+   "thinned_bonus_share": 0.38159405967039717,
+   "thinned_owned_touch_rate": 10.357639992546883,
+   "variants": {
+    "candidate": {
+     "dead_recall": null,
+     "macro_f1": 0.5622573176096525,
+     "n_gt": 296,
+     "n_pred": 384,
+     "spell_f1": 0.5782352941176471
+    },
+    "candidate+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5622573176096525,
+     "n_gt": 296,
+     "n_pred": 384,
+     "spell_f1": 0.5782352941176471
+    },
+    "candidate+touch": {
+     "dead_recall": null,
+     "macro_f1": 0.5661176837128722,
+     "n_gt": 296,
+     "n_pred": 361,
+     "spell_f1": 0.6094368340943683
+    },
+    "candidate+touch+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5661176837128722,
+     "n_gt": 296,
+     "n_pred": 361,
+     "spell_f1": 0.6094368340943683
+    },
+    "candidate+touch-thin": {
+     "dead_recall": null,
+     "macro_f1": 0.554302169004389,
+     "n_gt": 296,
+     "n_pred": 322,
+     "spell_f1": 0.5799352750809061
+    },
+    "control": {
+     "dead_recall": null,
+     "macro_f1": 0.5644706044591263,
+     "n_gt": 296,
+     "n_pred": 392,
+     "spell_f1": 0.5813953488372092
+    }
+   }
+  },
+  "skillcorner-2016236": {
+   "bonus_share": 0.4633592261468562,
+   "delta_thin_minus_candidate": -0.026983010907985272,
+   "delta_touch_minus_candidate": 0.031542739003350806,
+   "owned_touch_rate": 20.3231378924906,
+   "provider": "skillcorner",
+   "regime": "natural",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.0011775197466604714,
+     "graded_changed_share": 0.0018653484870691378
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.0003278544817004736,
+     "graded_changed_share": 0.0018187147748924093
+    }
+   },
+   "role": "fit-disjoint",
+   "thinned_bonus_share": 0.3886386953219725,
+   "thinned_owned_touch_rate": 10.347864376926465,
+   "variants": {
+    "candidate": {
+     "dead_recall": null,
+     "macro_f1": 0.5694416981756959,
+     "n_gt": 300,
+     "n_pred": 364,
+     "spell_f1": 0.5897590361445783
+    },
+    "candidate+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5694505647808531,
+     "n_gt": 300,
+     "n_pred": 362,
+     "spell_f1": 0.5909365558912387
+    },
+    "candidate+touch": {
+     "dead_recall": null,
+     "macro_f1": 0.5759373185487128,
+     "n_gt": 300,
+     "n_pred": 376,
+     "spell_f1": 0.6213017751479291
+    },
+    "candidate+touch+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5758980733317726,
+     "n_gt": 300,
+     "n_pred": 375,
+     "spell_f1": 0.6216296296296295
+    },
+    "candidate+touch-thin": {
+     "dead_recall": null,
+     "macro_f1": 0.5589230551674933,
+     "n_gt": 300,
+     "n_pred": 334,
+     "spell_f1": 0.562776025236593
+    },
+    "control": {
+     "dead_recall": null,
+     "macro_f1": 0.5685946829825054,
+     "n_gt": 300,
+     "n_pred": 366,
+     "spell_f1": 0.5927927927927927
+    }
+   }
+  },
+  "skillcorner-2017461": {
+   "bonus_share": 0.39964826080708404,
+   "delta_thin_minus_candidate": -0.0037226031246487823,
+   "delta_touch_minus_candidate": -0.010795773856356106,
+   "owned_touch_rate": 18.173345759552657,
+   "provider": "skillcorner",
+   "regime": "natural",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.00021213842374307983
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.0,
+     "graded_changed_share": 0.00021213842374307983
+    }
+   },
+   "role": "fit-disjoint",
+   "thinned_bonus_share": 0.34856395973475857,
+   "thinned_owned_touch_rate": 10.541296189012872,
+   "variants": {
+    "candidate": {
+     "dead_recall": null,
+     "macro_f1": 0.5514647516732186,
+     "n_gt": 283,
+     "n_pred": 368,
+     "spell_f1": 0.5364055299539171
+    },
+    "candidate+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5514647516732186,
+     "n_gt": 283,
+     "n_pred": 368,
+     "spell_f1": 0.5364055299539171
+    },
+    "candidate+touch": {
+     "dead_recall": null,
+     "macro_f1": 0.5406546536382346,
+     "n_gt": 283,
+     "n_pred": 373,
+     "spell_f1": 0.525609756097561
+    },
+    "candidate+touch+reset": {
+     "dead_recall": null,
+     "macro_f1": 0.5406546536382346,
+     "n_gt": 283,
+     "n_pred": 373,
+     "spell_f1": 0.525609756097561
+    },
+    "candidate+touch-thin": {
+     "dead_recall": null,
+     "macro_f1": 0.5446839463251048,
+     "n_gt": 283,
+     "n_pred": 332,
+     "spell_f1": 0.5326829268292683
+    },
+    "control": {
+     "dead_recall": null,
+     "macro_f1": 0.5535096185300915,
+     "n_gt": 283,
+     "n_pred": 374,
+     "spell_f1": 0.5388127853881278
+    }
+   }
+  },
+  "wcsf-used-match": {
+   "bonus_share": 0.40160774170158475,
+   "delta_thin_minus_candidate": -0.007548004298195077,
+   "delta_touch_minus_candidate": 0.05772641994604366,
+   "median_surprise_mps": 1.146687372743938,
+   "owned_touch_rate": 30.280489132406835,
+   "provider": "wcsf",
+   "regime": "stop75-jitter",
+   "resets": {
+    "candidate+reset": {
+     "delta_spell_f1": 0.02154618430447669,
+     "graded_changed_share": 0.0030537331539207007,
+     "owner_agreement_with": {
+      "matched": 44,
+      "share": 0.5945945945945946,
+      "total": 74
+     },
+     "owner_agreement_without": {
+      "matched": 33,
+      "share": 0.44594594594594594,
+      "total": 74
+     }
+    },
+    "candidate+touch+reset": {
+     "delta_spell_f1": 0.015236976106541289,
+     "graded_changed_share": 0.0020497660896180046,
+     "owner_agreement_with": {
+      "matched": 41,
+      "share": 0.5540540540540541,
+      "total": 74
+     },
+     "owner_agreement_without": {
+      "matched": 30,
+      "share": 0.40540540540540543,
+      "total": 74
+     }
+    }
+   },
+   "role": "fit-disjoint",
+   "thinned_bonus_share": 0.3360291708208128,
+   "thinned_owned_touch_rate": 10.4321637214703,
+   "variants": {
+    "candidate": {
+     "dead_recall": 0.6406238329275034,
+     "macro_f1": 0.6996057339087295,
+     "n_gt": 411,
+     "n_pred": 407,
+     "spell_f1": 0.4386308068459658
+    },
+    "candidate+reset": {
+     "dead_recall": 0.6406238329275034,
+     "macro_f1": 0.7009506168670981,
+     "n_gt": 411,
+     "n_pred": 380,
+     "spell_f1": 0.46017699115044247
+    },
+    "candidate+touch": {
+     "dead_recall": 0.6406238329275034,
+     "macro_f1": 0.7146536152089995,
+     "n_gt": 411,
+     "n_pred": 440,
+     "spell_f1": 0.49635722679200944
+    },
+    "candidate+touch+reset": {
+     "dead_recall": 0.6406238329275034,
+     "macro_f1": 0.7157923945853143,
+     "n_gt": 411,
+     "n_pred": 417,
+     "spell_f1": 0.5115942028985507
+    },
+    "candidate+touch-thin": {
+     "dead_recall": 0.6406238329275034,
+     "macro_f1": 0.7002847280803614,
+     "n_gt": 411,
+     "n_pred": 374,
+     "spell_f1": 0.4310828025477707
+    },
+    "control": {
+     "dead_recall": 0.0,
+     "macro_f1": 0.38057680534652794,
+     "n_gt": 411,
+     "n_pred": 331,
+     "spell_f1": 0.39622641509433965
+    }
+   }
+  }
+ },
+ "means": {
+  "dfl_wcsf_primary": {
+   "bonus_share": 0.3964913427932969,
+   "dead_recall": {
+    "candidate": 0.6665511000941176,
+    "candidate+reset": 0.6665511000941176,
+    "candidate+touch": 0.6665511000941176,
+    "candidate+touch+reset": 0.6665511000941176,
+    "candidate+touch-thin": 0.6665511000941176,
+    "control": 0.0
+   },
+   "delta_reset_minus_candidate": 0.0171391100104214,
+   "delta_thin_minus_candidate": -0.002969056151048366,
+   "delta_touch_minus_candidate": 0.07638113071724068,
+   "delta_touch_reset_minus_touch": 0.013026177149116691,
+   "macro_f1": {
+    "candidate": 0.7049684475629645,
+    "candidate+reset": 0.7065645247555811,
+    "candidate+touch": 0.7227082352447347,
+    "candidate+touch+reset": 0.7238320262713659,
+    "candidate+touch-thin": 0.704760143857732,
+    "control": 0.37950062451385946
+   },
+   "n_gt": {
+    "candidate": 423.0,
+    "candidate+reset": 423.0,
+    "candidate+touch": 423.0,
+    "candidate+touch+reset": 423.0,
+    "candidate+touch-thin": 423.0,
+    "control": 423.0
+   },
+   "n_pred": {
+    "candidate": 355.0,
+    "candidate+reset": 333.25,
+    "candidate+touch": 397.25,
+    "candidate+touch+reset": 379.0,
+    "candidate+touch-thin": 332.25,
+    "control": 275.75
+   },
+   "owned_touch_rate": 29.027398566374654,
+   "reset_changed_share": {
+    "candidate+reset": 0.002898656516201076,
+    "candidate+touch+reset": 0.0023482482473523004
+   },
+   "restart_owner_agreement": {
+    "candidate+reset": {
+     "with": 0.5862785862785863,
+     "without": 0.4455301455301455
+    },
+    "candidate+touch+reset": {
+     "with": 0.526039501039501,
+     "without": 0.39729729729729735
+    }
+   },
+   "spell_f1": {
+    "candidate": 0.40127010590675205,
+    "candidate+reset": 0.41840921591717345,
+    "candidate+touch": 0.4776512366239927,
+    "candidate+touch+reset": 0.4906774137731094,
+    "candidate+touch-thin": 0.3983010497557037,
+    "control": 0.3437829748567221
+   },
+   "thinned_bonus_share": 0.3280054166407961,
+   "thinned_owned_touch_rate": 10.42352068247565
+  },
+  "skillcorner_confirmation": {
+   "bonus_share": 0.4419464095980718,
+   "dead_recall": {
+    "candidate": null,
+    "candidate+reset": null,
+    "candidate+touch": null,
+    "candidate+touch+reset": null,
+    "candidate+touch-thin": null,
+    "control": null
+   },
+   "delta_reset_minus_candidate": 0.0,
+   "delta_thin_minus_candidate": -0.0142155070674167,
+   "delta_touch_minus_candidate": -0.0008713593164570987,
+   "delta_touch_reset_minus_touch": 0.0,
+   "macro_f1": {
+    "candidate": 0.5701366247414381,
+    "candidate+reset": 0.5701366247414381,
+    "candidate+touch": 0.5697086533121745,
+    "candidate+touch+reset": 0.5697086533121745,
+    "candidate+touch-thin": 0.5615346640649044,
+    "control": 0.5709548560013584
+   },
+   "n_gt": {
+    "candidate": 267.0,
+    "candidate+reset": 267.0,
+    "candidate+touch": 267.0,
+    "candidate+touch+reset": 267.0,
+    "candidate+touch-thin": 267.0,
+    "control": 267.0
+   },
+   "n_pred": {
+    "candidate": 345.40000000000003,
+    "candidate+reset": 345.40000000000003,
+    "candidate+touch": 350.8,
+    "candidate+touch+reset": 350.8,
+    "candidate+touch-thin": 315.40000000000003,
+    "control": 350.6
+   },
+   "owned_touch_rate": 19.073252211358543,
+   "reset_changed_share": {
+    "candidate+reset": 9.985443225789774e-05,
+    "candidate+touch+reset": 0.0001105384783061362
+   },
+   "restart_owner_agreement": null,
+   "spell_f1": {
+    "candidate": 0.584340675896707,
+    "candidate+reset": 0.584340675896707,
+    "candidate+touch": 0.5834693165802499,
+    "candidate+touch+reset": 0.5834693165802499,
+    "candidate+touch-thin": 0.5701251688292903,
+    "control": 0.5869115884959916
+   },
+   "thinned_bonus_share": 0.38302771076271147,
+   "thinned_owned_touch_rate": 10.425883076767626
+  },
+  "skillcorner_development": {
+   "bonus_share": 0.4710887908764748,
+   "dead_recall": {
+    "candidate": null,
+    "candidate+reset": null,
+    "candidate+touch": null,
+    "candidate+touch+reset": null,
+    "candidate+touch-thin": null,
+    "control": null
+   },
+   "delta_reset_minus_candidate": 0.0004664502598842324,
+   "delta_thin_minus_candidate": -0.0022757440337002333,
+   "delta_touch_minus_candidate": 0.01332676100697705,
+   "delta_touch_reset_minus_touch": 0.000287645706148143,
+   "macro_f1": {
+    "candidate": 0.5801847627169242,
+    "candidate+reset": 0.5801486071903548,
+    "candidate+touch": 0.5819594885616781,
+    "candidate+touch+reset": 0.5819136150939885,
+    "candidate+touch-thin": 0.5741034843608093,
+    "control": 0.5807513405624378
+   },
+   "n_gt": {
+    "candidate": 262.8,
+    "candidate+reset": 262.8,
+    "candidate+touch": 262.8,
+    "candidate+touch+reset": 262.8,
+    "candidate+touch-thin": 262.8,
+    "control": 262.8
+   },
+   "n_pred": {
+    "candidate": 322.6,
+    "candidate+reset": 322.0,
+    "candidate+touch": 331.8,
+    "candidate+touch+reset": 331.40000000000003,
+    "candidate+touch-thin": 291.6,
+    "control": 327.2
+   },
+   "owned_touch_rate": 20.37225871244268,
+   "reset_changed_share": {
+    "candidate+reset": 0.0005096759504135368,
+    "candidate+touch+reset": 0.0005340507660845802
+   },
+   "restart_owner_agreement": null,
+   "spell_f1": {
+    "candidate": 0.6031520293905372,
+    "candidate+reset": 0.6036184796504215,
+    "candidate+touch": 0.6164787903975143,
+    "candidate+touch+reset": 0.6167664361036624,
+    "candidate+touch-thin": 0.600876285356837,
+    "control": 0.6062215672525938
+   },
+   "thinned_bonus_share": 0.40394013661496897,
+   "thinned_owned_touch_rate": 10.438151646841094
+  }
+ },
+ "reproduction": {
+  "dfl-J03WN1": {
+   "candidate+touch_regime_difference": 0.0,
+   "candidate_regime_difference": 0.0,
+   "control_regime_difference": 0.0,
+   "natural_control_difference": 0.0
+  },
+  "dfl-J03WOH": {
+   "candidate+touch_regime_difference": 0.0,
+   "candidate_regime_difference": 0.0,
+   "control_regime_difference": 0.0,
+   "natural_control_difference": 0.0
+  },
+  "dfl-J03WOY": {
+   "candidate+touch_regime_difference": 0.0,
+   "candidate_regime_difference": 0.0,
+   "control_regime_difference": 0.0,
+   "natural_control_difference": 0.0
+  },
+  "dfl-J03WR9": {
+   "candidate+touch_regime_difference": 0.0,
+   "candidate_regime_difference": 0.0,
+   "control_regime_difference": 0.0,
+   "natural_control_difference": 0.0
+  },
+  "skillcorner-1874553": {
+   "natural_control_difference": 0.0
+  },
+  "skillcorner-1886347": {
+   "natural_control_difference": 0.0
+  },
+  "skillcorner-2007448": {
+   "natural_control_difference": 0.0
+  },
+  "skillcorner-2007721": {
+   "natural_control_difference": 0.0
+  },
+  "skillcorner-2010085": {
+   "natural_control_difference": 0.0
+  },
+  "skillcorner-2011166": {
+   "natural_control_difference": 0.0
+  },
+  "skillcorner-2013725": {
+   "natural_control_difference": 0.0
+  },
+  "skillcorner-2015213": {
+   "natural_control_difference": 0.0
+  },
+  "skillcorner-2016236": {
+   "natural_control_difference": 0.0
+  },
+  "skillcorner-2017461": {
+   "natural_control_difference": 0.0
+  },
+  "wcsf-used-match": {
+   "candidate+touch_regime_difference": 0.0,
+   "candidate_regime_difference": 0.0,
+   "control_regime_difference": 0.0,
+   "natural_control_difference": 0.0
+  }
+ },
+ "scoring_calls": 95,
+ "status": "complete",
+ "variant_scores": 90
+}

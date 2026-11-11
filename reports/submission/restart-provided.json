@@ -1,0 +1,93 @@
+{
+ "changed_by_pair": {
+  "A->H": 41,
+  "D->H": 1,
+  "H->A": 346
+ },
+ "changed_share": 0.002442448239611726,
+ "frames_changed": 388,
+ "gaps_with_different_first_owner": 19,
+ "gaps_without_later_owner": 1,
+ "graded_frames": 158857,
+ "new": {
+  "dead_share": 0.41458040879533165,
+  "label_counts": {
+   "A": 37378,
+   "D": 65859,
+   "H": 55620,
+   "X": 0
+  },
+  "median_spell": 137,
+  "spells": 415,
+  "spells_under_25": 9,
+  "spells_under_50": 74
+ },
+ "new_csv_sha256": "15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685",
+ "old": {
+  "dead_share": 0.4145867037650214,
+  "label_counts": {
+   "A": 37073,
+   "D": 65860,
+   "H": 55924,
+   "X": 0
+  },
+  "median_spell": 124.0,
+  "spells": 434,
+  "spells_under_25": 29,
+  "spells_under_50": 94
+ },
+ "old_csv_sha256": "31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963",
+ "status": "complete",
+ "stop_required": false,
+ "stoppage_gaps": 113,
+ "tag_check": {
+  "new": {
+   "by_type": {
+    "CORNER KICK": {
+     "match": 6,
+     "mismatch": 6,
+     "no_transition": 0
+    },
+    "FREE KICK": {
+     "match": 4,
+     "mismatch": 1,
+     "no_transition": 0
+    },
+    "GOAL KICK": {
+     "match": 4,
+     "mismatch": 3,
+     "no_transition": 3
+    }
+   },
+   "total": {
+    "match": 14,
+    "mismatch": 10,
+    "no_transition": 3
+   }
+  },
+  "old": {
+   "by_type": {
+    "CORNER KICK": {
+     "match": 10,
+     "mismatch": 2,
+     "no_transition": 0
+    },
+    "FREE KICK": {
+     "match": 3,
+     "mismatch": 2,
+     "no_transition": 0
+    },
+    "GOAL KICK": {
+     "match": 2,
+     "mismatch": 5,
+     "no_transition": 3
+    }
+   },
+   "total": {
+    "match": 15,
+    "mismatch": 9,
+    "no_transition": 3
+   }
+  }
+ }
+}
