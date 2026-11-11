@@ -1,5 +1,8 @@
 # MESSI's FOOT
 
+**11 November decision:** existing `candidate` file is recommended after the fixed touch-transfer test. Decoder restart qualifies: **True**; no reset release has been built. [Results and limits](reports/touch-transfer/report.md). The user makes the final submission choice.
+
+
 An experimental local football-possession pipeline for More Than a Hack 2027.
 
 **9 November frozen release candidate:** `competition_release.py` packages the unchanged `w0-c32-neutral-missing` control as a selected-only standard-library entry point. Two clean runs match both historical selected CSVs byte-for-byte; exact-file validation and one frozen public-window check are complete. Follow [reproduction instructions](docs/competition-release.md), [technical document](docs/competition-technical.md) and the [release decision/evidence](docs/competition-release-decision.md). Packaging is not a predictive improvement. The [performance history](docs/performance-history-and-next-step.md) records what was already tried and the bounded next diagnosis. Older routes below remain preserved.
@@ -96,3 +99,50 @@ Experimental channel-contract candidate: see [input audit, reproducible command 
 The new opt-in sequence route uses `python soft_candidate.py --prefix "C:/football-data/tactical cam/BAR-ATH_tactical" --out "../soft-sequence-new-run"`. Use a fresh/empty output folder. See [results, commands and tradeoffs](docs/accuracy-first-results.md), [method](docs/accuracy-first-method.md) and [fresh review/fixes](docs/accuracy-first-code-review.md).
 
 The separate missing-ball-neutral route uses `python ball_gap_candidate.py --prefix "C:/football-data/tactical cam/BAR-ATH_tactical" --out "../ball-gap-new-run"`. Preserve the earlier generation and use a fresh/empty output folder. Reproduce its fixed external comparison through `ball_gap_run.py`; the [results](docs/ball-gap-results.md) explain the serialization-only runner, remaining missed transitions and reference limitations.
+
+## Touch-transfer and decoder-restart test (11 November 2026)
+
+This test supersedes the earlier touch recommendation. [Full results](reports/touch-transfer/report.md), [fixed protocol](docs/touch-transfer-protocol.md), and aggregate JSON receipts under `reports/touch-transfer/`.
+
+Ten SkillCorner matches use natural tracking as a harm check; five DFL/WCSF matches use stop75-jitter plus deterministic touch thinning to the provided track’s owned-touch rate as a gain check. Six variants also test resetting the existing decoder across gap-rule stoppages. Settings and gates were fixed before the single 90-case run; five additional natural-control scores serve reproduction only.
+
+Provider ranges below use natural tracks. All provided-track information is bounded aggregates.
+
+| Track | Observed share | Speed m/s | Surprise m/s | Owned/min visible | Surprise ≥3 share | Remote peak share | Bonus frames/owned touch |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Provided | 0.584179 | 5.108300 | 1.126769 | 10.457861 | 0.155712 | 0.297080 | 96.377125 |
+| skillcorner (n=10) | 0.525990–0.643804 | 4.708561–5.217943 | 1.062871–1.201334 | 18.007388–21.637317 | 0.150967–0.175843 | 0.197628–0.231284 | 55.313980–61.575855 |
+| dfl (n=4) | 1.000000–1.000000 | 0.000000–1.585172 | 0.000000–0.200539 | 17.501858–19.617192 | 0.089603–0.111106 | 0.090788–0.136697 | 45.627598–49.993754 |
+| wcsf (n=1) | 1.000000–1.000000 | 1.592804–1.592804 | 0.112062–0.112062 | 21.271552–21.271552 | 0.121253–0.121253 | 0.129058–0.129058 | 43.945428–43.945428 |
+
+S* = 1.126768830; R* = 10.457861445. All profile stop checks passed.
+
+| DFL/WCSF scored track | Median surprise m/s |
+| --- | --- |
+| dfl-J03WN1 | 1.066647 |
+| dfl-J03WOH | 1.062326 |
+| dfl-J03WOY | 1.039035 |
+| dfl-J03WR9 | 1.081570 |
+| wcsf-used-match | 1.146687 |
+
+| Group | Control | Candidate | Touch | Thin | Reset | Touch+reset |
+|---|---|---|---|---|---|---|
+| dfl_wcsf_primary | 0.343783 | 0.401270 | 0.477651 | 0.398301 | 0.418409 | 0.490677 |
+| skillcorner_confirmation | 0.586912 | 0.584341 | 0.583469 | 0.570125 | 0.584341 | 0.583469 |
+| skillcorner_development | 0.606222 | 0.603152 | 0.616479 | 0.600876 | 0.603618 | 0.616766 |
+
+| Gate | Value | Pass |
+|---|---|---|
+| A | -0.000871 | True |
+| B | -0.014216 | False |
+| C | -0.002969 | False |
+| D | +0.000000 | True |
+| E | +0.018823 | True |
+| F | +0.000000 | True |
+| G | +0.000000 | True |
+
+Recommended existing file: **candidate**, SHA-256 `31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963`. Decoder restart qualifies: **True**. The user chooses the submission; no file was regenerated. A qualified reset needs a separate release brief. All reproduction checks passed within 1e-9.
+
+**Limits.** Every match has been scored before; touch settings were selected on five development SkillCorner matches and dfl-J03WN1. This is the third test of touch evidence and is post-hoc. SkillCorner references have no dead ball and longer possessions than the challenge. White noise and random thinning match two tracking statistics, not the causes of missing touches; real misses may be nonrandom. Touch gating sets contain five and three matches. Expected reset gain is about 0.01, below what two matches can confirm; gate E is a consistency check, not proof. The reset idea was chosen after a probe on nongating matches. The regime hides the ball up to two seconds after a restart, which may not match the provided track reacquisition delay.
+
+The full report contains every match’s spell/macro scores, dead recall, spell counts, touch rates and bonus shares, reset changed shares and owner agreement, and the comparison with the earlier nongating probe. No public truth was opened or existing predictor changed. Both Desktop submission hashes are unchanged.
