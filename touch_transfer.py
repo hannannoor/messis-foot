@@ -103,6 +103,15 @@ def summary(result):
                 dead_recall=result['dead']['recall'], n_pred=result['spells']['n_pred'], n_gt=result['spells']['n_gt'])
 
 
+def owner_agreement_means(matches, ids, weights):
+    variants = ('candidate+reset', 'candidate+touch+reset')
+    if not all('owner_agreement_without' in matches[c]['resets'][v] for c in ids for v in variants):
+        return None
+    return {v: {key: fsum(matches[c]['resets'][v]['owner_agreement_'+field]['share']*w for c, w in zip(ids, weights))
+                if all(matches[c]['resets'][v]['owner_agreement_'+field]['share'] is not None for c in ids) else None
+                for key, field in (('without', 'without'), ('with', 'with'))} for v in variants}
+
+
 def means(matches, ids, weights=None):
     weights = weights or [1/len(ids)] * len(ids)
     out = {}
@@ -118,6 +127,7 @@ def means(matches, ids, weights=None):
         out[key] = fsum(matches[c][key]*w for c, w in zip(ids, weights))
     out['reset_changed_share'] = {v: fsum(matches[c]['resets'][v]['graded_changed_share']*w for c, w in zip(ids, weights))
                                   for v in ('candidate+reset', 'candidate+touch+reset')}
+    out['restart_owner_agreement'] = owner_agreement_means(matches, ids, weights)
     return out
 
 

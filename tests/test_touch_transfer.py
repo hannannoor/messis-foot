@@ -100,7 +100,7 @@ class Restart(unittest.TestCase):
 class Boundaries(unittest.TestCase):
     def test_only_profile_cli_loads_provided_and_no_public_truth(self):
         root = Path(__file__).resolve().parent.parent
-        for name in ('tracking_profile.py', 'touch_transfer.py'):
+        for name in ('tracking_profile.py', 'touch_transfer.py', 'touch_transfer_decision.py'):
             source = (root / name).read_text(encoding='utf-8')
             for forbidden in ('gt_public', 'ground_truth', '_smart_tagging', 'submission.csv'):
                 self.assertNotIn(forbidden, source)
@@ -110,9 +110,32 @@ class Boundaries(unittest.TestCase):
                     text = ast.get_source_segment(source, node)
                     self.assertNotIn('load_source', text)
                     self.assertNotIn('target-handling', text)
-            if name == 'touch_transfer.py':
+            if name != 'tracking_profile.py':
                 self.assertNotIn('load_source', source)
                 self.assertNotIn('target-handling', source)
+
+
+class AgreementReporting(unittest.TestCase):
+    def test_weighted_per_match_agreement_mean_and_missing_group(self):
+        matches = {}
+        for cid, before, after in (('a', .2, .4), ('b', .8, .9)):
+            matches[cid] = dict(resets={v: dict(owner_agreement_without=dict(share=before),
+                                               owner_agreement_with=dict(share=after))
+                                       for v in ('candidate+reset', 'candidate+touch+reset')})
+        value = r.owner_agreement_means(matches, ('a', 'b'), (.25, .75))
+        self.assertAlmostEqual(value['candidate+reset']['without'], .65)
+        self.assertAlmostEqual(value['candidate+reset']['with'], .775)
+        matches['a'] = dict(resets={'candidate+reset': {}, 'candidate+touch+reset': {}})
+        self.assertIsNone(r.owner_agreement_means(matches, ('a',), (1.,)))
+
+    def test_first_owner_diagnostic_skips_dead_unknown_and_period_end(self):
+        reference = [0]*4 + [2]*80 + [3, 1, 1] + [2]*80
+        periods = [1]*len(reference)
+        labels = ['H']*4 + ['D']*80 + ['D', 'X', 'A'] + ['D']*80
+        value = r.restart_agreement(reference, labels, periods, [4, 87])
+        self.assertEqual(value, dict(matched=1, total=1, share=1.))
+        labels[86] = 'H'
+        self.assertEqual(r.restart_agreement(reference, labels, periods, [4])['share'], 0.)
 
 
 if __name__ == '__main__':
