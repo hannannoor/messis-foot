@@ -1,0 +1,38 @@
+{
+ "code_review": {
+  "critical_or_important_findings": 0,
+  "separate_agent_same_model_family": true
+ },
+ "command": "python -m unittest discover -s tests -v",
+ "document_guard_tests": "pending final documents",
+ "environment": {
+  "FOOTBALL_OFFICIAL_CODE": "${Desktop}/more than a hack data/more-than-a-hack-2027-main/more-than-a-hack-2027-main",
+  "TEMP": "${checkout}/.tmp",
+  "TMP": "${checkout}/.tmp",
+  "temporary_link_operations_permitted": true
+ },
+ "errors": 0,
+ "executable": "C:\\Python314\\python.exe",
+ "failures": 0,
+ "implementation": "CPython",
+ "machine": "AMD64",
+ "official_code_sha256": {
+  "evaluation/possession_metrics.py": "341bad48904b489d6e875397b27687f5d6a4d22a397f3dc8af3a00d48f16874d",
+  "evaluation/run_evaluation.py": "1c61564fe52499ba4af3006fb5eb4147b825e92bf516651add80de49d267b19f",
+  "evaluation/validate_submission.py": "07ac29499acbd337e1dc1de1832d63f6e1fa1d981e22f6ad08212529e2bbee14",
+  "games.py": "3b2122794e9e0476e2b3a871d14880e5fa47c4feaeacf99caef054c2309076ce"
+ },
+ "passed": 759,
+ "platform": "Windows-11-10.0.26200-SP0",
+ "provided_disabled_hash_test_passed": true,
+ "python_version": "3.14.5",
+ "release_code_commit": "30a7ace010e3fc1ece23c440e54151058dbf8b19",
+ "seconds": 1253.577,
+ "single_clean_suite_run": true,
+ "skipped": 21,
+ "starting_branch": "codex/touch-transfer-2026-11-10",
+ "starting_head": "175329e365f02042655b474db62b04cae358e15d",
+ "starting_tree_clean": true,
+ "synthetic_aggregate_tests": 3,
+ "tests": 780
+}
