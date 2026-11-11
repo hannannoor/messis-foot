@@ -1,10 +1,17 @@
 {
+ "authored_python_files": [
+  "gap_support_aggregates.py",
+  "restart_provided_aggregates.py",
+  "restart_release.py",
+  "tests/test_restart_release.py",
+  "tests/test_submission_docs.py"
+ ],
  "code_review": {
   "critical_or_important_findings": 0,
   "separate_agent_same_model_family": true
  },
  "command": "python -m unittest discover -s tests -v",
- "document_guard_tests": "pending final documents",
+ "document_guard_tests": 4,
  "environment": {
   "FOOTBALL_OFFICIAL_CODE": "${Desktop}/more than a hack data/more-than-a-hack-2027-main/more-than-a-hack-2027-main",
   "TEMP": "${checkout}/.tmp",
@@ -14,7 +21,18 @@
  "errors": 0,
  "executable": "C:\\Python314\\python.exe",
  "failures": 0,
+ "final_review": {
+  "critical_or_important_release_code_findings": 0,
+  "documentation_findings_addressed": true,
+  "separate_agent_same_model_family": true
+ },
+ "gap_support_aggregate_runs": 1,
+ "generation_runs": 2,
  "implementation": "CPython",
+ "latest_aggregate_and_document_test_run": {
+  "passed": 7,
+  "tests": 7
+ },
  "machine": "AMD64",
  "official_code_sha256": {
   "evaluation/possession_metrics.py": "341bad48904b489d6e875397b27687f5d6a4d22a397f3dc8af3a00d48f16874d",
@@ -22,17 +40,33 @@
   "evaluation/validate_submission.py": "07ac29499acbd337e1dc1de1832d63f6e1fa1d981e22f6ad08212529e2bbee14",
   "games.py": "3b2122794e9e0476e2b3a871d14880e5fa47c4feaeacf99caef054c2309076ce"
  },
+ "old_technical_document_original_bytes_preserved": true,
+ "original_code_and_evidence_byte_identical": true,
  "passed": 759,
  "platform": "Windows-11-10.0.26200-SP0",
  "provided_disabled_hash_test_passed": true,
+ "provided_restart_aggregate_runs": 1,
+ "public_window_scoring_attempts": 1,
  "python_version": "3.14.5",
+ "rehearsal": "pending",
  "release_code_commit": "30a7ace010e3fc1ece23c440e54151058dbf8b19",
  "seconds": 1253.577,
  "single_clean_suite_run": true,
  "skipped": 21,
+ "source_clarifications": [
+  "Decoder restart resets path continuity, not retained-control feature history; wording in the brief was broader than the implementation.",
+  "Quoted natural primary means use 13 fitting-disjoint matches; 15 includes two secondary fitting overlaps.",
+  "Official code is inside a second nested repository folder; validator dependencies are separate from standard-library inference."
+ ],
  "starting_branch": "codex/touch-transfer-2026-11-10",
  "starting_head": "175329e365f02042655b474db62b04cae358e15d",
  "starting_tree_clean": true,
  "synthetic_aggregate_tests": 3,
+ "technical_document": {
+  "all_links_absolute": true,
+  "code_links_pinned_to": "30a7ace010e3fc1ece23c440e54151058dbf8b19",
+  "prose_words_excluding_tables": 960,
+  "sections": 8
+ },
  "tests": 780
 }
