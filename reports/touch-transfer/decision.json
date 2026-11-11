@@ -1,0 +1,60 @@
+{
+ "base": "candidate",
+ "conditions": {
+  "A": {
+   "minimum": -0.01,
+   "passed": true,
+   "value": -0.0008713593164570992
+  },
+  "B": {
+   "minimum": -0.01,
+   "passed": false,
+   "value": -0.014215507067416679
+  },
+  "C": {
+   "minimum": 0.02,
+   "passed": false,
+   "value": -0.002969056151048338
+  },
+  "D": {
+   "minimum": -0.02,
+   "passed": true,
+   "value": 0.0
+  },
+  "E": {
+   "minimum": 0.005,
+   "neither_negative": true,
+   "passed": true,
+   "per_match": {
+    "dfl-J03WR9": 0.016100694144416616,
+    "wcsf-used-match": 0.02154618430447669
+   },
+   "value": 0.018823439224446653
+  },
+  "F": {
+   "minimum": -0.005,
+   "passed": true,
+   "value": 0.0
+  },
+  "G": {
+   "minimum": -0.02,
+   "passed": true,
+   "value": 0.0
+  }
+ },
+ "limits": [
+  "Every match has been scored before; touch settings were selected on five development SkillCorner matches and dfl-J03WN1.",
+  "This is the third test of touch evidence and is post-hoc.",
+  "SkillCorner references have no dead ball and longer possessions than the challenge.",
+  "White noise and random thinning match two tracking statistics, not the causes of missing touches; real misses may be nonrandom.",
+  "Touch gating sets contain five and three matches.",
+  "Expected reset gain is about 0.01, below what two matches can confirm; gate E is a consistency check, not proof.",
+  "The reset idea was chosen after a probe on nongating matches.",
+  "The regime hides the ball up to two seconds after a restart, which may not match the provided track reacquisition delay."
+ ],
+ "recommended_file_sha256": "31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963",
+ "release_built": false,
+ "restart_qualifies": true,
+ "touch_replaces_candidate": false,
+ "user_final_choice_pending": true
+}

@@ -1,0 +1,77 @@
+{
+ "branch": "codex/touch-transfer-2026-11-10",
+ "deviations": [
+  "The profile ran while the first full suite was in progress.",
+  "The scientific run began after 16 new tests and all profile gates passed, while the corrected legacy suite was still running.",
+  "Prepared evidence was reused after an exact synthetic label/bonus parity test; settings and cases unchanged.",
+  "The full suite required targeted environment rechecks; no existing test or predictor was modified."
+ ],
+ "environment_corrections": [
+  "Set TEMP and TMP to checkout .tmp after default app temporary-folder permission errors.",
+  "Official repository is nested twice; FOOTBALL_OFFICIAL_CODE corrected to the inner folder.",
+  "Four link/junction methods and the two official-code contract methods pass in the permitted environment."
+ ],
+ "extra_natural_reproduction_scores": 5,
+ "max_absolute_reproduction_error": 0.0,
+ "merged": false,
+ "new_submission_generated": false,
+ "original_files_changed": [
+  "DESIGN.md",
+  "README.md"
+ ],
+ "pre_run_profile_protocol_commit": "8d5a0e7",
+ "public_truth_opened": false,
+ "pushed": false,
+ "reproduction_comparisons": 30,
+ "review": {
+  "critical_or_important_findings": 0,
+  "independent_provider": false,
+  "reporting_suggestions_addressed": true,
+  "separate_agent": true
+ },
+ "scientific_reruns": 0,
+ "scientific_runs": 1,
+ "starting_branch": "codex/stoppage-regime-2026-11-10",
+ "starting_head": "5147e236235daf9cd9c4ddac6bc9afcd04366b66",
+ "starting_tree_clean": true,
+ "submission_hashes": {
+  "gap": {
+   "after": "31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963",
+   "before": "31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963",
+   "unchanged": true
+  },
+  "touch": {
+   "after": "1de96acb8ac2198c960637f6b20c2438c9ff142e76a9ab463c384b52814b8d14",
+   "before": "1de96acb8ac2198c960637f6b20c2438c9ff142e76a9ab463c384b52814b8d14",
+   "unchanged": true
+  }
+ },
+ "tests": {
+  "caveat": "Counts combine the full-suite run and targeted rechecks; no single 773-case green run was claimed.",
+  "distinct_current_cases": 773,
+  "distinct_passed_after_rechecks": 751,
+  "environment_rechecks": {
+   "passed": 6,
+   "tests": 6
+  },
+  "initial_default_temp_run": {
+   "errors": 274,
+   "skipped": 20,
+   "tests": 755
+  },
+  "latest_experiment_tests": {
+   "passed": 16,
+   "tests": 16
+  },
+  "skipped": 22,
+  "unresolved_failures": 0,
+  "workspace_temp_full_run": {
+   "errors": 4,
+   "failures": 1,
+   "skipped": 22,
+   "tests": 770
+  }
+ },
+ "uploaded": false,
+ "variant_scores": 90
+}
