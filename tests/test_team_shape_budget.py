@@ -100,3 +100,36 @@ class Ledger(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class Amendment1Identities(unittest.TestCase):
+    def test_training_alignment_identity_is_a_known_bounded_parity_claim(self):
+        import tempfile
+        from pathlib import Path
+        import team_shape_run as r
+        with tempfile.TemporaryDirectory() as d:
+            ledger = r.Ledger(Path(d) / 'claims', Path(d) / 'access.jsonl')
+            for m in ('J03WOH', 'J03WOY', 'J03WPY', 'J03WMX'):
+                ledger.claim('parity', 'training-alignment/' + m)
+            with self.assertRaises(r.BudgetError):
+                ledger.claim('parity', 'training-alignment/J03WQQ')
+            self.assertEqual(ledger.count('parity'), 4)
+            self.assertEqual(ledger.count('fit'), 0)
+
+
+class Amendment1RunScopedAlignment(unittest.TestCase):
+    def test_alignment_claims_are_scoped_by_run_and_still_unique(self):
+        import tempfile
+        from pathlib import Path
+        import team_shape_run as r
+        with tempfile.TemporaryDirectory() as d:
+            ledger = r.Ledger(Path(d) / 'claims', Path(d) / 'access.jsonl')
+            ledger.claim('parity', 'training-alignment/J03WOH')
+            ledger.claim('parity', 'training-alignment/2026-11-12-d/J03WOH')
+            with self.assertRaises(r.BudgetError):
+                ledger.claim('parity', 'training-alignment/2026-11-12-d/J03WOH')
+            with self.assertRaises(r.BudgetError):
+                ledger.claim('parity', 'training-alignment/2026-11-12-d/J03WQQ')
+            with self.assertRaises(ValueError):
+                ledger.claim('parity', 'training-alignment/BAD_ID/J03WOH')
+            self.assertEqual(ledger.count('feature_pass'), 0)

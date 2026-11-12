@@ -129,8 +129,14 @@ class Ledger:
 
     @staticmethod
     def _parity_allowed(identity):
-        if identity == 'exporter' or identity in {prefix + m for prefix in ('training/','training-fit/')
-                                                for m in ('J03WOH','J03WOY','J03WPY','J03WMX')}:
+        matches = ('J03WOH','J03WOY','J03WPY','J03WMX')
+        if identity == 'exporter' or identity in {prefix + m for prefix in ('training/','training-alignment/','training-fit/')
+                                                for m in matches}:
+            return True
+        # Amendment 1: the claims folder is shared across runs, so the alignment gate is claimed per run.
+        parts = identity.split('/')
+        if len(parts) == 3 and parts[0] == 'training-alignment' and parts[2] in matches:
+            safe_run_id(parts[1])
             return True
         kind, _, case = identity.partition('/')
         return kind in ('release', 'prefix') and case in NATURAL_CASES
@@ -515,7 +521,7 @@ def preflight(run_id):
     import team_shape_training as rt
     groups = load_training_groups(read_json(private / 'input-map.json'), freeze_value['input_sha256'])
     for i, group in enumerate(groups):
-        ledger.claim('parity', 'training-alignment/' + group['match'])
+        ledger.claim('parity', 'training-alignment/' + run_id + '/' + group['match'])
         try:
             training_parity[group['match']] = rt.alignment_check(group, i)
         except rt.TrainingAlignmentMismatch as error:

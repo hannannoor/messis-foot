@@ -66,6 +66,9 @@ def training_frame_parity(group, group_index):
 
 
 ALIGNMENT_TOLERANCE_M = 1e-4
+# Public receipts may not use coordinate field names; these are aggregate maxima only.
+REPORT_NAMES = dict(ball_x='ball_x_max_diff', ball_y='ball_y_max_diff', home_distance='home_distance_max_diff',
+                    away_distance='away_distance_max_diff')
 
 
 class TrainingAlignmentMismatch(ValueError):
@@ -111,7 +114,7 @@ def alignment_check(group, group_index, tolerance=ALIGNMENT_TOLERANCE_M):
                           ('home_distance', lambda f: _valid_distance(f.home_distance)),
                           ('away_distance', lambda f: _valid_distance(f.away_distance))):
             diffs = [abs(getattr(x, field) - getattr(y, field)) for x, y in zip(a, b) if ok(x)]
-            maxima[field] = float(max(diffs)) if diffs else 0.
+            maxima[REPORT_NAMES[field]] = float(max(diffs)) if diffs else 0.
         worst = max(maxima.values())
         if not worst <= tolerance:
             raise TrainingAlignmentMismatch(dict(regime=name, reason='value difference above tolerance', rows=len(a), max_abs_diff_m=maxima))

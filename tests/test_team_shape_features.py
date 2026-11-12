@@ -118,9 +118,12 @@ class Features(unittest.TestCase):
     def test_one_team_mean_on_midpoint_has_unambiguous_lower_team(self):
         self.assertEqual(ts.attacking_directions([frame()],20.),{1:(1,-1)})
 
-    def test_direction_stops_on_same_side_or_no_valid_team_rows(self):
-        with self.assertRaisesRegex(ValueError, 'same side|midpoint'):
-            ts.attacking_directions([frame()], 100.)
+    def test_direction_stops_on_tie_or_no_valid_team_rows(self):
+        # Amendment 2: both means on one side of halfway is allowed; order decides.
+        self.assertEqual(ts.attacking_directions([frame()], 100.), {1: (1, -1)})
+        tied = replace(frame(), away_xy=frame().home_xy)
+        with self.assertRaisesRegex(ValueError, 'tied'):
+            ts.attacking_directions([tied], 50.)
         with self.assertRaisesRegex(ValueError, 'no shape-valid'):
             ts.attacking_directions([frame(n=6)], 50.)
 

@@ -273,3 +273,18 @@ Run `2026-11-12-b` stopped at the section 6 training-frame bit-parity gate: on J
 3. **Unchanged:** fit 1 must still reproduce both control SHAs exactly; evaluation cases still use one loader each; the external feature-prefix parity (15/15) stays bit-exact; every gate, constant, seed and budget is unchanged.
 4. **Known limit, recorded before any result:** the unchanged assembly gives neutral emissions on missing-ball rows, so features 19–22 can only act on visible-ball rows. The live-gap hidden-live accuracy report stays descriptive and is expected to show no mechanism effect.
 5. **Freeze order:** this text and the code change are committed, then the freeze, then preflight.
+
+### Amendment 1, addendum (implementation record, 12 November 2026)
+
+- Run `2026-11-12-c` was frozen (`9ae42f2`) and stopped immediately in preflight on a harness defect: the ledger did not recognise the new parity identity name. No data was read. It stays committed as stopped.
+- Two further harness defects were found by dry runs of preflight on the cohort inputs in a scratch folder (no fit, prediction or score; no science claim): an alignment-receipt key name forbidden by the public-report guard, and the first dry run writing four parity claims (`training-alignment/<match>`) into the shared claims folder. Those four claim files are left untouched as an audit record. From run `2026-11-12-d` the alignment gate is claimed per run as `training-alignment/<run-id>/<match>`. Each defect has a test.
+- The dry runs also showed the training alignment passing on all four matches in both regimes (largest difference 3.1e-6 m).
+
+## Amendment 2 (12 November 2026, approved by the user before any fit or score)
+
+Section 5's attacking-direction rule stopped the study whenever both teams' period means of x fell on the same side of the pitch midpoint. A dry run showed this happens on 6 of 15 evaluation cases (SkillCorner 1886347, 2010085, 2011166; DFL J03WR9; WCSF), including fully tracked matches: a dominant team can pull both means to one side of halfway. The rule was a coordinate sanity check, not part of the feature.
+
+- **New rule:** in each period, the team with the lower mean x attacks towards +x and the other towards −x. Stop only on an exactly tied mean or a period with no shape-valid rows for a team. The loader midpoint is still derived and asserted to be exactly 52.65 for every provider.
+- No labels, references or scores informed this change; every feature definition, constant, gate, seed and budget is unchanged.
+- **Recorded limit:** the dry run measured shape support (`shape_support = 1`) on 100% of rows for DFL and WCSF but only 11–34% for SkillCorner (broadcast tracking often shows fewer than 7 players per team), so SkillCorner gives the features a weak test.
+- Fresh run `2026-11-12-d`, frozen after this text is committed.

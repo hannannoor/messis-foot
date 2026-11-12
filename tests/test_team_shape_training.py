@@ -150,14 +150,14 @@ class Amendment1Alignment(unittest.TestCase):
         r = ts.alignment_check(groups()[0], 0)
         for regime in ('natural', 'mask30'):
             self.assertEqual(r[regime]['status'], 'aligned')
-            self.assertEqual(set(r[regime]['max_abs_diff_m']), {'ball_x', 'ball_y', 'home_distance', 'away_distance'})
+            self.assertEqual(set(r[regime]['max_abs_diff_m']), {'ball_x_max_diff', 'ball_y_max_diff', 'home_distance_max_diff', 'away_distance_max_diff'})
 
     def test_float32_scale_rounding_is_within_tolerance(self):
         g = groups()[0]
         g['cache_frames'] = [replace(f, ball_x=f.ball_x + 2e-6, home_distance=f.home_distance + 1.8e-6) for f in g['cache_frames']]
         r = ts.alignment_check(g, 0)
-        self.assertLess(r['natural']['max_abs_diff_m']['ball_x'], ts.ALIGNMENT_TOLERANCE_M)
-        self.assertGreater(r['natural']['max_abs_diff_m']['ball_x'], 0.)
+        self.assertLess(r['natural']['max_abs_diff_m']['ball_x_max_diff'], ts.ALIGNMENT_TOLERANCE_M)
+        self.assertGreater(r['natural']['max_abs_diff_m']['ball_x_max_diff'], 0.)
 
     def test_value_above_tolerance_stops(self):
         g = groups()[0]
@@ -188,3 +188,15 @@ class Amendment1Alignment(unittest.TestCase):
         with self.assertRaises(ValueError):
             ts.training_frame_parity(g[0], 0)
         ts.prepare_pair(g)  # must not raise
+
+
+class Amendment1PublicReceipt(unittest.TestCase):
+    def test_alignment_receipt_passes_the_public_report_guard(self):
+        from accuracy_evidence import assert_public_report
+        g = groups()
+        receipt = {v['match']: ts.alignment_check(v, i) for i, v in enumerate(g)}
+        assert_public_report(dict(status='passed', cases=receipt))
+        g[0]['cache_frames'][7] = replace(g[0]['cache_frames'][7], home_distance=g[0]['cache_frames'][7].home_distance + 1e-3)
+        with self.assertRaises(ts.TrainingAlignmentMismatch) as caught:
+            ts.alignment_check(g[0], 0)
+        assert_public_report(dict(status='stopped', cases=dict(J03WOH=dict(status='not_aligned', **caught.exception.receipt))))

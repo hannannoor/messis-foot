@@ -69,8 +69,10 @@ def attacking_directions(frames, pitch_midpoint):
         if any(not v for v in pair):
             raise ValueError(f'period {period}: no shape-valid rows for a team')
         h, a = (fsum(v) / len(v) for v in pair)
-        if (h - pitch_midpoint) * (a - pitch_midpoint) > 0 or h == a:
-            raise ValueError(f'period {period}: team means on same side of pitch midpoint or tied')
+        # Amendment 2: direction comes from the order of the two team means only; a dominant team can
+        # pull both means to one side of halfway, so only an exact tie is ambiguous.
+        if h == a:
+            raise ValueError(f'period {period}: team means tied')
         out[period] = (1, -1) if h < a else (-1, 1)
     return out
 
