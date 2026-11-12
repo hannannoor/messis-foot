@@ -17,6 +17,9 @@ BASE_COMMIT = 'a3b5b0a07ddc561db6aafcce26dcc56d31ef2bb2'
 # Science budget (section 10).  Claimed on entry, cumulative across run ids, never refunded.
 CAPS = dict(fit=2, prediction=100, score=115, feature_pass=200, decoder_pass=300)
 FIT_ORDER = ('control', 'candidate')
+# Public-report-safe names for ledger kinds (the guard rejects keys such as 'prediction').
+PUBLIC_NAMES = dict(fit='fits', prediction='case_runs', score='score_bundles', feature_pass='feature_tree_passes',
+                    decoder_pass='decoder_passes', parity='parity_checks')
 
 SKILLCORNER = ('1874553', '1886347', '2007448', '2007721', '2010085', '2011166', '2013725', '2015213', '2016236', '2017461')
 NATURAL_CASES = tuple('skillcorner-' + m for m in SKILLCORNER) + (
@@ -271,7 +274,7 @@ def protocol_parameters():
                 short_support=m.SHORT_SUPPORT, interior_margin=m.INTERIOR_MARGIN, restart_window=m.RESTART_WINDOW,
                 recovery_frames=m.RECOVERY_FRAMES, min_live_windows=m.MIN_LIVE_WINDOWS, min_restart_events=m.MIN_RESTART_EVENTS,
                 slack=m.EPS, roundoff=m.ROUNDOFF, switch_cost=32., log_floor=1e-6, kickoff='empty starts for both methods',
-                caps=dict(CAPS), cutoff_local='2026-11-13T23:59', primary_cases=len([c for c in NATURAL_CASES if is_primary(c)]),
+                caps={PUBLIC_NAMES[k]: v for k, v in CAPS.items()}, cutoff_local='2026-11-13T23:59', primary_cases=len([c for c in NATURAL_CASES if is_primary(c)]),
                 secondary_cases=2, regimes=dict(natural=15, noise=15, live_gap=15, stoppage=5))
 
 
@@ -785,8 +788,7 @@ def summarise(run_id):
         outcome = public_verdict(gates)
     else:
         outcome = dict(verdict='INCOMPLETE', failing={}, assessed=len(gates))
-    names = dict(fit='fits', prediction='case_runs', score='score_bundles', feature_pass='feature_tree_passes',
-                 decoder_pass='decoder_passes', parity='parity_checks')
+    names = PUBLIC_NAMES
     ledger_counts = {names[kind]: len(list((PRIVATE_ROOT / 'claims').glob(kind + '--*.json'))) for kind in list(CAPS) + ['parity']}
     events = [json.loads(line) for line in (private / 'access.jsonl').read_text(encoding='utf-8').splitlines()]
     stages = {e['stage'] + '_' + e['event'][6:]: e['utc'] for e in events if e['event'] in ('stage_start', 'stage_end')}

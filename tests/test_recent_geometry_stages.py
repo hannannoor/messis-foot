@@ -176,6 +176,12 @@ class ParityPieces(unittest.TestCase):
         cases['dfl-J03WOH'] = 0.0                      # secondary cases never enter the mean
         self.assertEqual(run.primary_natural_check(cases, summary)[1], True)
 
+    def test_protocol_parameters_are_public_report_safe(self):
+        from accuracy_evidence import assert_public_report
+        assert_public_report(run.protocol_parameters())
+        assert_public_report(dict(protocol=run.protocol_parameters(), source_sha256={'a.py': '0' * 64},
+                                  input_sha256={'training': {'m': {'f': '0' * 64}}}))
+
     def test_protocol_parameters_survive_a_json_round_trip(self):
         self.assertEqual(json.loads(json.dumps(run.protocol_parameters())), run.protocol_parameters())
 
