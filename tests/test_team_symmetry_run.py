@@ -468,6 +468,41 @@ class Stages(unittest.TestCase):
         self.assertEqual(run.open_ledger('run-a').count('prediction'), 0)
 
 
+class Freeze(unittest.TestCase):
+    """freeze() on a fresh run id creates its output folder and writes a verifiable receipt (heavy checks patched)."""
+
+    def test_freeze_creates_public_folder_and_receipt(self):
+        import memory_ablation_protocol as p
+        a = json.loads(run.A_FREEZE.read_text())
+        bindings = dict(evaluation={cid: dict(expected=h, files={}) for cid, h in a['input_sha256']['evaluation'].items()})
+        root = Path(tempfile.mkdtemp())
+        private, public = root / 'private', root / 'public' / 'run-x'
+        with patch.object(run, 'run_paths', lambda rid: (private, public)), \
+                patch.object(run, 'check_repository', lambda: 'a' * 40), \
+                patch.object(run, 'verified_bindings', lambda: bindings), \
+                patch.object(run, 'PRIVATE_ROOT', root / 'pr'), \
+                patch.object(p, 'runtime_info', lambda *a_, **k: a['environment']['scoring']):
+            out = run.freeze('run-x')
+        self.assertEqual(out['status'], 'frozen')
+        receipt = json.loads((public / 'freeze.json').read_text())
+        self.assertEqual(receipt['protocol'], run.protocol_parameters())
+        self.assertEqual(receipt['protocol_doc_sha256'], run.file_sha(run.ROOT / run.PROTOCOL_DOC))
+        self.assertEqual(receipt['input_sha256']['evaluation'], a['input_sha256']['evaluation'])
+        self.assertEqual(receipt['environment']['scoring'], a['environment']['scoring'])
+        self.assertTrue((private / 'freeze-anchor.json').is_file())
+
+    def test_freeze_refuses_a_different_environment(self):
+        import memory_ablation_protocol as p
+        a = json.loads(run.A_FREEZE.read_text())
+        root = Path(tempfile.mkdtemp())
+        with patch.object(run, 'run_paths', lambda rid: (root / 'private', root / 'public')), \
+                patch.object(run, 'check_repository', lambda: 'a' * 40), \
+                patch.object(p, 'runtime_info', lambda *a_, **k: dict(a['environment']['scoring'], python='3.0.0')):
+            with self.assertRaises(ValueError):
+                run.freeze('run-x')
+        self.assertFalse((root / 'public' / 'freeze.json').exists())
+
+
 class GatesAreExperimentA(unittest.TestCase):
     def setUp(self):
         self.assertIsNotNone(run, 'team_symmetry_run is missing')

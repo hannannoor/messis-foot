@@ -381,6 +381,7 @@ def freeze(run_id):
     if evaluation != a_freeze['input_sha256']['evaluation']:
         raise ValueError('Evaluation inputs differ from the Experiment A freeze')
     private.mkdir(parents=True, exist_ok=True)
+    public.mkdir(parents=True, exist_ok=True)
     sources = {name: file_sha(path) for name, path in source_paths().items()}
     value = dict(schema_version=1, run_id=run_id, created_utc=utc(), head_commit=head, protocol=protocol_parameters(),
                  protocol_doc_sha256=sources[PROTOCOL_DOC], source_sha256=sources, input_sha256=dict(evaluation=evaluation),
