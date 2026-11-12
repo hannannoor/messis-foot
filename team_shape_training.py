@@ -14,7 +14,7 @@ import numpy as np
 
 from gap_solver.selection import ball_mask, export_tree, mask_frames
 from gap_solver.temporal import mask_motion_frames
-from memory_ablation import MODEL_SHA, predict_supports
+from memory_ablation import MODEL_SHA, predict_supports, transform_matrix
 from memory_ablation_training import TRAIN_MATCHES, TrainingData, model_digest, prepare_training, semantic_digest
 from team_shape_features import RESEARCH_FEATURE_NAMES, research_matrix, provider_midpoint
 
@@ -63,6 +63,61 @@ def training_frame_parity(group, group_index):
                 column_mismatches={key:int(bad[:,k].sum()) for k,key in enumerate(FEATURE_NAMES)}))
         out[name] = 'identical'
     return dict(out, rows=len(frames))
+
+
+ALIGNMENT_TOLERANCE_M = 1e-4
+
+
+class TrainingAlignmentMismatch(ValueError):
+    def __init__(self, receipt):
+        super().__init__('Training source alignment failed: ' + receipt['regime'] + ' ' + receipt['reason'])
+        self.receipt = receipt
+
+
+def _valid_distance(value):
+    return value is not None and isfinite(value) and value >= 0
+
+
+def alignment_check(group, group_index, tolerance=ALIGNMENT_TOLERANCE_M):
+    """Amendment 1: the cache supplies columns 1-18; the motion load supplies player tracks only.
+
+    Prove the two sources describe the same rows: identical counts, periods, references, ball and
+    distance availability, and ball/distance values within a stated float32 round-off allowance.
+    """
+    frames = list(group['frames'])
+    cache = list(group.get('cache_frames', frames))
+    periods = np.asarray(group['periods'])
+    if len(frames) != len(cache):
+        raise TrainingAlignmentMismatch(dict(regime='natural', reason='row count', rows=len(frames)))
+    if not np.array_equal(group['reference'], group.get('cache_reference', group['reference'])):
+        raise ValueError('Training reference parity failed')
+    if (not np.array_equal(periods, group.get('cache_periods', periods))
+            or not np.array_equal(periods, [f.period for f in frames])
+            or not np.array_equal(periods, [f.period for f in cache])):
+        raise ValueError('Training period parity failed')
+    out = dict(rows=len(frames), tolerance_m=tolerance)
+    mask = ball_mask(periods, .3, 1729 + group_index)
+    for name, a, b in (('natural', frames, cache),
+                       ('mask30', mask_motion_frames(frames, mask), mask_frames(cache, mask))):
+        flags = (('ball_observed', lambda f: f.ball_observed),
+                 ('home_distance_valid', lambda f: _valid_distance(f.home_distance)),
+                 ('away_distance_valid', lambda f: _valid_distance(f.away_distance)))
+        for flag, get in flags:
+            bad = sum(get(x) != get(y) for x, y in zip(a, b))
+            if bad:
+                raise TrainingAlignmentMismatch(dict(regime=name, reason=flag + ' differs', rows=len(a), mismatched_rows=bad))
+        maxima = {}
+        for field, ok in (('ball_x', lambda f: f.ball_observed), ('ball_y', lambda f: f.ball_observed),
+                          ('home_distance', lambda f: _valid_distance(f.home_distance)),
+                          ('away_distance', lambda f: _valid_distance(f.away_distance))):
+            diffs = [abs(getattr(x, field) - getattr(y, field)) for x, y in zip(a, b) if ok(x)]
+            maxima[field] = float(max(diffs)) if diffs else 0.
+        worst = max(maxima.values())
+        if not worst <= tolerance:
+            raise TrainingAlignmentMismatch(dict(regime=name, reason='value difference above tolerance', rows=len(a), max_abs_diff_m=maxima))
+        out[name] = dict(status='aligned', max_abs_diff_m=maxima,
+                         observed_rows=int(sum(f.ball_observed for f in a)))
+    return out
 
 
 def load_training_groups(input_map, expected):
@@ -144,6 +199,7 @@ class Pair:
 
 
 def _candidate_training(groups):
+    from gap_solver.tactical import feature_rows
     matrices, targets, weights, identities, counts = [], [], [], [], []
     for group_index, group in enumerate(groups):
         frames = list(group['frames'])
@@ -152,8 +208,15 @@ def _candidate_training(groups):
         selected = np.flatnonzero(take)
         periods = np.asarray(group['periods'])
         for regime, rate in enumerate((0., .3)):
-            inputs = frames if rate == 0 else mask_motion_frames(frames, ball_mask(periods, rate, 1729 + group_index))
-            matrix = research_matrix(inputs, pitch_midpoint=group['pitch_midpoint'])       # full history before selecting any row
+            mask = ball_mask(periods, rate, 1729 + group_index)
+            inputs = frames if rate == 0 else mask_motion_frames(frames, mask)
+            cache = list(group.get('cache_frames', frames))
+            cache_inputs = cache if rate == 0 else mask_frames(cache, mask)
+            # Amendment 1: columns 1-18 exactly as the historical control builds them from the cache;
+            # columns 19-22 from the motion load's player tracks. Full history before selecting rows.
+            prefix = transform_matrix(list(feature_rows(cache_inputs)), 'control')
+            shape = research_matrix(inputs, pitch_midpoint=group['pitch_midpoint'])[:, 18:]
+            matrix = np.concatenate((np.asarray(prefix, dtype=np.float32), shape), axis=1)
             matrices.append(matrix[take])
             targets.append(target[take])
             weights.append(np.full(len(selected), 1. / len(selected), dtype=np.float64))
@@ -168,7 +231,7 @@ def prepare_pair(groups):
     """Historical control (18 columns) and 22-column candidate over identical rows."""
     groups = list(groups)
     for i, group in enumerate(groups):
-        training_frame_parity(group, i)
+        alignment_check(group, i)
     control = prepare_training([dict(g, frames=g.get('cache_frames', g['frames'])) for g in groups])                 # enforces order, codes, geometry-only frames
     candidate = _candidate_training(groups)
     _check_shared(control, candidate)

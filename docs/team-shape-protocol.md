@@ -261,3 +261,15 @@ Log all parity runs in a separate `parity` ledger category: no scores, not count
 12. Timing; cut-offs met yes/no.
 13. Transfer coverage check (aggregates).
 14. Limits, stated plainly (section 12 at minimum).
+
+---
+
+## Amendment 1 (12 November 2026, approved by the user before any fit or score)
+
+Run `2026-11-12-b` stopped at the section 6 training-frame bit-parity gate: on J03WOH every row differed in continuous columns by at most 1.82e-6 m (float32 rounding in the DFL position files), while every flag, latch, control and age column was identical. No fit, prediction or score had happened. That run stays committed unchanged. This amendment applies to a fresh run, `2026-11-12-c`, frozen after this text is committed.
+
+1. **Training features.** Columns 1–18 come from the cache frames, built exactly as `memory_ablation_training.prepare_training` builds them (natural, and the 30% mask via `gap_solver.selection.mask_frames`). Columns 19–22 come from the `load_dfl_motion` frames (natural, and the same mask via `gap_solver.temporal.mask_motion_frames`). The motion frames' ball and distance values never enter columns 1–18.
+2. **The section 6 training-frame parity gate is replaced by an alignment gate**, per training match and regime: identical row count, period and reference arrays; identical ball-observed, home-distance-valid and away-distance-valid flags row for row; maximum absolute difference between the two sources' ball x/y and home/away distances ≤ **1e-4 m** (about 50× the observed round-off). Observed maxima are reported in `training-alignment.json`. Any breach stops the run.
+3. **Unchanged:** fit 1 must still reproduce both control SHAs exactly; evaluation cases still use one loader each; the external feature-prefix parity (15/15) stays bit-exact; every gate, constant, seed and budget is unchanged.
+4. **Known limit, recorded before any result:** the unchanged assembly gives neutral emissions on missing-ball rows, so features 19–22 can only act on visible-ball rows. The live-gap hidden-live accuracy report stays descriptive and is expected to show no mechanism effect.
+5. **Freeze order:** this text and the code change are committed, then the freeze, then preflight.

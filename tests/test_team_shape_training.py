@@ -138,3 +138,53 @@ class Fitting(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+
+class Amendment1Alignment(unittest.TestCase):
+    """Amendment 1: cache supplies columns 1-18, motion load supplies player tracks only."""
+
+    def setUp(self):
+        self.assertIsNotNone(ts, 'team_shape_training is missing')
+
+    def test_alignment_passes_and_reports_maxima_both_regimes(self):
+        r = ts.alignment_check(groups()[0], 0)
+        for regime in ('natural', 'mask30'):
+            self.assertEqual(r[regime]['status'], 'aligned')
+            self.assertEqual(set(r[regime]['max_abs_diff_m']), {'ball_x', 'ball_y', 'home_distance', 'away_distance'})
+
+    def test_float32_scale_rounding_is_within_tolerance(self):
+        g = groups()[0]
+        g['cache_frames'] = [replace(f, ball_x=f.ball_x + 2e-6, home_distance=f.home_distance + 1.8e-6) for f in g['cache_frames']]
+        r = ts.alignment_check(g, 0)
+        self.assertLess(r['natural']['max_abs_diff_m']['ball_x'], ts.ALIGNMENT_TOLERANCE_M)
+        self.assertGreater(r['natural']['max_abs_diff_m']['ball_x'], 0.)
+
+    def test_value_above_tolerance_stops(self):
+        g = groups()[0]
+        g['cache_frames'][7] = replace(g['cache_frames'][7], home_distance=g['cache_frames'][7].home_distance + 1e-3)
+        with self.assertRaises(ts.TrainingAlignmentMismatch) as caught:
+            ts.alignment_check(g, 0)
+        self.assertEqual(caught.exception.receipt['reason'], 'value difference above tolerance')
+
+    def test_availability_difference_stops(self):
+        g = groups()[0]
+        g['cache_frames'][7] = replace(g['cache_frames'][7], ball_x=None, ball_y=None)
+        with self.assertRaisesRegex(ts.TrainingAlignmentMismatch, 'ball_observed'):
+            ts.alignment_check(g, 0)
+
+    def test_prefix_comes_from_cache_exactly_even_when_motion_values_differ(self):
+        g = groups()
+        for v in g:
+            v['frames'] = [replace(f, home_distance=f.home_distance + 1e-6) for f in v['frames']]
+        pair = ts.prepare_pair(g)
+        old = prepare_training([dict(v, frames=v['cache_frames']) for v in g])
+        self.assertEqual(semantic_digest(pair.control.matrix), semantic_digest(old.matrix))
+        self.assertEqual(semantic_digest(pair.candidate.matrix[:, :18]), semantic_digest(old.matrix))
+
+    def test_prepare_pair_uses_alignment_not_bit_parity(self):
+        g = groups()
+        for v in g:
+            v['frames'] = [replace(f, ball_x=f.ball_x + 1e-6) for f in v['frames']]
+        with self.assertRaises(ValueError):
+            ts.training_frame_parity(g[0], 0)
+        ts.prepare_pair(g)  # must not raise

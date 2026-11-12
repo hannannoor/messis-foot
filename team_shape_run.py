@@ -364,7 +364,7 @@ def protocol_parameters():
     import team_shape_training as rt
     from memory_ablation import MODEL_SHA
     return dict(experiment=EXPERIMENT, base_commit=BASE_COMMIT, model_sha256=MODEL_SHA, window=rf.WINDOW, min_players=rf.MIN_PLAYERS, velocity_lag=rf.VELOCITY_LAG, closing_radius=15., closing_speed=1.,
-                expected_rows=rt.EXPECTED_ROWS, control_training_semantic_sha256=rt.CONTROL_TRAINING_SEMANTIC_SHA,
+                expected_rows=rt.EXPECTED_ROWS, amendment=1, training_prefix_source='cache', training_alignment_tolerance_m=rt.ALIGNMENT_TOLERANCE_M, control_training_semantic_sha256=rt.CONTROL_TRAINING_SEMANTIC_SHA,
                 tree=dict(max_depth=4, min_samples_leaf=125, random_state=1729), mask_rate=.3, mask_seed=1729,
                 jitter_prefix=JITTER_PREFIX, jitter_sigma=rr.JITTER_SIGMA, live_window=rr.LIVE_WINDOW,
                 live_max_windows=rr.LIVE_MAX_WINDOWS, live_min_visible=rr.LIVE_MIN_VISIBLE, stoppage_tail=rr.STOPPAGE_TAIL,
@@ -515,15 +515,15 @@ def preflight(run_id):
     import team_shape_training as rt
     groups = load_training_groups(read_json(private / 'input-map.json'), freeze_value['input_sha256'])
     for i, group in enumerate(groups):
-        ledger.claim('parity', 'training/' + group['match'])
+        ledger.claim('parity', 'training-alignment/' + group['match'])
         try:
-            training_parity[group['match']] = rt.training_frame_parity(group, i)
-        except rt.TrainingFrameMismatch as error:
-            training_parity[group['match']]=dict(status='not_identical',**error.receipt)
-            store_exact(public/'training-parity.json',dict(status='stopped',cases=training_parity))
+            training_parity[group['match']] = rt.alignment_check(group, i)
+        except rt.TrainingAlignmentMismatch as error:
+            training_parity[group['match']]=dict(status='not_aligned',**error.receipt)
+            store_exact(public/'training-alignment.json',dict(status='stopped',cases=training_parity))
             raise
     del groups
-    store_exact(public / 'training-parity.json',dict(status='passed', cases=training_parity))
+    store_exact(public / 'training-alignment.json',dict(status='passed', cases=training_parity))
     for cid in NATURAL_CASES:
         enforce_cutoff('natural')
         loaded = adapter_load(ledger, cid, bindings, 'preflight')
