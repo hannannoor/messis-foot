@@ -426,3 +426,4 @@ Thumbs.db
 !reports/decoder-duration/2026-11-12-b/dfl-J03WOY--stoppage.json
 !reports/decoder-duration/2026-11-12-b/wcsf-used-match--stoppage.json
 !reports/decoder-duration/2026-11-12-b/report.md
+!reports/pair-costs/**/*.json
