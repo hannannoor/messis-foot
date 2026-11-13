@@ -26,7 +26,7 @@ Does letting the stillness tree's dead-ball evidence act on missing-ball rows, a
 | WCSF (1) | 0 | 0 | 0 |
 
 - The DFL and WCSF inputs have no missing-ball rows in the graded periods, so F cannot change anything there. This was not recorded among the limits before the run.
-- On SkillCorner, F turned 1,084 rows (0.18% of missing rows) into D on 8 of 10 matches, and none of them is reference D.
+- On SkillCorner, F turned 1,084 rows (0.18% of missing rows) into D on 7 of 10 matches, and none of them is reference D.
 - Two SkillCorner matches lost spell F1: 2010085 (−0.0020, 650 rows) and 2015213 (−0.0038, 90 rows). The rest are unchanged.
 
 ## 5. Gates (stage 1)
@@ -50,7 +50,7 @@ Does letting the stillness tree's dead-ball evidence act on missing-ball rows, a
   - λ = 0 equivalence with the replica;
   - E-tree supports equal E's stored natural candidate supports;
   - feature prefix identical.
-  The primary reconciliation reproduced .5518160817.
+  The primary reconciliation reproduced .5518160817. That figure scores the first-decode labels against history; the .5509537 control above scores the final labels, so the two differ by design.
 - **Budget used:** 30 case runs, 45 score bundles, 45 feature/tree passes, 60 decoder passes, 0 fits, 60 parity checks. All are within the caps of 100, 115, 200, 300 and 0.
 - **Models:** E's committed trees, pinned by artifact and semantic SHA-256; no fit.
 - **Public files:** these carry aggregates, case IDs and hashes only.
