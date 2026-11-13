@@ -52,7 +52,7 @@ Does a 3×3 pair-cost table derived from training-match transition rates, with m
 | SkillCorner | 3,963 → 4,169 | 39 → 45 |
 | WCSF | 524 → 534 | 13 → 12 |
 
-Cheaper team switches (54 instead of 64 for a round trip) add spells, and those extra spells are mostly wrong.
+Cheaper team switches (54 instead of 64 for a round trip) add spells. Spell correctness was not measured directly; the falls in spell F1 and interior accuracy suggest most of the extra spells are wrong.
 
 ## 6. Gates (stage 1)
 
@@ -71,12 +71,12 @@ Cheaper team switches (54 instead of 64 for a round trip) add spells, and those 
   - release replica equals `restart_release.assemble`;
   - uniform-32 matrix equivalence with the replica;
   - mask seals equal Experiment A's.
-  The primary reconciliation reproduced .5518160817.
+  The primary reconciliation reproduced .5518160817. That figure scores the first-decode labels against history; the .5509537 control above scores the final labels, so the two differ by design.
 - **Budget used:** 30 case runs, 45 score bundles, 45 feature/tree passes, 60 decoder passes, 0 fits, 31 parity checks.
 - **Public files:** these carry aggregates, case IDs and hashes only.
 
 ## 8. Interpretation and limits
 
 - Training-rate pair costs make team switches cheaper. That helps one DFL match and the two DFL training matches (both used to derive the table, so in-sample), but it over-switches on SkillCorner broadcast tracking.
-- Equal entry costs (the release) are better on this cohort. This agrees with Experiments D and E and the ownership-only check: the release's boundary costs are not too high.
+- This run rejects this one training-rate table, not asymmetric costs in general. It is consistent with Experiments D and E and the ownership-only check, which also found no gain from changing how the release places boundaries.
 - This report does not change the submission. No push, merge, release installation or challenge run is made from this report.
