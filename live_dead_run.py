@@ -34,6 +34,7 @@ FIT_ORDER = ('instant', 'temporal')
 PUBLIC_NAMES = dict(fit='fits', prediction='stream_runs', score='score_bundles', feature_pass='feature_tree_passes',
                     decoder_pass='decoder_passes', parity='parity_checks')
 STRESS_REGIMES = ('jitter', 'degrade')
+RESTART_CASES = ('dfl-J03WR9', 'dfl-J03WN1', 'dfl-J03WOH', 'dfl-J03WOY', 'wcsf-used-match')
 _SAFE = re.compile(r'[A-Za-z0-9_.:/-]{1,200}')
 
 
@@ -261,7 +262,7 @@ def protocol_parameters():
     import live_dead_training as lt
     from memory_ablation import MODEL_SHA
     return dict(experiment=lp.EXPERIMENT, base_commit=BASE_COMMIT, start_local=lp.START_LOCAL,
-                deadline_local=lp.DEADLINE_LOCAL, frozen_model_sha256=MODEL_SHA, pitch_m=list(PITCH),
+                deadline_local=lp.DEADLINE_LOCAL, frozen_model_sha256=MODEL_SHA, pitch_m=dict(length=PITCH[0], width=PITCH[1]),
                 offsets=dict(first=lf.OFFSETS[0], last=lf.OFFSETS[-1], step=5, positions=len(lf.OFFSETS)),
                 frame_columns=lf.FRAME_COLUMNS, speed_lag=lf.SPEED_LAG, max_speed=lf.MAX_SPEED, slow=lf.SLOW,
                 fast=lf.FAST, cap=lf.CAP, min_support=lf.MIN_SUPPORT, min_side=lf.MIN_SIDE, quantile='linear',
@@ -657,7 +658,8 @@ def run_bundle(ledger, regime, cid, frames, reference, instant, eligible, frozen
         assemblies[stream] = assembly
         finals[stream] = encode(assembly.final)
         ledger.claim('score', identity)
-        bundles[stream] = metrics.score_bundle(reference, finals[stream], periods, observed)
+        bundles[stream] = metrics.score_bundle(reference, finals[stream], periods, observed,
+                                               restart=cid in RESTART_CASES)
         arrays = dict(supports=supports[stream], final=finals[stream], latent=encode(assembly.latent))
         if stream in q:
             arrays['dead_score'] = q[stream]
@@ -677,6 +679,18 @@ def run_bundle(ledger, regime, cid, frames, reference, instant, eligible, frozen
 def _store_case(public, regime, receipt, cid):
     value = dict(receipt, role='primary' if cid in lp.PRIMARY else 'secondary', provider=lp.provider_of(cid))
     store_exact(public / 'cases' / f'{cid}--{regime}.json', value)
+    return value
+
+
+def finish_stage(path, value):
+    """Store a completed stage aggregate; past the deadline it is kept but marked timeout/UNRESOLVED."""
+    try:
+        deadline()
+    except ValueError:
+        value = dict(value, status='timeout', decision='UNRESOLVED', decision_before_timeout=value.get('decision'))
+        if 'advance_to_stage2' in value:
+            value['advance_to_stage2'] = False
+    store_exact(path, value)
     return value
 
 
@@ -708,64 +722,93 @@ def natural(run_id):
         del loaded, arrays
     gates = lm.gate_natural(flats)
     decision = lm.verdict(dict(natural=gates), [])
-    value = dict(schema_version=1, status='complete', decision=decision, advance_to_stage2=decision == 'PASS',
-                 gates=gates, budget=ledger.usage(), created_utc=utc())
-    deadline()
-    store_exact(public / 'stage1.json', value)
+    value = finish_stage(public / 'stage1.json', dict(
+        schema_version=1, status='complete', decision=decision, advance_to_stage2=decision == 'PASS', gates=gates,
+        budget=ledger.usage(), created_utc=utc()))
+    decision = value['decision']
     ledger.event('stage_end', stage='natural', decision=decision)
     return dict(decision=decision, failing=sorted(k for k, v in gates.items() if v['status'] not in ('pass', 'reported', 'non_applicable')))
 
 
+def _stress_inputs(ledger, regime, cid, bindings, case_arrays, transform, directory):
+    """Transform one case, build its liveness and frozen inputs (two feature passes) and measure coverage."""
+    import numpy as np
+    from gap_solver.tactical import feature_rows
+    import live_dead_assembly as la
+    import live_dead_features as lf
+    loaded = adapter_load(ledger, cid, bindings, regime + '-inputs')
+    frames = transform(list(loaded['frames']), cid)
+    ledger.claim('feature_pass', f'{regime}/{cid}/liveness')
+    x = lf.liveness_inputs(frames, PITCH)
+    if regime == 'jitter' and (np.asarray(x.instant).tobytes() != case_arrays['instant'].tobytes()
+                               or np.asarray(x.eligible).tobytes() != case_arrays['eligible'].tobytes()):
+        raise ValueError('Liveness inputs changed under ball jitter on ' + cid)
+    ledger.claim('feature_pass', f'{regime}/{cid}/frozen')
+    frozen_matrix = np.asarray(list(feature_rows(frames)), dtype=np.float32)
+    denominator = la.denominator_mask(frames)
+    integration = la.integration_mask(frames, x.eligible)
+    reference = np.asarray(case_arrays['reference'])
+    arrays = dict(instant=np.asarray(x.instant), eligible=np.asarray(x.eligible), frozen_matrix=frozen_matrix)
+    identity = save_arrays(Path(directory) / (cid + '.npz'), arrays)
+    return dict(coverage(frames, reference, x.eligible, integration, denominator), stress_arrays_sha256=identity)
+
+
 def stress(run_id):
+    """Stage 2 after a stage-1 PASS.  Transformed inputs and support floors for both regimes are checked before any
+    prediction or score claim; any shortfall stops the stage as UNRESOLVED_support and lists every shortfall."""
     deadline()
     _, public = run_paths(run_id)
     stage1_path = public / 'stage1.json'
     if not stage1_path.is_file() or read_json(stage1_path).get('decision') != 'PASS':
         raise ValueError('Stress requires a stage 1 PASS')
-    import numpy as np
-    from gap_solver.tactical import feature_rows
-    import live_dead_features as lf
     import live_dead_metrics as lm
     import live_dead_regimes as lg
     _, bindings = frozen(run_id, 'scoring')
     private, public = run_paths(run_id)
-    if (public / 'stage2.json').exists() or (private / 'predictions' / 'jitter').exists():
+    if (public / 'stage2.json').exists() or (private / 'stress-inputs').exists():
         raise ValueError('Preserve prior stage-2 attempt')
     pre = require(public, 'preflight.json', ('ready',))
     models, _ = load_models(public)
     frozen_model = lp.load_frozen_model()
     ledger = open_ledger(run_id)
     transforms = dict(jitter=lg.jitter_ball, degrade=lg.degrade_players)
+    coverages, problems = {}, []
+    for regime in STRESS_REGIMES:
+        ledger.event('stage_start', stage=regime + '-inputs')
+        coverages[regime] = {}
+        for cid in lp.PRIMARY:
+            deadline()
+            case_arrays = load_arrays(private / 'cases' / (cid + '.npz'), pre['cases'][cid]['case_arrays_sha256'])
+            coverages[regime][cid] = _stress_inputs(ledger, regime, cid, bindings, case_arrays, transforms[regime],
+                                                    private / 'stress-inputs' / regime)
+        problems += [regime + ': ' + p for p in lm.coverage_floors(coverages[regime])]
+    if problems:
+        finish_stage(public / 'stage2.json', dict(
+            schema_version=1, status='UNRESOLVED_support', decision='UNRESOLVED', problems='; '.join(problems),
+            coverage=coverages, budget=ledger.usage(), created_utc=utc()))
+        return dict(decision='UNRESOLVED', problems=problems)
     gates, decisions = {}, {}
     for regime in STRESS_REGIMES:
-        ledger.event('stage_start', stage=regime)
         flats = {}
         for cid in lp.PRIMARY:
             deadline()
-            arrays = load_arrays(private / 'cases' / (cid + '.npz'), pre['cases'][cid]['case_arrays_sha256'])
+            case_arrays = load_arrays(private / 'cases' / (cid + '.npz'), pre['cases'][cid]['case_arrays_sha256'])
+            inputs = load_arrays(private / 'stress-inputs' / regime / (cid + '.npz'),
+                                 coverages[regime][cid]['stress_arrays_sha256'])
             loaded = adapter_load(ledger, cid, bindings, regime)
             frames = transforms[regime](list(loaded['frames']), cid)
-            ledger.claim('feature_pass', f'{regime}/{cid}/liveness')
-            x = lf.liveness_inputs(frames, PITCH)
-            if regime == 'jitter' and (np.asarray(x.instant).tobytes() != arrays['instant'].tobytes()
-                                       or np.asarray(x.eligible).tobytes() != arrays['eligible'].tobytes()):
-                raise ValueError('Liveness inputs changed under ball jitter on ' + cid)
-            ledger.claim('feature_pass', f'{regime}/{cid}/frozen')
-            frozen_matrix = np.asarray(list(feature_rows(frames)), dtype=np.float32)
-            receipt = run_bundle(ledger, regime, cid, frames, arrays['reference'], np.asarray(x.instant),
-                                 np.asarray(x.eligible), frozen_matrix, models, frozen_model,
+            receipt = run_bundle(ledger, regime, cid, frames, case_arrays['reference'], inputs['instant'],
+                                 inputs['eligible'], inputs['frozen_matrix'], models, frozen_model,
                                  private / 'predictions' / regime / cid)
             flats[cid] = _store_case(public, regime, receipt, cid)['flats']
             ledger.event('case_complete', case_id=cid, regime=regime)
-            del loaded, frames, x, arrays
+            del loaded, frames, inputs, case_arrays
         gates[regime] = lm.gate_stress(flats)
         decisions[regime] = lm.verdict({regime: gates[regime]}, [])
-    decision = lm.verdict(gates, [])
-    value = dict(schema_version=1, status='complete', decision=decision, regimes=decisions, gates=gates,
-                 budget=ledger.usage(), created_utc=utc())
-    deadline()
-    store_exact(public / 'stage2.json', value)
-    return dict(decision=decision, regimes=decisions)
+    value = finish_stage(public / 'stage2.json', dict(
+        schema_version=1, status='complete', decision=lm.verdict(gates, []), regimes=decisions, gates=gates,
+        coverage=coverages, budget=ledger.usage(), created_utc=utc()))
+    return dict(decision=value['decision'], regimes=decisions)
 
 
 def summarise(run_id):
@@ -792,7 +835,45 @@ def summarise(run_id):
                           'integrity, support, incompleteness or timeout; not scientific evidence'),
                  budget=ledger.usage(), deadline_local=lp.DEADLINE_LOCAL, created_utc=utc())
     store_exact(public / 'summary.json', value)
+    with (public / 'report.md').open('x', encoding='utf-8') as handle:
+        handle.write(render_report(value, pre, stage1, stage2))
     return value
+
+
+def _cell(value):
+    if isinstance(value, float):
+        return f'{value:.6f}'
+    if isinstance(value, dict):
+        return ', '.join(f'{k} {_cell(v)}' for k, v in value.items() if not isinstance(v, dict))
+    return '' if value is None else str(value)
+
+
+def _gate_table(gates):
+    lines = ['| Check | Status | Value | Threshold |', '|---|---|---|---|']
+    for name, check in gates.items():
+        shown = {k: v for k, v in check.items() if k not in ('status', 'threshold')}
+        value = check.get('value', shown if check['status'] == 'reported' else None)
+        lines.append(f"| {name} | {check['status']} | {_cell(value)} | {_cell(check.get('threshold'))} |")
+    return '\n'.join(lines)
+
+
+def render_report(summary, pre, stage1, stage2):
+    out = [f"# Live/dead sequence experiment: {summary['verdict']}", '',
+           f"Verdict **{summary['verdict']}**: {summary['meaning']}.", f"Reason: {summary['reason']}.", '',
+           'Streams: frozen release, instantaneous binary head, temporal binary head, on reused external '
+           'development/regression cases. Not a holdout, not a challenge estimate, no significance claim.', '']
+    if pre and pre.get('problems'):
+        out += ['## Preflight shortfalls', '', pre['problems'], '']
+    if stage1 and stage1.get('gates'):
+        out += ['## Stage 1: natural inputs', '', f"Decision: {stage1['decision']}", '', _gate_table(stage1['gates']), '']
+    if stage2:
+        out += ['## Stage 2: stress regimes', '', f"Decision: {stage2['decision']}", '']
+        if stage2.get('problems'):
+            out += [stage2['problems'], '']
+        for regime, gates in (stage2.get('gates') or {}).items():
+            out += [f'### {regime}', '', _gate_table(gates), '']
+    out += ['## Budget used', '', ', '.join(f'{k} {v}' for k, v in summary['budget'].items()), '']
+    return '\n'.join(out)
 
 
 COMMANDS = dict(freeze=freeze, preflight=preflight, fit=fit, parity=parity, natural=natural, stress=stress,

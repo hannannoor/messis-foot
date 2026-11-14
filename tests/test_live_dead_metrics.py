@@ -158,6 +158,13 @@ class FloorAndVerdictTest(unittest.TestCase):
         del c['dfl-J03WR9']
         self.assertTrue(any('dfl-J03WR9' in p for p in lm.coverage_floors(c)))
 
+    def test_hard_fail_outranks_candidate_unresolved(self):
+        f = flats(gain=.0)
+        f['dfl-J03WN1']['temporal'].update(dead_precision=None, dead_recall=0.)    # collapsed head: no D at all
+        g = lm.gate_natural(f)
+        self.assertEqual(g['dead_precision']['status'], 'unresolved')
+        self.assertEqual(lm.verdict(dict(natural=g), []), 'NO_ADVANCEMENT')
+
     def test_verdict_precedence(self):
         f = flats(gain=.0)
         g = lm.gate_natural(f)

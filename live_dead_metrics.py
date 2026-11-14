@@ -171,9 +171,13 @@ def _statuses(gates):
 
 
 def verdict(gates, problems):
+    """Support/integrity problems first; then any hard fail is decisive (a collapsed head can leave other checks
+    undefined, which must not relabel a scientific failure); then anything undefined; else PASS."""
     statuses = list(_statuses(gates))
-    if problems or 'unresolved' in statuses:
+    if problems:
         return 'UNRESOLVED'
     if 'fail' in statuses:
         return 'NO_ADVANCEMENT'
+    if 'unresolved' in statuses:
+        return 'UNRESOLVED'
     return 'PASS'
