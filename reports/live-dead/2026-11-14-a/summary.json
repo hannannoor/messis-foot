@@ -1,0 +1,1 @@
+{"budget":{"decoder_passes":90,"feature_tree_passes":83,"fits":2,"parity_checks":36,"score_bundles":45,"stream_runs":45},"created_utc":"2026-11-14T08:16:43.735293+00:00","deadline_local":"2026-11-15T15:03:04+08:00","meaning":"no advancement for this fixed recipe","reason":"stage 1 NO_ADVANCEMENT; stress not run","schema_version":1,"status":"complete","verdict":"NO_ADVANCEMENT"}
