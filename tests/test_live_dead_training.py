@@ -2,6 +2,7 @@
 
 Run under the pinned training interpreter (scikit-learn 1.5.1).
 """
+import importlib.util
 import unittest
 
 import numpy as np
@@ -58,6 +59,10 @@ class SelectionTest(unittest.TestCase):
             self.ts.temporal[0, 0] = 1.
 
 
+SKLEARN = importlib.util.find_spec('sklearn') is not None
+
+
+@unittest.skipUnless(SKLEARN, 'needs the pinned training interpreter (scikit-learn 1.5.1)')
 class FitTest(unittest.TestCase):
     def test_parameters_exact(self):
         self.assertEqual(lt.PARAMETERS, dict(n_estimators=32, max_depth=6, min_samples_leaf=125, max_features=1.0,
@@ -83,6 +88,7 @@ class FitTest(unittest.TestCase):
             lt.fit_pair(None, print, min_samples_leaf=5)
 
 
+@unittest.skipUnless(SKLEARN, 'needs the pinned training interpreter (scikit-learn 1.5.1)')
 class ExporterTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
