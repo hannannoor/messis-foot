@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import numpy as np
 
-VERSION = '2026.11.15-strong-emissions-v3'
+VERSION = '2026.11.15-strong-emissions-v4'
 
 
 def generate(prefix, tags, out, *, features_out=None):
@@ -35,6 +35,8 @@ def generate(prefix, tags, out, *, features_out=None):
     frames = list(frames)
     f18 = np.asarray(list(feature_rows(frames)), dtype=np.float64)
     X, names, info = se_features.build(frames, f18)
+    Xe, ne = se_features.impulse_features(frames)
+    X, names = np.concatenate([X, Xe], 1), tuple(names) + tuple(ne)
     sup = strong_runtime.supports(X, names, info['period'])
     stages = assemble(frames, sup, kickoff_starts(tags), missing_w=strong_runtime.MISSING_W,
                       cost=strong_runtime.SWITCH_COST)

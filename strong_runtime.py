@@ -146,10 +146,13 @@ def gru_supports(p, k, X, period, plan):
 def supports(X, names, period):
     gbm = np.load(MODEL_DIR / 'gbm.npz')
     gru = np.load(MODEL_DIR / 'gru.npz')
-    if [str(s) for s in gbm['names']] != list(names):
-        raise ValueError('Feature schema differs from the exported model')
-    plan = swap_plan(list(names))
-    X = np.asarray(X, np.float32)
+    want = [str(s) for s in gbm['names']]
+    have = list(names)
+    missing = [n for n in want if n not in have]
+    if missing:
+        raise ValueError('Feature schema lacks model columns: ' + ', '.join(missing[:5]))
+    X = np.asarray(X, np.float32)[:, [have.index(n) for n in want]]
+    plan = swap_plan(want)
     parts = [gru_supports(gru, k, X, period, plan) for k in range(int(gru['n_models']))]
     parts.append(gbm_supports(gbm, X, plan))
     lp = sum(np.log(np.clip(p, 1e-9, 1)) for p in parts) / len(parts)

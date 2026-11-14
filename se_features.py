@@ -301,3 +301,69 @@ def build(frames, frozen18=None):
 def swap_names(names):
     """Index permutation and sign flips that swap home/away roles (for symmetric augmentation)."""
     return None
+
+
+IMPULSE_THR = 4.0   # m/s velocity change over +-2 frames (fixed a priori, physical)
+TOUCH_R = 2.0       # m, player radius for a contact
+
+
+def impulse_features(frames):
+    """Contact ('impulse touch') features: ball-velocity impulse peaks with a player within TOUCH_R."""
+    per, val, obs, ball, H, A, Hid, Aid = _arr(frames)
+    n = len(per)
+    seg = _segments(per)
+    # smooth ball over 5 frames inside observed runs of the same segment
+    bx = np.where(obs, ball[:, 0], np.nan)
+    by = np.where(obs, ball[:, 1], np.nan)
+    def smooth(x):
+        out = np.full(n, np.nan)
+        for k in range(-2, 3):
+            s = _shift(x, k)
+            s = np.where(_shift(seg.astype(float), k) == seg, s, np.nan)
+            out = np.where(k == -2, s, out + s) if False else out
+        stack = np.stack([np.where(_shift(seg.astype(float), k) == seg, _shift(x, k), np.nan) for k in range(-2, 3)])
+        return np.nanmean(stack, 0) if True else out
+    with np.errstate(all='ignore'):
+        sx, sy = smooth(bx), smooth(by)
+        vx = (sx - _shift(sx, 1)) * FPS
+        vy = (sy - _shift(sy, 1)) * FPS
+        dvx = _shift(vx, -2) - _shift(vx, 2)
+        dvy = _shift(vy, -2) - _shift(vy, 2)
+        imp = np.hypot(dvx, dvy)
+    imp = np.where(np.isfinite(imp), np.minimum(imp, 40.0), 0.0)
+    # nearest player distances per team
+    dH = np.hypot(H[:, :, 0] - ball[:, None, 0], H[:, :, 1] - ball[:, None, 1])
+    dA = np.hypot(A[:, :, 0] - ball[:, None, 0], A[:, :, 1] - ball[:, None, 1])
+    h1 = np.where(obs, np.nanmin(np.where(np.isfinite(dH), dH, np.inf), 1), np.inf)
+    a1 = np.where(obs, np.nanmin(np.where(np.isfinite(dA), dA, np.inf), 1), np.inf)
+    # local maxima within +-3 frames above threshold, with a player within TOUCH_R
+    peak = imp >= IMPULSE_THR
+    for k in (1, 2, 3):
+        peak &= imp >= np.nan_to_num(_shift(imp, k), nan=0)
+        peak &= imp > np.nan_to_num(_shift(imp, -k), nan=0)
+    near = np.minimum(h1, a1) <= TOUCH_R
+    touch = peak & near & obs
+    team = np.where(h1 < a1, 1.0, -1.0)
+    conf = np.clip(np.abs(np.where(np.isfinite(a1 - h1), a1 - h1, 0)), 0, 5) / 5 * np.minimum(imp, 20) / 20
+    tv = np.where(touch, team, 0.0)
+    cols, names = [], []
+
+    def add(name, x):
+        x = np.asarray(x, np.float64)
+        cols.append(np.where(np.isfinite(x), x, 0.0).astype(np.float32)); names.append(name)
+
+    lv, ldt = _event_ref(touch, tv, seg, -1)
+    nv, ndt = _event_ref(touch, tv, seg, +1)
+    lc, _ = _event_ref(touch, conf, seg, -1)
+    nc, _ = _event_ref(touch, conf, seg, +1)
+    add('itouch_last', lv); add('itouch_last_dt', ldt); add('itouch_last_conf', lc)
+    add('itouch_next', nv); add('itouch_next_dt', ndt); add('itouch_next_conf', nc)
+    add('itouch_flip', (lv * nv < 0).astype(float))
+    add('impulse', imp)
+    for w in (12, 25):
+        for d in (-1, 1):
+            mh, _ = _window_mean(np.where(touch & (team > 0), 1.0, 0.0), w, seg, d)
+            ma, _ = _window_mean(np.where(touch & (team < 0), 1.0, 0.0), w, seg, d)
+            add(f'itouchH_{"p" if d < 0 else "f"}{w}', mh * (w + 1))
+            add(f'itouchA_{"p" if d < 0 else "f"}{w}', ma * (w + 1))
+    return np.stack(cols, 1), tuple(names)

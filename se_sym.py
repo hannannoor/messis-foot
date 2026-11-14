@@ -18,7 +18,16 @@ def swap_plan(names):
     if 'ball_minus_hcx' in idx and 'ball_minus_acx' in idx:
         perm[idx['ball_minus_hcx']], perm[idx['ball_minus_acx']] = idx['ball_minus_acx'], idx['ball_minus_hcx']
         sign[idx['ball_minus_hcx']] = sign[idx['ball_minus_acx']] = -1
+    for w in ('p12', 'f12', 'p25', 'f25'):
+        a, b = f'itouchH_{w}', f'itouchA_{w}'
+        if a in idx and b in idx:
+            perm[idx[a]], perm[idx[b]] = idx[b], idx[a]
+    for n in ('itouch_last', 'itouch_next'):
+        if n in idx:
+            sign[idx[n]] = -1
     for n, i in idx.items():
+        if n.startswith('itouch'):
+            continue
         base = n.split('_p')[0].split('_f')[0]
         if n.endswith('_sup'):
             continue

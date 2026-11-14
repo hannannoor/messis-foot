@@ -68,3 +68,13 @@ Changes, each tested on dev cross-validation (13 matches) against the v1 recipe 
   - short D breaks at touch flips (council idea): every setting was flat or worse, because false splits dominate;
   - a stronger augmentation dose (80%): no better.
 - **Submission:** SHA-256 `27b4e25c…`. CPU runs are byte-identical, it is identical to the GPU path, and the official validator says OK. The D share of non-X frames on BAR–ATH falls from 45% (v2) to 38.5%.
+
+## v4 (15 November 2026): ball-impulse contact features
+- **New contact detector:** a touch is a local peak of ball-velocity change over ±2 frames, at least 4 m/s, with a player within 2 m, computed on 5-frame smoothed ball positions.
+  - It finds about 1,600 contacts per DFL match.
+  - The touch team agrees with the true owner 0.2 s later 96% of the time.
+  - The old proximity proxy marked 52,000 "near" frames.
+- **16 new features:** last and next contact team, timing and confidence; a team flip; impulse size; and per-team contact counts in ±0.5 s and ±1 s.
+- **Dev:** clean 0.7812 → **0.7980**. DFL rose 0.777 → 0.813 (all 6 matches up); SkillCorner was flat (0.785 → 0.784). Degraded DFL 0.590 → **0.599** (5 of 6 up).
+- **Holdout (confirmation):** clean 0.7463 → **0.7587**. DFL J03WN1 went 0.759 → 0.796 and WCSF 0.721 → 0.724; SkillCorner moved −0.004 on average. Degraded: WCSF 0.597, DFL J03WN1 0.556.
+- **Submission:** SHA-256 `a2761b6a…`. CPU runs are byte-identical, it differs from the GPU path on 1 frame, and the official validator says OK.
