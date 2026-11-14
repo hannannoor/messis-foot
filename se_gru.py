@@ -102,7 +102,12 @@ def train(cids, opts, plan, stats):
         Xs = np.clip((swapped(load(cid)[0], plan) - mu) / sd, -6, 6).astype(np.float32)
         refs = np.where(ref == 0, 1, np.where(ref == 1, 0, ref))
         wt = spell_weights(ref, per, opts.get('short_scale', 0), opts.get('short_cap', 4.0))
-        data.append((X, Xs, ref, refs, segments(per), not cid.startswith('skillcorner'), wt))
+        aug = None
+        ap = PRIVATE / 'cases_aug' / (cid + '.npz')
+        if opts.get('aug') and ap.exists():
+            Xa = load_path(ap)[0]
+            aug = (np.clip((Xa - mu) / sd, -6, 6).astype(np.float32), np.clip((swapped(Xa, plan) - mu) / sd, -6, 6).astype(np.float32))
+        data.append((X, Xs, ref, refs, segments(per), not cid.startswith('skillcorner'), wt, aug))
     torch.manual_seed(opts.get('seed', 1729))
     rng = np.random.default_rng(opts.get('seed', 1729))
     net = Net(data[0][0].shape[1], opts.get('hidden', 128), opts.get('layers', 2), opts.get('drop', .1)).to(DEVICE)
@@ -115,7 +120,9 @@ def train(cids, opts, plan, stats):
     for step in range(steps):
         xb, rb, db, wb = [], [], [], []
         for _ in range(B):
-            X, Xs, ref, refs, segs, hasd, wt = data[rng.integers(len(data))]
+            X, Xs, ref, refs, segs, hasd, wt, aug = data[rng.integers(len(data))]
+            if aug is not None and rng.random() < opts.get('aug_p', .5):
+                X, Xs = aug
             a, b = segs[rng.integers(len(segs))]
             s = rng.integers(a, max(a + 1, b - L))
             e = min(b, s + L)
@@ -182,6 +189,10 @@ def run(tag, mode, opts):
         net = train(tr, opts, plan, (mu, sd))
         for cid in te:
             np.savez_compressed(out / (cid + '.npz'), sup=predict(net, cid, plan, (mu, sd)))
+            dp = PRIVATE / 'cases_deg' / (cid + '.npz')
+            if dp.exists():
+                (out / 'deg').mkdir(exist_ok=True)
+                np.savez_compressed(out / 'deg' / (cid + '.npz'), sup=predict(net, None, plan, (mu, sd), dp))
         if mode in ('final', 'all'):
             prov = PRIVATE / 'provided' / 'features.npz'
             np.savez_compressed(out / 'provided.npz', sup=predict(net, None, plan, (mu, sd), prov))

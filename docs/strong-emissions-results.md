@@ -54,3 +54,17 @@ Changes, each tested on dev cross-validation (13 matches) against the v1 recipe 
 - **Rejected:** cost 10 (dev +0.012, but a worse tail and DFL-only gain), H/A-only missing-ball evidence (no better), a separate dead-ball switch cost (no gain), and a wider GRU (too slow). Training-budget scaling was deferred at the user's request.
 - **Holdout (second look, so supporting evidence only):** 0.7262 → 0.7420 (+0.016). WCSF went 0.687 → 0.709 and DFL J03WN1 0.736 → 0.760; 4 of 5 matches improved, and the worst is −0.008.
 - **Submission:** SHA-256 `edc50685…`. Two CPU runs are byte-identical, it agrees with the GPU path on all but 1 of 199,319 frames, and the official validator says OK. 98.3% of frames are the same as v1.
+
+## v3 (15 November 2026): robustness to missing ball
+- **Finding:** BAR–ATH sees the ball on only 58% of active frames. Every D-labelled training match sees it on about 100%, WCSF included. To simulate BAR–ATH, we dropped the ball on DFL dev matches (about 42% missing, gap lengths sampled from SkillCorner dev) and recomputed all features.
+  - Under that degradation, v2 fell from 0.78 to **0.48**, and the old release to 0.35.
+  - Cause: the models had learned "ball missing ⇒ dead ball" (99% of missing-ball live frames were predicted D).
+- **Fix:**
+  - Train with ball-dropout copies of the D-labelled matches, using different masks from evaluation, applied to 50% of GRU chunks and as extra GBM rows.
+  - Drop the gap rule, which now hurts: degraded 0.587 before it runs and 0.552 after.
+- **Dev:** clean 0.7812 (v2 0.7827, within noise). Degraded DFL **0.590** (v2 0.483).
+- **Holdout:** clean 0.7463 (v2 0.7420). Degraded WCSF **0.591** (release 0.395); degraded DFL J03WN1 **0.526** (release 0.349).
+- **Rejected this round:**
+  - short D breaks at touch flips (council idea): every setting was flat or worse, because false splits dominate;
+  - a stronger augmentation dose (80%): no better.
+- **Submission:** SHA-256 `27b4e25c…`. CPU runs are byte-identical, it is identical to the GPU path, and the official validator says OK. The D share of non-X frames on BAR–ATH falls from 45% (v2) to 38.5%.

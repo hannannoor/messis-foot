@@ -14,6 +14,7 @@ MODEL_DIR = Path(__file__).resolve().parent / 'strong_model'
 POWER = 2.0
 MISSING_W = 1.0   # log-evidence weight on missing-ball rows (release: 0)
 SWITCH_COST = 20.0  # decoder switch cost (release: 32)
+GAP_RULE = False  # v3: model infers dead ball itself (trained with ball-dropout augmentation); kickoff patch kept
 WINDOW, CONTEXT = 6000, 1500
 
 

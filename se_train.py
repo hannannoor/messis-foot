@@ -42,10 +42,20 @@ def columns(opts):
     return keep, [names[i] for i in keep]
 
 
+AUG = False
+
+
+def _sources(cid, keep):
+    yield load(cid, keep), 1.0
+    ap = PRIVATE / 'cases_aug' / (cid + '.npz')
+    if AUG and ap.exists():
+        z = np.load(ap)
+        yield (z['X'][:, keep], z['ref'], z['period'], z['observed']), 1.0
+
+
 def rows(cids, keep, step, head):
     Xs, ys, ws = [], [], []
-    for cid in cids:
-        X, ref, per, obs = load(cid, keep)
+    for cid, ((X, ref, per, obs), _) in ((c, s) for c in cids for s in _sources(c, keep)):
         if head == 'own':
             m = (ref < 2) & (per > 0)
         else:
@@ -77,6 +87,8 @@ def predict(models, cid, keep, plan=None):
 
 
 def run(tag, mode, opts):
+    global AUG
+    AUG = bool(opts.get('aug'))
     keep, names = columns(opts)
     step = opts.get('step', 4)
     out = PRIVATE / 'preds' / tag
@@ -94,6 +106,15 @@ def run(tag, mode, opts):
             models[h] = fit(X, y, w, opts)
         for cid in test:
             np.savez_compressed(out / (cid + '.npz'), sup=predict(models, cid, keep, sp))
+            dp = PRIVATE / 'cases_deg' / (cid + '.npz')
+            if dp.exists():
+                (out / 'deg').mkdir(exist_ok=True)
+                z = np.load(dp); Xd = z['X'][:, keep]
+                ph = models['own'].predict_proba(Xd)[:, 1]
+                if sp is not None:
+                    ph = .5 * (ph + 1 - models['own'].predict_proba(swapped(Xd, sp))[:, 1])
+                pdd = models['live'].predict_proba(Xd)[:, 1]
+                np.savez_compressed(out / 'deg' / (cid + '.npz'), sup=np.column_stack(((1 - pdd) * ph, (1 - pdd) * (1 - ph), pdd)))
         if mode in ('final', 'all'):
             X, _, _, _ = (lambda z: (z['X'][:, keep], 0, 0, 0))(np.load(PRIVATE / 'provided' / 'features.npz'))
             ph = models['own'].predict_proba(X)[:, 1]

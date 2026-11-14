@@ -2,7 +2,7 @@
 
 ## Submission
 
-Submitted pipeline (v2, 15 November 2026): **strong-emission model** -> release decoder chain (decode -> gap rule -> decoder restart across stoppage gaps -> gap rule -> automatic kickoff patch), with model evidence kept on missing-ball rows and switch cost 20. The per-frame H/A/D evidence now comes from two bidirectional GRUs plus a gradient-boosted pair of heads over 155 geometry features, fitted on 18 external matches only (7 DFL, 10 SkillCorner, 1 WCSF); GRU training up-weights short possessions. The provided match is used for inference only. On locked external holdout matches the provider-weighted spell F1 rose from 0.536 (old release) to 0.726 (v1) and 0.742 (v2). See [results](docs/strong-emissions-results.md).
+Submitted pipeline (v3, 15 November 2026): **strong-emission model** -> 3-state Viterbi decoder (model evidence kept on missing-ball rows, switch cost 20) -> automatic kickoff patch. The gap rule is dropped: models are trained with ball-dropout augmentation and infer dead ball from player context. The per-frame H/A/D evidence now comes from two bidirectional GRUs plus a gradient-boosted pair of heads over 155 geometry features, fitted on 18 external matches only (7 DFL, 10 SkillCorner, 1 WCSF); GRU training up-weights short possessions and uses ball-dropout augmentation on D-labelled matches. The provided match is used for inference only. On locked external holdout matches the provider-weighted spell F1 rose from 0.536 (old release) to 0.726 (v1), 0.742 (v2) and 0.746 (v3); under BAR-ATH-like ball loss (about 42% missing) v3 scores 0.59 on WCSF versus 0.40 for the old release. See [results](docs/strong-emissions-results.md).
 
 With `$prefix` set to the local tactical filename prefix and `$out` to a new absolute output directory, run:
 
@@ -10,9 +10,9 @@ With `$prefix` set to the local tactical filename prefix and `$out` to a new abs
 python strong_release.py --prefix "$prefix" --tags "${prefix}_smart_tagging.xml" --out "$out"
 ```
 
-Expected `submission.csv`: 199,319 rows, SHA-256 `edc506854272f3fd2d07be00c4fd802345a9b519a4d0e99dc075fa29cc798d50`. CPython 3.14.5 + numpy 2.5.1 (deterministic CPU inference, ~4 min; run without `-I` if numpy is a user-site install). Model weights: `strong_model/gru.npz`, `strong_model/gbm.npz`. Training code: `se_features.py`, `se_train.py` (scikit-learn 1.5.1), `se_gru.py` (PyTorch), exporters `se_export_*.py`.
+Expected `submission.csv`: 199,319 rows, SHA-256 `27b4e25c24e66d48929914ca4590613ae7f4fbd884b4c206e16b1c3215be9ed9`. CPython 3.14.5 + numpy 2.5.1 (deterministic CPU inference, ~4 min; run without `-I` if numpy is a user-site install). Model weights: `strong_model/gru.npz`, `strong_model/gbm.npz`. Training code: `se_features.py`, `se_train.py` (scikit-learn 1.5.1), `se_gru.py` (PyTorch), exporters `se_export_*.py`.
 
-Previously submitted: v1 of this route, SHA-256 `853d4e7c13de10e920fa6ded3225fedac03763b600c8e4552d27ee56847fea01` (commit 96a3acc); before that `restart_release.py` (frozen 31-node tree), SHA-256 `15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685`, retained unchanged. [Previous technical document](docs/technical-document.md).
+Previously submitted: v2, SHA-256 `edc506854272f3fd2d07be00c4fd802345a9b519a4d0e99dc075fa29cc798d50` (commit 811ea5d); v1, SHA-256 `853d4e7c13de10e920fa6ded3225fedac03763b600c8e4552d27ee56847fea01` (commit 96a3acc); before that `restart_release.py` (frozen 31-node tree), SHA-256 `15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685`, retained unchanged. [Previous technical document](docs/technical-document.md).
 
 Not submitted: `gap_release.py`, the previous gap-rule candidate (retained unchanged).
 

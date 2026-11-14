@@ -3,8 +3,9 @@
     python strong_release.py --prefix <tactical prefix> --tags <tags.xml> --out <new dir>
 
 Runtime: CPython 3.14 + numpy (inference only; models in strong_model/ were fitted on external data only).
-Decoder chain as restart_release.py (decode -> gap rule -> decoder restart -> gap rule -> kickoff patch), with
-model evidence kept on missing-ball rows and switch cost 20 (se_assembly.py).
+Decoder: 3-state Viterbi over model supports (evidence kept on missing-ball rows, switch cost 20) -> automatic
+kickoff patch (se_assembly.py, 'nogap' stage). v3 drops the gap rule: the models are trained with ball-dropout
+augmentation and infer dead ball from player context.
 """
 import argparse
 import hashlib
@@ -16,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import numpy as np
 
-VERSION = '2026.11.15-strong-emissions-v2'
+VERSION = '2026.11.15-strong-emissions-v3'
 
 
 def generate(prefix, tags, out, *, features_out=None):
@@ -37,13 +38,14 @@ def generate(prefix, tags, out, *, features_out=None):
     sup = strong_runtime.supports(X, names, info['period'])
     stages = assemble(frames, sup, kickoff_starts(tags), missing_w=strong_runtime.MISSING_W,
                       cost=strong_runtime.SWITCH_COST)
-    final = list(stages['final'])
+    final = list(stages['final' if strong_runtime.GAP_RULE else 'nogap'])
     data = submission_bytes(final)
     model_sha = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(strong_runtime.MODEL_DIR.glob('*.npz'))}
     receipt = dict(version=VERSION, rows=len(final), csv_sha256=hashlib.sha256(data).hexdigest(),
                    supports_sha256=hashlib.sha256(np.ascontiguousarray(sup).tobytes()).hexdigest(),
                    model_sha256=model_sha, counts={k: final.count(k) for k in 'HADX'},
-                   missing_w=strong_runtime.MISSING_W, switch_cost=strong_runtime.SWITCH_COST)
+                   missing_w=strong_runtime.MISSING_W, switch_cost=strong_runtime.SWITCH_COST,
+                   gap_rule=strong_runtime.GAP_RULE)
     out.mkdir(parents=True, exist_ok=False)
     (out / 'submission.csv').write_bytes(data)
     (out / 'strong-release-receipt.json').write_text(json.dumps(receipt, sort_keys=True, indent=1, default=str) + '\n',
