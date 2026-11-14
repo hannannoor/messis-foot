@@ -3,7 +3,8 @@
     python strong_release.py --prefix <tactical prefix> --tags <tags.xml> --out <new dir>
 
 Runtime: CPython 3.14 + numpy (inference only; models in strong_model/ were fitted on external data only).
-Decoder chain unchanged from restart_release.py: decode -> gap rule -> decoder restart -> gap rule -> kickoff patch.
+Decoder chain as restart_release.py (decode -> gap rule -> decoder restart -> gap rule -> kickoff patch), with
+model evidence kept on missing-ball rows and switch cost 20 (se_assembly.py).
 """
 import argparse
 import hashlib
@@ -15,14 +16,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import numpy as np
 
-VERSION = '2026.11.14-strong-emissions'
+VERSION = '2026.11.15-strong-emissions-v2'
 
 
 def generate(prefix, tags, out, *, features_out=None):
     from gap_solver.tactical import feature_rows
     from kickoff_patch import kickoff_starts
-    from live_dead_assembly import StreamSupportSet
-    from recent_geometry_assembly import assemble_research
+    from se_assembly import assemble
     from release_runtime import load_source, submission_bytes
     import se_features
     import strong_runtime
@@ -35,13 +35,15 @@ def generate(prefix, tags, out, *, features_out=None):
     f18 = np.asarray(list(feature_rows(frames)), dtype=np.float64)
     X, names, info = se_features.build(frames, f18)
     sup = strong_runtime.supports(X, names, info['period'])
-    result = assemble_research(frames, StreamSupportSet('release', sup), kickoff_starts(tags))
-    data = submission_bytes(result.final)
+    stages = assemble(frames, sup, kickoff_starts(tags), missing_w=strong_runtime.MISSING_W,
+                      cost=strong_runtime.SWITCH_COST)
+    final = list(stages['final'])
+    data = submission_bytes(final)
     model_sha = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(strong_runtime.MODEL_DIR.glob('*.npz'))}
-    receipt = dict(version=VERSION, rows=len(result.final), csv_sha256=hashlib.sha256(data).hexdigest(),
+    receipt = dict(version=VERSION, rows=len(final), csv_sha256=hashlib.sha256(data).hexdigest(),
                    supports_sha256=hashlib.sha256(np.ascontiguousarray(sup).tobytes()).hexdigest(),
-                   model_sha256=model_sha, counts={k: result.final.count(k) for k in 'HADX'},
-                   stoppage_gaps=len(result.stoppage_gaps), kickoff_changed=result.kickoff_changed)
+                   model_sha256=model_sha, counts={k: final.count(k) for k in 'HADX'},
+                   missing_w=strong_runtime.MISSING_W, switch_cost=strong_runtime.SWITCH_COST)
     out.mkdir(parents=True, exist_ok=False)
     (out / 'submission.csv').write_bytes(data)
     (out / 'strong-release-receipt.json').write_text(json.dumps(receipt, sort_keys=True, indent=1, default=str) + '\n',

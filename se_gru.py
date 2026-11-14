@@ -62,7 +62,23 @@ class Net(nn.Module):
         return self.out(y)
 
 
-def loss_fn(logits, ref, dmask):
+def spell_weights(ref, per, scale, cap):
+    """Weight H/A frames by inverse spell length: clip(scale / len, 1, cap). Other frames 1."""
+    w = np.ones(len(ref), np.float32)
+    if not scale:
+        return w
+    i, n = 0, len(ref)
+    while i < n:
+        j = i + 1
+        while j < n and ref[j] == ref[i] and per[j] == per[i]:
+            j += 1
+        if ref[i] < 2:
+            w[i:j] = min(cap, max(1.0, scale / (j - i)))
+        i = j
+    return w
+
+
+def loss_fn(logits, ref, dmask, wt=None):
     """ref: 0 H,1 A,2 D,3 X. dmask: True where provider has D labels."""
     logp = torch.log_softmax(logits, -1)
     full = (ref < 3) & dmask
@@ -71,8 +87,10 @@ def loss_fn(logits, ref, dmask):
     l1 = -logp.gather(-1, lab.unsqueeze(-1)).squeeze(-1)
     cond = logp[..., :2] - torch.logsumexp(logp[..., :2], -1, keepdim=True)
     l2 = -cond.gather(-1, lab.clamp(max=1).unsqueeze(-1)).squeeze(-1)
-    tot = (l1 * full).sum() + (l2 * own).sum()
-    return tot / (full.sum() + own.sum()).clamp(min=1)
+    if wt is None:
+        wt = torch.ones_like(l1)
+    tot = (l1 * full * wt).sum() + (l2 * own * wt).sum()
+    return tot / ((full + own) * wt).sum().clamp(min=1)
 
 
 def train(cids, opts, plan, stats):
@@ -83,7 +101,8 @@ def train(cids, opts, plan, stats):
         X = np.clip((X - mu) / sd, -6, 6).astype(np.float32)
         Xs = np.clip((swapped(load(cid)[0], plan) - mu) / sd, -6, 6).astype(np.float32)
         refs = np.where(ref == 0, 1, np.where(ref == 1, 0, ref))
-        data.append((X, Xs, ref, refs, segments(per), not cid.startswith('skillcorner')))
+        wt = spell_weights(ref, per, opts.get('short_scale', 0), opts.get('short_cap', 4.0))
+        data.append((X, Xs, ref, refs, segments(per), not cid.startswith('skillcorner'), wt))
     torch.manual_seed(opts.get('seed', 1729))
     rng = np.random.default_rng(opts.get('seed', 1729))
     net = Net(data[0][0].shape[1], opts.get('hidden', 128), opts.get('layers', 2), opts.get('drop', .1)).to(DEVICE)
@@ -94,23 +113,26 @@ def train(cids, opts, plan, stats):
     net.train()
     t0 = time.time()
     for step in range(steps):
-        xb, rb, db = [], [], []
+        xb, rb, db, wb = [], [], [], []
         for _ in range(B):
-            X, Xs, ref, refs, segs, hasd = data[rng.integers(len(data))]
+            X, Xs, ref, refs, segs, hasd, wt = data[rng.integers(len(data))]
             a, b = segs[rng.integers(len(segs))]
             s = rng.integers(a, max(a + 1, b - L))
             e = min(b, s + L)
             sw = rng.random() < .5
             x = (Xs if sw else X)[s:e]
             r = (refs if sw else ref)[s:e]
+            ww = wt[s:e]
             if e - s < L:
                 x = np.pad(x, ((0, L - (e - s)), (0, 0)))
                 r = np.pad(r, (0, L - (e - s)), constant_values=3)
-            xb.append(x); rb.append(r); db.append(hasd)
+                ww = np.pad(ww, (0, L - (e - s)), constant_values=1)
+            xb.append(x); rb.append(r); db.append(hasd); wb.append(ww)
         xb = torch.from_numpy(np.stack(xb)).to(DEVICE)
         rb = torch.from_numpy(np.stack(rb)).to(DEVICE)
         dm = torch.tensor(db, device=DEVICE)[:, None].expand_as(rb)
-        loss = loss_fn(net(xb), rb, dm)
+        wtb = torch.from_numpy(np.stack(wb)).to(DEVICE)
+        loss = loss_fn(net(xb), rb, dm, wtb)
         opt.zero_grad()
         loss.backward()
         nn.utils.clip_grad_norm_(net.parameters(), 1.0)

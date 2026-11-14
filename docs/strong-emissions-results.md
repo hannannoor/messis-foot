@@ -44,3 +44,13 @@ On the dev matches (grouped 4-fold, held-out folds only), the score went from 0.
 ## Caveats
 - External matches are not BAR–ATH. Its tracking is from a tactical camera, with the ball observed in 58% of active frames. Input features sit within about 1 SD of the external data.
 - The decoder still treats missing-ball rows as neutral, the release's policy. That is a possible next gain.
+
+## v2 (15 November 2026)
+Changes, each tested on dev cross-validation (13 matches) against the v1 recipe (0.7723):
+- **Short-possession weighting:** GRU ownership loss weight is `clip(50 / spell frames, 1, 4)`. In a matched single-model comparison (same seed and steps) it moved dev from 0.7587 to 0.7675.
+- **Missing-ball rows:** the decoder now keeps model evidence there (weight 1; the release used 0). This adds roughly +0.001 to +0.003.
+- **Switch cost:** 32 → 20.
+- **Blend result:** dev 0.7723 → 0.7827 (+0.010). Nine matches are better and four worse; the worst is −0.010.
+- **Rejected:** cost 10 (dev +0.012, but a worse tail and DFL-only gain), H/A-only missing-ball evidence (no better), a separate dead-ball switch cost (no gain), and a wider GRU (too slow). Training-budget scaling was deferred at the user's request.
+- **Holdout (second look, so supporting evidence only):** 0.7262 → 0.7420 (+0.016). WCSF went 0.687 → 0.709 and DFL J03WN1 0.736 → 0.760; 4 of 5 matches improved, and the worst is −0.008.
+- **Submission:** SHA-256 `edc50685…`. Two CPU runs are byte-identical, it agrees with the GPU path on all but 1 of 199,319 frames, and the official validator says OK. 98.3% of frames are the same as v1.
