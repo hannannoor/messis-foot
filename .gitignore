@@ -581,3 +581,6 @@ Thumbs.db
 !reports/player-stillness/2026-11-12-b/wcsf-used-match--stoppage.json
 !reports/player-stillness/2026-11-12-b/stop.json
 !reports/player-stillness/2026-11-12-b/training-alignment.json
+
+# Strong-emission release model weights (fitted on external data only)
+!strong_model/*.npz

@@ -2,13 +2,17 @@
 
 ## Submission
 
-Submitted pipeline: frozen control → gap rule → decoder restart across stoppage gaps → gap rule → automatic kickoff patch. With `$prefix` set to the local tactical filename prefix and `$out` to a new absolute output directory, run:
+Submitted pipeline (14 November 2026): **strong-emission model** -> unchanged release decoder chain (decode -> gap rule -> decoder restart across stoppage gaps -> gap rule -> automatic kickoff patch). The per-frame H/A/D evidence now comes from two bidirectional GRUs plus a gradient-boosted pair of heads over 155 geometry features, fitted on 18 external matches only (7 DFL, 10 SkillCorner, 1 WCSF). The provided match is used for inference only. On locked external holdout matches the provider-weighted spell F1 rose from 0.536 to 0.726. See [results](docs/strong-emissions-results.md).
+
+With `$prefix` set to the local tactical filename prefix and `$out` to a new absolute output directory, run:
 
 ```powershell
-python -I restart_release.py --prefix "$prefix" --tags "${prefix}_smart_tagging.xml" --out "$out"
+python strong_release.py --prefix "$prefix" --tags "${prefix}_smart_tagging.xml" --out "$out"
 ```
 
-Expected `submission.csv`: 199,319 rows, SHA-256 `15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685`. CPython 3.14.5; standard library only. [Submission technical document](docs/technical-document.md).
+Expected `submission.csv`: 199,319 rows, SHA-256 `853d4e7c13de10e920fa6ded3225fedac03763b600c8e4552d27ee56847fea01`. CPython 3.14.5 + numpy 2.5.1 (deterministic CPU inference, ~4 min; run without `-I` if numpy is a user-site install). Model weights: `strong_model/gru.npz`, `strong_model/gbm.npz`. Training code: `se_features.py`, `se_train.py` (scikit-learn 1.5.1), `se_gru.py` (PyTorch), exporters `se_export_*.py`.
+
+Previously submitted: `restart_release.py` (frozen 31-node tree), SHA-256 `15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685`, retained unchanged. [Previous technical document](docs/technical-document.md).
 
 Not submitted: `gap_release.py`, the previous gap-rule candidate (retained unchanged).
 
