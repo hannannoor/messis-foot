@@ -109,8 +109,8 @@ def train(cids, opts, plan, stats):
         wt = spell_weights(ref, per, opts.get('short_scale', 0), opts.get('short_cap', 4.0))
         aug = None
         ap = PRIVATE / 'cases_aug' / (cid + '.npz')
-        views = [PRIVATE / v / (cid + '.npz') for v in opts.get('aug_views', ())]
-        if opts.get('aug') and views and all(v.exists() for v in views):
+        views = [q for q in (PRIVATE / v / (cid + '.npz') for v in opts.get('aug_views', ())) if q.exists()]
+        if opts.get('aug') and views:
             aug = ('lazy', [load_path(v)[0] for v in views])   # raw; normalised + swapped per chunk (RAM)
         elif opts.get('aug') and ap.exists():
             Xa = load_path(ap)[0]

@@ -1,6 +1,6 @@
 """Noise-aware comparison of prediction tags across evaluation views (investigation, dev only).
 
-    python se_noise.py <cfg> <tagA> <tagB> [<tagC> ...]
+    python se_noise.py <cfg> <tagA> <tagB> [<tagC> ...]     (a tag may be tag#cfg, tag@power#cfg to override)
 For each view (clean, deg, cases_evalg1/2, cases_evalr1/2) prints each tag's provider-weighted mean and, for every
 tag against the first, the paired per-match mean difference +- 1 SE and how many matches improved.
 Reads scores2/<tag>[_<view>]/<cid>.json written by se_score2.py.
@@ -36,7 +36,10 @@ def weighted(scores):
 if __name__ == '__main__':
     cfg, tags = sys.argv[1], sys.argv[2:]
     for view, suf in VIEWS:
-        s = {t: per_match(t + '@2', suf, cfg) for t in tags}
+        def get(t):
+            name, _, c = t.partition('#')
+            return per_match(name if '@' in name else name + '@2', suf, c or cfg)
+        s = {t: get(t) for t in tags}
         if not all(s.values()):
             continue
         common = sorted(set.intersection(*[set(v) for v in s.values()]))

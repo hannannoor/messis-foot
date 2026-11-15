@@ -144,3 +144,10 @@ Changes, each tested on dev cross-validation (13 matches) against the v1 recipe 
 - **Mask noise:** one model's ball-loss score moves 0.644–0.679 across masks, so absolute ball-loss numbers carry about ±0.015 uncertainty. Paired comparisons are much tighter.
 - **Touch-aware cost:** re-checked on all views, +0.002 to +0.006. Kept.
 - **Status:** v5 remains submitted pending the user's decision. v6 is fully built (commit 480ee92, CSV in `final-submission/previous-v6/`).
+
+## Round 7: trying to improve v6 (15 November 2026, dev only, five-view protocol)
+- **Re-checked v5-era settings on v6:** v4 weight {0, 0.15}, switch cost {16, 24}, power {1.5, 2.5}. All within about ±0.003 of v6's current settings; none clears the bar (every view ≥ 0 and 3 of 5 views ≥ 2 SE).
+- **5 dropout copies instead of 3** (two seeds): +0.012 on the original mask but about 0 on the other four views. Diversity saturates at 3.
+- **Dropout copies for SkillCorner matches** (two seeds): +0.001 to +0.004 on most views, never ≥ 2 SE.
+- **Lesson:** single-seed gains of about 0.005 (clean and SkillCorner) disappeared with a second seed. Decisions at this effect size need two seeds and all five views.
+- **Result:** no v7. v6 is the best-supported candidate.

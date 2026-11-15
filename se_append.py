@@ -36,11 +36,15 @@ def job(path):
 if __name__ == '__main__':
     P = se_load.PRIVATE
     paths = sorted((P / 'cases').glob('*.npz')) + sorted((P / 'cases_deg').glob('*.npz')) + sorted((P / 'cases_aug').glob('*.npz')) + [P / 'provided' / 'features.npz']
-    paths += sorted((P / 'cases_aug2').glob('*.npz')) + sorted((P / 'cases_aug3').glob('*.npz'))
+    for d in sorted(P.glob('cases_aug?*')):
+        paths += sorted(d.glob('*.npz'))
     for d in sorted(P.glob('cases_eval*')):
         paths += sorted(d.glob('*.npz'))
     if '--only-new' in sys.argv:
         paths = [p for p in paths if p.parent.name in ('cases_aug2', 'cases_aug3')]
+    if '--only' in sys.argv:
+        keep = sys.argv[sys.argv.index('--only') + 1].split(',')
+        paths = [p for p in paths if p.parent.name in keep]
     if '--only-eval' in sys.argv:
         paths = [p for p in paths if p.parent.name.startswith('cases_eval')]
     with Pool(8) as pool:

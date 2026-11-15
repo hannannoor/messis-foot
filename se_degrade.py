@@ -40,9 +40,10 @@ def gap_stats():
     return np.concatenate(o), np.concatenate(m)
 
 
-def make_mask(n, period, cid):
+def make_mask(n, period, cid, target=None):
     """True = drop ball. Alternating observed/missing runs from SC empirical distributions, rescaled so the
-    missing fraction on active rows is about TARGET_MISSING."""
+    missing fraction on active rows is about TARGET_MISSING (or `target`)."""
+    TARGET_MISSING = globals()['TARGET_MISSING'] if target is None else target
     obs_runs, miss_runs = gap_stats()
     rng = np.random.default_rng(zlib.crc32(cid.encode()))
     # scale observed runs so expected missing fraction hits the target
@@ -108,6 +109,8 @@ def build(cids, kind='deg'):
         if kind.startswith('evalr'):   # real SkillCorner gap layout, rotated over SC dev matches
             k = DEG_CASES.index(cid) + (0 if kind == 'evalr1' else 3)
             drop = transplant_mask(per, sorted(SC_DEV)[k % len(SC_DEV)])
+        elif kind == 'augsc':   # SkillCorner training copy: extra ~25% removal on top of its natural ball loss
+            drop = make_mask(len(frames), per, cid + '#' + kind, target=0.25)
         else:
             drop = make_mask(len(frames), per, cid if kind == 'deg' else cid + '#' + kind)
         frames = degrade(frames, drop)
