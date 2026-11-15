@@ -112,7 +112,7 @@ Changes, each tested on dev cross-validation (13 matches) against the v1 recipe 
   - Degraded: WCSF 0.597 → **0.670**, DFL J03WN1 0.556 → **0.635**.
 - **Submission:** SHA-256 `f4d3d940…`. Two CPU runs are byte-identical, the GPU path agrees on all 199,319 frames, and the official validator says OK. 96.2% of frames match v4.
 
-## v6 (15 November 2026, experiment, not submitted): three independent ball-dropout views per match
+## v6 (15 November 2026; submitted after the investigation): three independent ball-dropout views per match
 - **Change:** each D-labelled match now has 3 dropout copies (independent masks, SkillCorner dev gap statistics) instead of 1.
   - Each GRU training chunk picks one copy; the boosted trees weight the 3 copies together like the single copy.
   - Steps, seeds and features are the same as v5.
@@ -151,3 +151,8 @@ Changes, each tested on dev cross-validation (13 matches) against the v1 recipe 
 - **Dropout copies for SkillCorner matches** (two seeds): +0.001 to +0.004 on most views, never ≥ 2 SE.
 - **Lesson:** single-seed gains of about 0.005 (clean and SkillCorner) disappeared with a second seed. Decisions at this effect size need two seeds and all five views.
 - **Result:** no v7. v6 is the best-supported candidate.
+
+## Decision: v6 submitted (15 November 2026, user's go-ahead)
+- The investigation showed v6's ball-loss gain holds on real SkillCorner gap layouts, and round 7 found nothing better.
+- `final-submission/submission.csv` is v6 (SHA-256 `e2ff053d…`), and v5 is kept in `final-submission/previous-v5/`.
+- The branch rebuilds v6 byte-identically, and the official validator says OK.
