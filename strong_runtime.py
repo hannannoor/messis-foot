@@ -1,7 +1,8 @@
 """Deterministic numpy inference for the strong-emission model (no torch / scikit-learn at runtime).
 
-Supports = geometric blend (equal weights) of two bidirectional-GRU heads and one gradient-boosted pair of heads
-(ownership with home/away swap averaging, live/dead), then squared (power 2) and renormalised.
+Each model set = geometric blend (equal weights) of two bidirectional-GRU heads and one gradient-boosted pair of
+heads (ownership with home/away swap averaging, live/dead). v5 blends two sets geometrically (v4 set 0.3 on 171
+features, v5 set 0.7 on 241 features incl. team-shape), then squares (power 2) and renormalises.
 Models were fitted on external matches only (DFL, SkillCorner, WCSF); see docs/strong-emissions-results.md.
 """
 from pathlib import Path
@@ -16,6 +17,16 @@ MISSING_W = 1.0   # log-evidence weight on missing-ball rows (release: 0)
 SWITCH_COST = 20.0  # decoder switch cost (release: 32)
 GAP_RULE = False  # v3: model infers dead ball itself (trained with ball-dropout augmentation); kickoff patch kept
 WINDOW, CONTEXT = 6000, 1500
+SETS = (('gru.npz', 'gbm.npz', 0.3), ('gru5.npz', 'gbm5.npz', 0.7))   # (GRU file, GBM file, set weight)
+TOUCH_COST, TOUCH_K = 10.0, 6   # v5: switch cost within +-TOUCH_K frames of an impulse contact
+
+
+def cost_rows(X, names):
+    """Per-frame switch cost: TOUCH_COST near impulse contacts (itouch_last_dt == 0), SWITCH_COST elsewhere."""
+    names = list(names)
+    t = (np.asarray(X)[:, names.index('itouch_last_dt')] == 0) & (np.asarray(X)[:, names.index('itouch_last')] != 0)
+    near = np.convolve(t.astype(float), np.ones(2 * TOUCH_K + 1), 'same') > 0
+    return np.where(near, TOUCH_COST, SWITCH_COST)
 
 
 # ----- gradient-boosted heads ---------------------------------------------------------------------------------
@@ -143,19 +154,25 @@ def gru_supports(p, k, X, period, plan):
 
 # ----- blend --------------------------------------------------------------------------------------------------
 
-def supports(X, names, period):
-    gbm = np.load(MODEL_DIR / 'gbm.npz')
-    gru = np.load(MODEL_DIR / 'gru.npz')
+def _set_logp(gru_file, gbm_file, X, names, period):
+    gbm = np.load(MODEL_DIR / gbm_file)
+    gru = np.load(MODEL_DIR / gru_file)
     want = [str(s) for s in gbm['names']]
     have = list(names)
     missing = [n for n in want if n not in have]
     if missing:
         raise ValueError('Feature schema lacks model columns: ' + ', '.join(missing[:5]))
-    X = np.asarray(X, np.float32)[:, [have.index(n) for n in want]]
+    Xs = np.asarray(X, np.float32)[:, [have.index(n) for n in want]]
     plan = swap_plan(want)
-    parts = [gru_supports(gru, k, X, period, plan) for k in range(int(gru['n_models']))]
-    parts.append(gbm_supports(gbm, X, plan))
+    parts = [gru_supports(gru, k, Xs, period, plan) for k in range(int(gru['n_models']))]
+    parts.append(gbm_supports(gbm, Xs, plan))
     lp = sum(np.log(np.clip(p, 1e-9, 1)) for p in parts) / len(parts)
+    p = np.exp(lp - lp.max(1, keepdims=True))
+    return np.log(np.clip(p / p.sum(1, keepdims=True), 1e-9, 1))
+
+
+def supports(X, names, period):
+    lp = sum(w * _set_logp(a, b, X, names, period) for a, b, w in SETS) / sum(w for _, _, w in SETS)
     p = np.exp(lp - lp.max(1, keepdims=True))
     p /= p.sum(1, keepdims=True)
     p = np.clip(p, 1e-9, 1) ** POWER

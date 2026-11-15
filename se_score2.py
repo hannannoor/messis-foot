@@ -7,8 +7,16 @@ import numpy as np
 import se_load
 
 def parse(cfg):
-    m = re.fullmatch(r'w([\d.]+)(h?)c([\d.]+)(?:d([\d.]+))?', cfg)
-    return float(m.group(1)), float(m.group(3)), (float(m.group(4)) if m.group(4) else None), ('ha' if m.group(2) else 'all')
+    m = re.fullmatch(r'w([\d.]+)(h?)c([\d.]+)(?:d([\d.]+))?(?:t([\d.]+)k(\d+))?', cfg)
+    t = (float(m.group(5)), int(m.group(6))) if m.group(5) else None
+    return float(m.group(1)), float(m.group(3)), (float(m.group(4)) if m.group(4) else None), ('ha' if m.group(2) else 'all'), t
+
+
+def touch_costs(case, c_far, c_touch, k):
+    names = [str(x) for x in case['names']]; X = case['X']
+    t = (X[:, names.index('itouch_last_dt')] == 0) & (X[:, names.index('itouch_last')] != 0)
+    near = np.convolve(t.astype(float), np.ones(2 * k + 1), 'same') > 0
+    return np.where(near, c_touch, c_far)
 
 DEG = False
 
@@ -40,8 +48,9 @@ def one(args):
     per = np.asarray([f.period for f in frames], np.uint8); obs = np.asarray([f.ball_observed for f in frames], bool)
     out = {}
     for cfg in cfgs:
-        w, c, d, mode = parse(cfg)
-        st = assemble(frames, sup, (), missing_w=w, cost=c, cost_d=d, mode=mode)
+        w, c, d, mode, t = parse(cfg)
+        cr = touch_costs(case, c, t[0], t[1]) if t else None
+        st = assemble(frames, sup, (), missing_w=w, cost=c, cost_d=d, mode=mode, cost_rows=cr)
         d0 = se_load.PRIVATE / 'scores2' / (tag + ('_deg' if DEG else '')); d0.mkdir(parents=True, exist_ok=True)
         np.save(d0 / f'{cid}.{cfg}.final.npy', np.asarray(['HADX'.index(s) for s in st['final']], np.uint8))
         np.save(d0 / f'{cid}.{cfg}.nogap.npy', np.asarray(['HADX'.index(s) for s in st['nogap']], np.uint8))

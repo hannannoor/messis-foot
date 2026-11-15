@@ -22,11 +22,14 @@ def swap_plan(names):
         a, b = f'itouchH_{w}', f'itouchA_{w}'
         if a in idx and b in idx:
             perm[idx[a]], perm[idx[b]] = idx[b], idx[a]
-    for n in ('itouch_last', 'itouch_next'):
+    for n, i in idx.items():
+        if n.startswith('tsH_') and 'tsA_' + n[4:] in idx:
+            perm[i], perm[idx['tsA_' + n[4:]]] = idx['tsA_' + n[4:]], i
+    for n in ('itouch_last', 'itouch_next', 'rtouch_last', 'rtouch_next'):
         if n in idx:
             sign[idx[n]] = -1
     for n, i in idx.items():
-        if n.startswith('itouch'):
+        if n.startswith(('itouch', 'rtouch', 'tsH_', 'tsA_')):
             continue
         base = n.split('_p')[0].split('_f')[0]
         if n.endswith('_sup'):

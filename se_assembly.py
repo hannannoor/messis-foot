@@ -43,14 +43,16 @@ def _rows(supports, frames, periods, usable, observed, missing_w, mode='all'):
     return rows, effective
 
 
-def assemble(frames, supports, starts=(), *, missing_w=0.0, cost=32.0, cost_d=None, mode='all'):
+def assemble(frames, supports, starts=(), *, missing_w=0.0, cost=32.0, cost_d=None, mode='all', cost_rows=None):
     frames = list(frames)
     supports = np.asarray(supports, np.float64).tolist()
     periods = [f.period for f in frames]
     usable = [sequence_usable(f) for f in frames]
     observed = [f.ball_observed for f in frames]
     rows, effective = _rows(supports, frames, periods, usable, observed, missing_w, mode)
-    if cost_d is None:
+    if cost_rows is not None:
+        latent = decode_variable(rows, periods, effective, [(float(c), float(c), float(c)) for c in cost_rows])
+    elif cost_d is None:
         latent = decode_soft(rows, periods, effective, float(cost))
     else:
         latent = decode_variable(rows, periods, effective, [(float(cost), float(cost), float(cost_d))] * len(rows))

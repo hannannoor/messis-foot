@@ -28,14 +28,19 @@ FOLDS = (('dfl-J03WR9', 'dfl-J03WMX', 'skillcorner-1874553', 'skillcorner-200744
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
+XDROP = ()   # feature-name prefixes to leave out (opts "xdrop"), for ablations
+
+
 def load(cid):
-    z = np.load(PRIVATE / 'cases' / (cid + '.npz'))
-    return z['X'].astype(np.float32), z['ref'].astype(np.int64), z['period'].astype(np.int64), [str(s) for s in z['names']]
+    return load_path(PRIVATE / 'cases' / (cid + '.npz'))
 
 
 def load_path(path):
     z = np.load(path)
-    return z['X'].astype(np.float32), z['ref'].astype(np.int64), z['period'].astype(np.int64), [str(s) for s in z['names']]
+    names = [str(s) for s in z['names']]
+    keep = [i for i, n in enumerate(names) if not (XDROP and n.startswith(XDROP))]
+    return (z['X'][:, keep].astype(np.float32), z['ref'].astype(np.int64), z['period'].astype(np.int64),
+            [names[i] for i in keep])
 
 
 def segments(period):
@@ -179,6 +184,8 @@ def run(tag, mode, opts):
     out = PRIVATE / 'preds' / tag
     out.mkdir(parents=True, exist_ok=True)
     (out / 'opts.json').write_text(json.dumps(dict(opts, mode=mode, model='gru')))
+    global XDROP
+    XDROP = tuple(opts.get('xdrop', ()))
     names = load(DEV[0])[3]
     plan = swap_plan(names)
     folds = [(tuple(c for c in DEV if c not in f), f) for f in FOLDS] if mode == 'cv' else [(DEV, HOLDOUT)] if mode == 'final' else [(ALL, ())]

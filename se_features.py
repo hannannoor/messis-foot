@@ -307,8 +307,8 @@ IMPULSE_THR = 4.0   # m/s velocity change over +-2 frames (fixed a priori, physi
 TOUCH_R = 2.0       # m, player radius for a contact
 
 
-def impulse_features(frames):
-    """Contact ('impulse touch') features: ball-velocity impulse peaks with a player within TOUCH_R."""
+def _impulse_core(frames):
+    """Contact detection shared by impulse_features and impulse_rel_features."""
     per, val, obs, ball, H, A, Hid, Aid = _arr(frames)
     n = len(per)
     seg = _segments(per)
@@ -346,6 +346,13 @@ def impulse_features(frames):
     team = np.where(h1 < a1, 1.0, -1.0)
     conf = np.clip(np.abs(np.where(np.isfinite(a1 - h1), a1 - h1, 0)), 0, 5) / 5 * np.minimum(imp, 20) / 20
     tv = np.where(touch, team, 0.0)
+    return dict(touch=touch, team=team, conf=conf, tv=tv, imp=imp, seg=seg, obs=obs)
+
+
+def impulse_features(frames):
+    """Contact ('impulse touch') features: ball-velocity impulse peaks with a player within TOUCH_R."""
+    k = _impulse_core(frames)
+    touch, team, conf, tv, imp, seg = k['touch'], k['team'], k['conf'], k['tv'], k['imp'], k['seg']
     cols, names = [], []
 
     def add(name, x):
@@ -366,4 +373,102 @@ def impulse_features(frames):
             ma, _ = _window_mean(np.where(touch & (team < 0), 1.0, 0.0), w, seg, d)
             add(f'itouchH_{"p" if d < 0 else "f"}{w}', mh * (w + 1))
             add(f'itouchA_{"p" if d < 0 else "f"}{w}', ma * (w + 1))
+    return np.stack(cols, 1), tuple(names)
+
+
+REL_HALF = 5   # frames: smoothing (+-2) plus the +-2 velocity difference plus 1 for the frame difference
+
+
+def impulse_rel_features(frames):
+    """Contact reliability: a contact is reliable when the ball is observed (same segment) on every frame of
+    [t-REL_HALF, t+REL_HALF], so smoothing/differencing never straddles an observation edge."""
+    k = _impulse_core(frames)
+    touch, tv, seg, obs = k['touch'], k['tv'], k['seg'], k['obs']
+    full = obs.copy()
+    for d in range(-REL_HALF, REL_HALF + 1):
+        if d:
+            full &= (np.nan_to_num(_shift(obs.astype(float), d), nan=0) > 0) & (_shift(seg.astype(float), d) == seg)
+    rel = touch & full
+    cols, names = [], []
+
+    def add(name, x):
+        x = np.asarray(x, np.float64)
+        cols.append(np.where(np.isfinite(x), x, 0.0).astype(np.float32)); names.append(name)
+
+    r = np.where(touch, full.astype(float), 0.0)
+    lr, _ = _event_ref(touch, r, seg, -1)
+    nr, _ = _event_ref(touch, r, seg, +1)
+    add('itouch_last_rel', lr); add('itouch_next_rel', nr)
+    lv, ldt = _event_ref(rel, tv, seg, -1)
+    nv, ndt = _event_ref(rel, tv, seg, +1)
+    add('rtouch_last', lv); add('rtouch_last_dt', ldt); add('rtouch_next', nv); add('rtouch_next_dt', ndt)
+    return np.stack(cols, 1), tuple(names)
+
+
+def _vel_x(P, I, seg, lag=5):
+    """Per-player x velocity (m/s), ids matched between t-lag and t; nan where unknown."""
+    n = len(P)
+    vx = np.full((n, K), np.nan)
+    Pp = np.full_like(P, np.nan); Pp[lag:] = P[:-lag]
+    Ip = np.full_like(I, -1); Ip[lag:] = I[:-lag]
+    segp = np.full_like(seg, -1); segp[lag:] = seg[:-lag]
+    same = segp == seg
+    for k in range(K):
+        idk = I[:, k]
+        match = (Ip == idk[:, None]) & (idk[:, None] >= 0)
+        has = match.any(1) & same
+        prev = Pp[np.arange(n), match.argmax(1)]
+        v = (P[:, k, 0] - prev[:, 0]) * FPS / lag
+        vx[:, k] = np.where(has & (np.abs(v) < 12), v, np.nan)
+    return vx
+
+
+def team_shape_features(frames):
+    """Player-only ownership cues for long ball gaps, each team in its own attacking frame (H/A paired):
+    centroid depth and forward velocity, length/width, forward runners, defensive-line depth, marking tightness."""
+    per, val, obs, ball, H, A, Hid, Aid = _arr(frames)
+    n = len(per)
+    seg = _segments(per)
+    hcx, _ = _nanmean(H[:, :, 0], 1)
+    acx, _ = _nanmean(A[:, :, 0], 1)
+    sgn = np.sign(np.nan_to_num(acx - hcx))
+    mid = np.zeros(n)
+    for s in np.unique(seg):
+        m = seg == s
+        sgn[m] = 1.0 if sgn[m].sum() >= 0 else -1.0
+        mid[m] = np.nanmedian(np.concatenate([hcx[m], acx[m]])) if np.isfinite(hcx[m]).any() else 0.0
+    cols, names = [], []
+
+    def add(name, x):
+        x = np.asarray(x, np.float64)
+        cols.append(np.where(np.isfinite(x), x, 0.0).astype(np.float32)); names.append(name)
+
+    sig = {}
+    with np.errstate(all='ignore'):
+        for T, P, I, O, d in (('H', H, Hid, A, sgn), ('A', A, Aid, H, -sgn)):
+            xs = d[:, None] * (P[:, :, 0] - mid[:, None])          # own attacking frame, + = towards opponent goal
+            ok = np.isfinite(xs)
+            cxa, _ = _nanmean(xs, 1)
+            vx = d[:, None] * _vel_x(P, I, seg)
+            vxm, _ = _nanmean(vx, 1)
+            srt = np.sort(np.where(ok, xs, np.inf), 1)
+            line = np.where(ok.sum(1) >= 3, srt[:, 1], np.nan)        # deepest outfield player (skip keeper)
+            top = np.where(ok, xs, -np.inf).max(1)
+            length = np.where(ok.sum(1) >= 3, top - line, np.nan)
+            ys = np.where(ok, P[:, :, 1], np.nan)
+            width = np.nanmax(ys, 1) - np.nanmin(ys, 1)
+            fwd = np.where(np.isfinite(vx), vx > 3.0, False).sum(1)
+            back = np.where(np.isfinite(vx), vx < -3.0, False).sum(1)
+            dd = np.hypot(P[:, :, None, 0] - O[:, None, :, 0], P[:, :, None, 1] - O[:, None, :, 1])
+            near_opp = np.nanmin(np.where(np.isfinite(dd), dd, np.inf), 2)
+            mark, _ = _nanmean(np.where(np.isfinite(near_opp) & ok, np.minimum(near_opp, 30), np.nan), 1)
+            for nm, x in (('cx', cxa), ('vx', vxm), ('line', line), ('len', length), ('wid', width),
+                          ('fwd', fwd), ('back', back), ('mark', mark)):
+                add(f'ts{T}_{nm}', x); sig[(T, nm)] = x
+    for nm in ('vx', 'fwd', 'cx', 'mark'):
+        for T in ('H', 'A'):
+            for w in (50, 125, 375):
+                for dr in (-1, 1):
+                    m, _ = _window_mean(sig[(T, nm)], w, seg, dr)
+                    add(f'ts{T}_{nm}_{"p" if dr < 0 else "f"}{w}', m)
     return np.stack(cols, 1), tuple(names)

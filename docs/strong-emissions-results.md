@@ -78,3 +78,36 @@ Changes, each tested on dev cross-validation (13 matches) against the v1 recipe 
 - **Dev:** clean 0.7812 → **0.7980**. DFL rose 0.777 → 0.813 (all 6 matches up); SkillCorner was flat (0.785 → 0.784). Degraded DFL 0.590 → **0.599** (5 of 6 up).
 - **Holdout (confirmation):** clean 0.7463 → **0.7587**. DFL J03WN1 went 0.759 → 0.796 and WCSF 0.721 → 0.724; SkillCorner moved −0.004 on average. Degraded: WCSF 0.597, DFL J03WN1 0.556.
 - **Submission:** SHA-256 `a2761b6a…`. CPU runs are byte-identical, it differs from the GPU path on 1 frame, and the official validator says OK.
+
+## v5 (15 November 2026): player-only team-shape features for long ball gaps
+- **Diagnosis:** in degraded DFL dev, about 89% of missing-ball errors sit in gaps longer than 10 s. No ball feature exists inside such a gap.
+- **New features (241 in total):**
+  - **64 team-shape features.** Each team is described in its own attacking frame:
+    - Shape: centroid depth, defensive-line depth, length and width.
+    - Movement: mean forward velocity, counts of forward and backward runners (> 3 m/s).
+    - Marking: mean distance to the nearest opponent.
+    - Windows: ±2/5/15 s means.
+    - Example (one dev match): the team in possession is about 9 m wider (46.8 m against 37.6 m).
+  - **6 contact-reliability features.** A contact is reliable only when the ball is observed for ±5 frames, so smoothing never straddles an observation edge. 3.7% of degraded contacts were edge artefacts; clean data has none.
+- **Decoder:** switch cost 10 within ±6 frames of an impulse contact, 20 elsewhere.
+- **Blend:** 0.3 × v4 set + 0.7 × v5 set (geometric). The v4 set keeps clean DFL, and the v5 set carries ball-loss robustness.
+- **Dev cross-validation (13 matches):**
+
+| Candidate | Clean | DFL | SkillCorner | Degraded DFL |
+|---|---:|---:|---:|---:|
+| v4 | 0.7980 | 0.8125 | 0.7836 | 0.5990 |
+| v4 + touch cost | 0.7989 | 0.8150 | 0.7828 | 0.6025 |
+| v3/v4 blend (rejected) | 0.7985 | 0.8095 | 0.7875 | 0.5994 |
+| v5 set alone + touch cost | 0.8002 | 0.8061 | 0.7943 | 0.6643 |
+| **v5: 0.3 v4 + 0.7 v5 set + touch cost** | **0.8027** | 0.8087 | 0.7968 | **0.6643** |
+
+- **Spread across matches:** degraded data improved on all 6 DFL matches, by +0.044 to +0.061 each. On clean data the worst match is −0.011 (DFL J03WPY).
+- **Ablation (single GRU, same seed and steps as v4's gru13):**
+  - reliability features only: clean 0.7836, degraded 0.5911. That's noise.
+  - reliability + team-shape: clean 0.7789, degraded **0.6442** (gru13: 0.7819 / 0.5991).
+  - Boosted trees: degraded 0.573 → 0.644.
+  - So the gain comes from team shape.
+- **Holdout (fifth look, confirmation only):** clean 0.7587 → **0.7652**.
+  - WCSF 0.724 → 0.738, DFL J03WN1 0.796 → 0.804, SkillCorner 0.756 → 0.754.
+  - Degraded: WCSF 0.597 → **0.670**, DFL J03WN1 0.556 → **0.635**.
+- **Submission:** SHA-256 `f4d3d940…`. Two CPU runs are byte-identical, the GPU path agrees on all 199,319 frames, and the official validator says OK. 96.2% of frames match v4.
