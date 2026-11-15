@@ -112,7 +112,7 @@ Changes, each tested on dev cross-validation (13 matches) against the v1 recipe 
   - Degraded: WCSF 0.597 → **0.670**, DFL J03WN1 0.556 → **0.635**.
 - **Submission:** SHA-256 `f4d3d940…`. Two CPU runs are byte-identical, the GPU path agrees on all 199,319 frames, and the official validator says OK. 96.2% of frames match v4.
 
-## v6 (15 November 2026): three independent ball-dropout views per match
+## v6 (15 November 2026, experiment, not submitted): three independent ball-dropout views per match
 - **Change:** each D-labelled match now has 3 dropout copies (independent masks, SkillCorner dev gap statistics) instead of 1.
   - Each GRU training chunk picks one copy; the boosted trees weight the 3 copies together like the single copy.
   - Steps, seeds and features are the same as v5.
@@ -125,3 +125,9 @@ Changes, each tested on dev cross-validation (13 matches) against the v1 recipe 
   - degraded 0.6522 → 0.6507: WCSF 0.670 → 0.668, DFL 0.635 → 0.633.
   - The degraded gain seen on dev did not replicate on the 2 degraded holdout matches. v6 is a small, low-confidence step over v5.
 - **Submission:** SHA-256 `e2ff053d…`. Two CPU runs are byte-identical, the GPU path agrees on all frames, and the official validator says OK. 98.6% of frames match v5.
+
+- **Decision (user and Claude, 15 November):** keep **v5** as the submission.
+  - v6's changes against v5 are within noise and point both ways.
+  - Its one larger gain (degraded dev +0.012) comes from the simulated ball loss, the least trustworthy proxy, and it did not replicate on the holdout.
+  - v6 code paths (`aug_views`, `xdrop`, `team_shape_ext_features`) stay in the repo as options. The v6 weights are in commit 480ee92, and its CSV is in `final-submission/previous-v6/`.
+  - Adoption rule from now on: a change must also gain on real missing-ball data (SkillCorner) and on the holdout, not only on simulated degradation.

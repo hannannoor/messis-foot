@@ -2,7 +2,7 @@
 
 Each model set = geometric blend (equal weights) of two bidirectional-GRU heads and one gradient-boosted pair of
 heads (ownership with home/away swap averaging, live/dead). v5 blends two sets geometrically (v4 set 0.3 on 171
-features, v6 set 0.7 on 241 features incl. team-shape, trained with 3 ball-dropout views), then squares (power 2) and renormalises.
+features, v5 set 0.7 on 241 features incl. team-shape), then squares (power 2) and renormalises.
 Models were fitted on external matches only (DFL, SkillCorner, WCSF); see docs/strong-emissions-results.md.
 """
 from pathlib import Path
@@ -17,7 +17,7 @@ MISSING_W = 1.0   # log-evidence weight on missing-ball rows (release: 0)
 SWITCH_COST = 20.0  # decoder switch cost (release: 32)
 GAP_RULE = False  # v3: model infers dead ball itself (trained with ball-dropout augmentation); kickoff patch kept
 WINDOW, CONTEXT = 6000, 1500
-SETS = (('gru.npz', 'gbm.npz', 0.3), ('gru6.npz', 'gbm6.npz', 0.7))   # (GRU file, GBM file, set weight)
+SETS = (('gru.npz', 'gbm.npz', 0.3), ('gru5.npz', 'gbm5.npz', 0.7))   # (GRU file, GBM file, set weight)
 TOUCH_COST, TOUCH_K = 10.0, 6   # v5: switch cost within +-TOUCH_K frames of an impulse contact
 
 

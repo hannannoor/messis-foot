@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import numpy as np
 
-VERSION = '2026.11.15-strong-emissions-v6'
+VERSION = '2026.11.15-strong-emissions-v5'
 
 
 def generate(prefix, tags, out, *, features_out=None):
