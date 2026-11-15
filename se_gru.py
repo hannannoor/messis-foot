@@ -109,7 +109,10 @@ def train(cids, opts, plan, stats):
         wt = spell_weights(ref, per, opts.get('short_scale', 0), opts.get('short_cap', 4.0))
         aug = None
         ap = PRIVATE / 'cases_aug' / (cid + '.npz')
-        if opts.get('aug') and ap.exists():
+        views = [PRIVATE / v / (cid + '.npz') for v in opts.get('aug_views', ())]
+        if opts.get('aug') and views and all(v.exists() for v in views):
+            aug = ('lazy', [load_path(v)[0] for v in views])   # raw; normalised + swapped per chunk (RAM)
+        elif opts.get('aug') and ap.exists():
             Xa = load_path(ap)[0]
             aug = (np.clip((Xa - mu) / sd, -6, 6).astype(np.float32), np.clip((swapped(Xa, plan) - mu) / sd, -6, 6).astype(np.float32))
         data.append((X, Xs, ref, refs, segments(per), not cid.startswith('skillcorner'), wt, aug))
@@ -126,13 +129,21 @@ def train(cids, opts, plan, stats):
         xb, rb, db, wb = [], [], [], []
         for _ in range(B):
             X, Xs, ref, refs, segs, hasd, wt, aug = data[rng.integers(len(data))]
+            raw = None
             if aug is not None and rng.random() < opts.get('aug_p', .5):
-                X, Xs = aug
+                if isinstance(aug[0], str):
+                    raw = aug[1][rng.integers(len(aug[1]))]
+                else:
+                    X, Xs = aug
             a, b = segs[rng.integers(len(segs))]
             s = rng.integers(a, max(a + 1, b - L))
             e = min(b, s + L)
             sw = rng.random() < .5
-            x = (Xs if sw else X)[s:e]
+            if raw is not None:
+                z = swapped(raw[s:e], plan) if sw else raw[s:e]
+                x = np.clip((z - mu) / sd, -6, 6).astype(np.float32)
+            else:
+                x = (Xs if sw else X)[s:e]
             r = (refs if sw else ref)[s:e]
             ww = wt[s:e]
             if e - s < L:

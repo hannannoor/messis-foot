@@ -20,7 +20,8 @@ for head, clf in blob['models'].items():
     out[f'{head}_baseline'] = np.asarray(clf._baseline_prediction, np.float64).ravel()
 np.savez_compressed(dst, names=np.array(blob['names']), **out)
 # self-check against sklearn on a probe matrix
-z = np.load(sys.argv[3]); X = z['X'][::97].astype(np.float32)
+z = np.load(sys.argv[3]); zn = [str(s) for s in z['names']]
+X = z['X'][::97][:, [zn.index(n) for n in blob['names']]].astype(np.float32)
 import importlib.util
 spec = importlib.util.spec_from_file_location('rt', 'strong_runtime.py'); rt = importlib.util.module_from_spec(spec); spec.loader.exec_module(rt)
 m = np.load(dst)

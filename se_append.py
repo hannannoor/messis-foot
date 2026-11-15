@@ -9,7 +9,8 @@ def job(path):
     names = [str(s) for s in z['names']]
     todo = [(m, f) for m, f in (('itouch_last', se_features.impulse_features),
                                  ('itouch_last_rel', se_features.impulse_rel_features),
-                                 ('tsH_cx', se_features.team_shape_features)) if m not in names]
+                                 ('tsH_cx', se_features.team_shape_features),
+                                 ('tsH_line_p50', se_features.team_shape_ext_features)) if m not in names]
     if not todo:
         return path.name, 'skip'
     kind = path.parent.name
@@ -19,7 +20,7 @@ def job(path):
     else:
         cid = path.stem
         frames, _ = se_load.load(cid)
-        if kind in ('cases_deg', 'cases_aug'):
+        if kind == 'cases_deg' or kind.startswith('cases_aug'):
             from se_degrade import degrade
             frames = degrade(frames, z['drop'])
     for _, fn in todo:
@@ -35,6 +36,9 @@ def job(path):
 if __name__ == '__main__':
     P = se_load.PRIVATE
     paths = sorted((P / 'cases').glob('*.npz')) + sorted((P / 'cases_deg').glob('*.npz')) + sorted((P / 'cases_aug').glob('*.npz')) + [P / 'provided' / 'features.npz']
+    paths += sorted((P / 'cases_aug2').glob('*.npz')) + sorted((P / 'cases_aug3').glob('*.npz'))
+    if '--only-new' in sys.argv:
+        paths = [p for p in paths if p.parent.name in ('cases_aug2', 'cases_aug3')]
     with Pool(8) as pool:
         for r in pool.imap_unordered(job, paths):
             print(*r, flush=True)

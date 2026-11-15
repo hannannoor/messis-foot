@@ -423,7 +423,7 @@ def _vel_x(P, I, seg, lag=5):
     return vx
 
 
-def team_shape_features(frames):
+def team_shape_features(frames, ext=False):
     """Player-only ownership cues for long ball gaps, each team in its own attacking frame (H/A paired):
     centroid depth and forward velocity, length/width, forward runners, defensive-line depth, marking tightness."""
     per, val, obs, ball, H, A, Hid, Aid = _arr(frames)
@@ -465,10 +465,19 @@ def team_shape_features(frames):
             for nm, x in (('cx', cxa), ('vx', vxm), ('line', line), ('len', length), ('wid', width),
                           ('fwd', fwd), ('back', back), ('mark', mark)):
                 add(f'ts{T}_{nm}', x); sig[(T, nm)] = x
-    for nm in ('vx', 'fwd', 'cx', 'mark'):
+    if ext:   # round 6: longer memory (+-30 s) and shape-extent windows; returned alone
+        cols, names = [], []
+        plan = [(nm, (50, 125, 375, 750)) for nm in ('line', 'len', 'wid')] +                [(nm, (750,)) for nm in ('vx', 'fwd', 'cx', 'mark')]
+    else:
+        plan = [(nm, (50, 125, 375)) for nm in ('vx', 'fwd', 'cx', 'mark')]
+    for nm, ws in plan:
         for T in ('H', 'A'):
-            for w in (50, 125, 375):
+            for w in ws:
                 for dr in (-1, 1):
                     m, _ = _window_mean(sig[(T, nm)], w, seg, dr)
                     add(f'ts{T}_{nm}_{"p" if dr < 0 else "f"}{w}', m)
     return np.stack(cols, 1), tuple(names)
+
+
+def team_shape_ext_features(frames):
+    return team_shape_features(frames, ext=True)

@@ -111,3 +111,17 @@ Changes, each tested on dev cross-validation (13 matches) against the v1 recipe 
   - WCSF 0.724 → 0.738, DFL J03WN1 0.796 → 0.804, SkillCorner 0.756 → 0.754.
   - Degraded: WCSF 0.597 → **0.670**, DFL J03WN1 0.556 → **0.635**.
 - **Submission:** SHA-256 `f4d3d940…`. Two CPU runs are byte-identical, the GPU path agrees on all 199,319 frames, and the official validator says OK. 96.2% of frames match v4.
+
+## v6 (15 November 2026): three independent ball-dropout views per match
+- **Change:** each D-labelled match now has 3 dropout copies (independent masks, SkillCorner dev gap statistics) instead of 1.
+  - Each GRU training chunk picks one copy; the boosted trees weight the 3 copies together like the single copy.
+  - Steps, seeds and features are the same as v5.
+- **Rejected:** ±30 s and shape-extent window features (64 more). GRU clean dropped −0.008; the boosted trees showed no gain.
+- **Dev cross-validation:**
+  - one GRU: degraded 0.644 → 0.667, clean 0.779 → 0.777;
+  - full blend: clean 0.8027 → 0.8005 (SkillCorner −0.005), degraded DFL 0.6643 → **0.6762**, up on 5 of 6 matches.
+- **Holdout (sixth look; go/no-go was SkillCorner no worse than −0.005):**
+  - clean 0.7652 → **0.7672**; SkillCorner +0.006 (pass), WCSF +0.003, DFL −0.003.
+  - degraded 0.6522 → 0.6507: WCSF 0.670 → 0.668, DFL 0.635 → 0.633.
+  - The degraded gain seen on dev did not replicate on the 2 degraded holdout matches. v6 is a small, low-confidence step over v5.
+- **Submission:** SHA-256 `e2ff053d…`. Two CPU runs are byte-identical, the GPU path agrees on all frames, and the official validator says OK. 98.6% of frames match v5.

@@ -43,28 +43,31 @@ def columns(opts):
 
 
 AUG = False
+VIEWS = ()   # opts "aug_views": several dropout copies, together weighted like the single copy
 
 
 def _sources(cid, keep):
     yield load(cid, keep), 1.0
-    ap = PRIVATE / 'cases_aug' / (cid + '.npz')
-    if AUG and ap.exists():
-        z = np.load(ap)
-        yield (z['X'][:, keep], z['ref'], z['period'], z['observed']), 1.0
+    paths = [PRIVATE / v / (cid + '.npz') for v in VIEWS] if VIEWS else [PRIVATE / 'cases_aug' / (cid + '.npz')]
+    if AUG and all(ap.exists() for ap in paths):
+        for ap in paths:
+            z = np.load(ap)
+            yield (z['X'][:, keep], z['ref'], z['period'], z['observed']), 1.0 / len(paths)
 
 
 def rows(cids, keep, step, head):
     Xs, ys, ws = [], [], []
-    for cid, ((X, ref, per, obs), _) in ((c, s) for c in cids for s in _sources(c, keep)):
+    for cid, ((X, ref, per, obs), sw) in ((c, s) for c in cids for s in _sources(c, keep)):
         if head == 'own':
             m = (ref < 2) & (per > 0)
         else:
             if cid.startswith('skillcorner'):
                 continue
             m = (ref < 3) & (per > 0)
-        idx = np.flatnonzero(m)[::step]
+        st = step if sw == 1.0 else int(round(step / sw))   # keep total aug rows as with one copy
+        idx = np.flatnonzero(m)[::st]
         y = (ref[idx] == 0) if head == 'own' else (ref[idx] == 2)
-        Xs.append(X[idx]); ys.append(y); ws.append(np.full(len(idx), 1.0 / max(1, len(idx))))
+        Xs.append(X[idx]); ys.append(y); ws.append(np.full(len(idx), sw / max(1, len(idx))))
     return np.concatenate(Xs), np.concatenate(ys), np.concatenate(ws) * 1e5
 
 
@@ -87,8 +90,9 @@ def predict(models, cid, keep, plan=None):
 
 
 def run(tag, mode, opts):
-    global AUG
+    global AUG, VIEWS
     AUG = bool(opts.get('aug'))
+    VIEWS = tuple(opts.get('aug_views', ()))
     keep, names = columns(opts)
     step = opts.get('step', 4)
     out = PRIVATE / 'preds' / tag
