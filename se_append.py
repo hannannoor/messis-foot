@@ -20,7 +20,7 @@ def job(path):
     else:
         cid = path.stem
         frames, _ = se_load.load(cid)
-        if kind == 'cases_deg' or kind.startswith('cases_aug'):
+        if kind == 'cases_deg' or kind.startswith(('cases_aug', 'cases_eval')):
             from se_degrade import degrade
             frames = degrade(frames, z['drop'])
     for _, fn in todo:
@@ -37,8 +37,12 @@ if __name__ == '__main__':
     P = se_load.PRIVATE
     paths = sorted((P / 'cases').glob('*.npz')) + sorted((P / 'cases_deg').glob('*.npz')) + sorted((P / 'cases_aug').glob('*.npz')) + [P / 'provided' / 'features.npz']
     paths += sorted((P / 'cases_aug2').glob('*.npz')) + sorted((P / 'cases_aug3').glob('*.npz'))
+    for d in sorted(P.glob('cases_eval*')):
+        paths += sorted(d.glob('*.npz'))
     if '--only-new' in sys.argv:
         paths = [p for p in paths if p.parent.name in ('cases_aug2', 'cases_aug3')]
+    if '--only-eval' in sys.argv:
+        paths = [p for p in paths if p.parent.name.startswith('cases_eval')]
     with Pool(8) as pool:
         for r in pool.imap_unordered(job, paths):
             print(*r, flush=True)

@@ -110,15 +110,17 @@ def run(tag, mode, opts):
             models[h] = fit(X, y, w, opts)
         for cid in test:
             np.savez_compressed(out / (cid + '.npz'), sup=predict(models, cid, keep, sp))
-            dp = PRIVATE / 'cases_deg' / (cid + '.npz')
-            if dp.exists():
-                (out / 'deg').mkdir(exist_ok=True)
+            for v, sub in [('cases_deg', 'deg')] + [(d, d) for d in opts.get('eval_dirs', ())]:
+                dp = PRIVATE / v / (cid + '.npz')
+                if not dp.exists():
+                    continue
+                (out / sub).mkdir(exist_ok=True)
                 z = np.load(dp); Xd = z['X'][:, keep]
                 ph = models['own'].predict_proba(Xd)[:, 1]
                 if sp is not None:
                     ph = .5 * (ph + 1 - models['own'].predict_proba(swapped(Xd, sp))[:, 1])
                 pdd = models['live'].predict_proba(Xd)[:, 1]
-                np.savez_compressed(out / 'deg' / (cid + '.npz'), sup=np.column_stack(((1 - pdd) * ph, (1 - pdd) * (1 - ph), pdd)))
+                np.savez_compressed(out / sub / (cid + '.npz'), sup=np.column_stack(((1 - pdd) * ph, (1 - pdd) * (1 - ph), pdd)))
         if mode in ('final', 'all'):
             X, _, _, _ = (lambda z: (z['X'][:, keep], 0, 0, 0))(np.load(PRIVATE / 'provided' / 'features.npz'))
             ph = models['own'].predict_proba(X)[:, 1]

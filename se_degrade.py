@@ -61,6 +61,22 @@ def make_mask(n, period, cid):
     return drop
 
 
+def transplant_mask(period, sc_cid):
+    """True = drop ball, copied from a real SkillCorner dev match: per period, frame k of the DFL period gets the
+    SkillCorner observed flag at frame k of the same period (wrapping if the DFL period is longer)."""
+    z = np.load(se_load.PRIVATE / 'cases' / (sc_cid + '.npz'))
+    sobs, sper = np.asarray(z['observed'], bool), np.asarray(z['period'])
+    period = np.asarray(period)
+    drop = np.zeros(len(period), bool)
+    for p in np.unique(period[period > 0]):
+        idx = np.flatnonzero(period == p)
+        src = sobs[sper == p]
+        if not len(src):
+            src = sobs[sper > 0]
+        drop[idx] = ~src[np.arange(len(idx)) % len(src)]
+    return drop
+
+
 def degrade(frames, drop):
     out = []
     for f, d in zip(frames, drop):
@@ -89,7 +105,11 @@ def build(cids, kind='deg'):
     for cid in cids:
         frames, ref = se_load.load(cid)
         per = np.asarray([f.period for f in frames])
-        drop = make_mask(len(frames), per, cid if kind == 'deg' else cid + '#' + kind)
+        if kind.startswith('evalr'):   # real SkillCorner gap layout, rotated over SC dev matches
+            k = DEG_CASES.index(cid) + (0 if kind == 'evalr1' else 3)
+            drop = transplant_mask(per, sorted(SC_DEV)[k % len(SC_DEV)])
+        else:
+            drop = make_mask(len(frames), per, cid if kind == 'deg' else cid + '#' + kind)
         frames = degrade(frames, drop)
         f18 = np.asarray(list(feature_rows(frames)), dtype=np.float64)
         sup = np.asarray(predict_supports(f18, model), dtype=np.float64)

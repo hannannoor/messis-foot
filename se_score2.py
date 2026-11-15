@@ -19,20 +19,21 @@ def touch_costs(case, c_far, c_touch, k):
     return np.where(near, c_touch, c_far)
 
 DEG = False
+VIEW = None   # e.g. 'cases_evalg1': cases dir and preds subdir of an extra evaluation view (implies degraded frames)
 
 
 def sup_for(tag, cid):
     base, _, power = tag.partition('@')
-    case = np.load(se_load.PRIVATE / ('cases_deg' if DEG else 'cases') / (cid + '.npz'))
-    sub = (base + '/deg') if DEG else base
+    case = np.load(se_load.PRIVATE / (VIEW or ('cases_deg' if DEG else 'cases')) / (cid + '.npz'))
+    sub = (base + '/' + VIEW) if VIEW else (base + '/deg') if DEG else base
     sup = case['release_sup'] if base == 'release' else np.load(se_load.PRIVATE / 'preds' / sub / (cid + '.npz'))['sup']
     if power:
         sup = np.clip(sup, 1e-9, 1) ** float(power); sup = sup / sup.sum(1, keepdims=True)
     sup = np.clip(np.asarray(sup, np.float64), 1e-6, 1); return sup / sup.sum(1, keepdims=True), case
 
-def _init(deg):
-    global DEG
-    DEG = deg
+def _init(deg, view=None):
+    global DEG, VIEW
+    DEG, VIEW = deg, view
 
 
 def one(args):
@@ -40,7 +41,11 @@ def one(args):
     from memory_ablation_metrics import score_variant
     from se_assembly import assemble
     sup, case = sup_for(tag, cid)
-    if DEG:
+    if VIEW:
+        from se_degrade import degrade
+        frames, ref = se_load.load(cid)
+        frames = degrade(frames, case['drop'])
+    elif DEG:
         from se_degrade import load_deg
         frames, ref = load_deg(cid)
     else:
@@ -51,11 +56,11 @@ def one(args):
         w, c, d, mode, t = parse(cfg)
         cr = touch_costs(case, c, t[0], t[1]) if t else None
         st = assemble(frames, sup, (), missing_w=w, cost=c, cost_d=d, mode=mode, cost_rows=cr)
-        d0 = se_load.PRIVATE / 'scores2' / (tag + ('_deg' if DEG else '')); d0.mkdir(parents=True, exist_ok=True)
+        d0 = se_load.PRIVATE / 'scores2' / (tag + ('_' + VIEW if VIEW else '_deg' if DEG else '')); d0.mkdir(parents=True, exist_ok=True)
         np.save(d0 / f'{cid}.{cfg}.final.npy', np.asarray(['HADX'.index(s) for s in st['final']], np.uint8))
         np.save(d0 / f'{cid}.{cfg}.nogap.npy', np.asarray(['HADX'.index(s) for s in st['nogap']], np.uint8))
         out[cfg] = {k: score_variant(ref, np.asarray(['HADX'.index(s) for s in v], np.uint8), per, obs)['metrics']['spell_f1_mean'] for k, v in st.items()}
-    d = se_load.PRIVATE / 'scores2' / (tag + ('_deg' if DEG else '')); d.mkdir(parents=True, exist_ok=True)
+    d = se_load.PRIVATE / 'scores2' / (tag + ('_' + VIEW if VIEW else '_deg' if DEG else '')); d.mkdir(parents=True, exist_ok=True)
     prev = json.loads((d / (cid + '.json')).read_text()) if (d / (cid + '.json')).exists() else {}
     prev.update(out); (d / (cid + '.json')).write_text(json.dumps(prev))
     return cid, out
@@ -66,11 +71,13 @@ if __name__ == '__main__':
         i = args.index('--cases'); cases = args[i + 1].split(','); del args[i:i + 2]
     if '--deg' in args:
         args.remove('--deg'); DEG = True
+    if '--view' in args:
+        i = args.index('--view'); VIEW = args[i + 1]; del args[i:i + 2]; DEG = True
     tag, cfgs = args[0], args[1:]
     cids = cases or [c for c in se_load.ALL if c not in se_load.HOLDOUT]
     if DEG and not cases:
         cids = [c for c in cids if c.startswith('dfl')]
-    with Pool(len(cids), initializer=_init, initargs=(DEG,)) as pool:
+    with Pool(len(cids), initializer=_init, initargs=(DEG, VIEW)) as pool:
         res = dict(pool.map(one, [(tag, c, cfgs) for c in cids]))
     for cfg in cfgs:
         for stage in ('control', 'final', 'nogap'):

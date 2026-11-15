@@ -7,6 +7,8 @@ argv = sys.argv[1:]
 sub = ''
 if '--deg' in argv:
     argv.remove('--deg'); sub = 'deg'
+if '--sub' in argv:
+    i = argv.index('--sub'); sub = argv[i + 1]; del argv[i:i + 2]
 out, parts = argv[0], [(a.split(':')[0], float(a.split(':')[1])) for a in argv[1:]]
 d = se_load.PRIVATE / 'preds' / out / sub
 d.mkdir(parents=True, exist_ok=True)

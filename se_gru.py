@@ -211,6 +211,11 @@ def run(tag, mode, opts):
             if dp.exists():
                 (out / 'deg').mkdir(exist_ok=True)
                 np.savez_compressed(out / 'deg' / (cid + '.npz'), sup=predict(net, None, plan, (mu, sd), dp))
+            for v in opts.get('eval_dirs', ()):   # extra evaluation views (investigation)
+                vp = PRIVATE / v / (cid + '.npz')
+                if vp.exists():
+                    (out / v).mkdir(exist_ok=True)
+                    np.savez_compressed(out / v / (cid + '.npz'), sup=predict(net, None, plan, (mu, sd), vp))
         if mode in ('final', 'all'):
             prov = PRIVATE / 'provided' / 'features.npz'
             np.savez_compressed(out / 'provided.npz', sup=predict(net, None, plan, (mu, sd), prov))

@@ -131,3 +131,16 @@ Changes, each tested on dev cross-validation (13 matches) against the v1 recipe 
   - Its one larger gain (degraded dev +0.012) comes from the simulated ball loss, the least trustworthy proxy, and it did not replicate on the holdout.
   - v6 code paths (`aug_views`, `xdrop`, `team_shape_ext_features`) stay in the repo as options. The v6 weights are in commit 480ee92, and its CSV is in `final-submission/previous-v6/`.
   - Adoption rule from now on: a change must also gain on real missing-ball data (SkillCorner) and on the holdout, not only on simulated degradation.
+
+## Investigation: was v6 real? (15 November 2026, dev only)
+- **New ball-loss evaluation views** on the 6 DFL dev matches:
+  - 2 more masks from the same generator;
+  - 2 real SkillCorner gap layouts transplanted onto the DFL matches (`se_degrade.py`, `evalr*`).
+- **Retrained models:** v4, v5 and v6 recipes, both seeds plus boosted trees, with fold predictions on every view. Retraining reproduced the original scores exactly. Comparison tool: `se_noise.py`.
+- **Full-blend result, v6 against v5:**
+  - ball-loss views: +0.009 to +0.015, with the two real-layout views at +0.013 ± 0.003 and +0.010 ± 0.005;
+  - clean: −0.0025 ± 0.0027.
+- So the gain is not simulator-specific. The holdout's −0.0015 on 2 degraded matches is about −1.8 SE from the dev expectation: noise more likely than a defect.
+- **Mask noise:** one model's ball-loss score moves 0.644–0.679 across masks, so absolute ball-loss numbers carry about ±0.015 uncertainty. Paired comparisons are much tighter.
+- **Touch-aware cost:** re-checked on all views, +0.002 to +0.006. Kept.
+- **Status:** v5 remains submitted pending the user's decision. v6 is fully built (commit 480ee92, CSV in `final-submission/previous-v6/`).
