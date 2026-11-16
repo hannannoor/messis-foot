@@ -51,7 +51,12 @@ Code: https://github.com/hannannoor/messis-foot/tree/experiment/strong-emissions
 
 **Kickoff patch** ([`kickoff_patch.py`](../kickoff_patch.py)). Graded frames before each half's automatic `Kick Off (Start)` tag are set to D.
 
-**Why the gap rule is in, after we had removed it.** On random-gap simulations it hurts. On three public Metrica sample games, where the ball-loss pattern is real, it helps: there, a missing ball mostly means stopped play (79–89% of dead frames have no ball, against 7–16% of live frames). BAR–ATH's inputs show the same pattern, label-free: the ball is missing on 77% of frames where most players stand still, against 19% where they move.
+**Why the gap rule is in, after we had removed it.** We removed it because it hurts when the ball is dropped at random, which is how we first simulated ball loss. BAR–ATH's inputs show, label-free, that its ball loss is not random:
+
+- the ball is missing in about 150 blocks, 133 of them longer than 3 s;
+- it is missing on 77% of frames where most players stand still, against 19% where they move.
+
+Long gaps there overwhelmingly look like stoppages, so the rule is back. We have no external measurement of its benefit (see §6 and §7).
 
 ## 3. Assets used and dropped
 
@@ -81,7 +86,7 @@ No label, annotation or human-produced data about BAR–ATH was used for trainin
 | [DFL / Sportec Solutions open data](https://doi.org/10.6084/m9.figshare.28196177.v1) (Bassek, Rein, Weber, Memmert 2025), CC BY 4.0 | Provider `BallPossession`/`BallStatus` from official DFL data (Sportec; trained analysts with quality control, per the paper) | 7 matches (J03WMX, J03WN1, J03WOH, J03WOY, J03WPY, J03WQQ, J03WR9), about 145,000 frames each | H/A/D training and evaluation |
 | [SkillCorner open data](https://github.com/SkillCorner/opendata), MIT | Provider possession phases; H/A on known play, no dead-ball labels | 10 matches | H vs A training (conditional loss) and evaluation |
 | [WCSF SolutionRoom](https://github.com/MatKempeGroningen/WCSF_SolutionRoom), MIT | Manual SciSports alive/possession annotations; 10 Hz tracking resampled to 25 Hz | 1 match | H/A/D training (final model) and holdout evaluation |
-| [Metrica Sports sample data](https://github.com/metrica-sports/sample-data) | Possession derived algorithmically from the public event data ([`metrica_event_reference.py`](../metrica_event_reference.py)) | 3 matches | Evaluation only |
+| [Metrica Sports sample data](https://github.com/metrica-sports/sample-data) | Owners derived algorithmically from the public event data; dead ball taken from the ball coordinates, which are blank while play is stopped ([`metrica_ball_reference.py`](../metrica_ball_reference.py)) | 3 matches | Evaluation only (ownership) |
 
 **Splits.**
 - Development: 13 matches with grouped 4-fold cross-validation.
@@ -104,34 +109,44 @@ No label, annotation or human-produced data about BAR–ATH was used for trainin
 
 Spell F1 throughout, scored on external data only.
 
-| Version | Change | Locked holdout (5) | Dev CV (13) | Metrica samples (3, never fitted) |
+| Version | Change | Locked holdout (5) | Dev CV (13) | Metrica samples, ownership only (3) |
 |---|---|---:|---:|---:|
-| Previous release | Decision tree + gap rule | 0.536 | 0.584 | 0.568 |
-| v4 | Sequence models + ball contacts | 0.759 | 0.798 | 0.739 |
-| v6 | + team shape, 3 ball-dropout copies | 0.767 | 0.800 | 0.747 |
-| v8 | + player dropout, boundary output | 0.783 | 0.809 | 0.752 |
-| **v9 (submitted)** | **+ gap rule reinstated** | – | **0.808** | **0.794** |
+| Previous release | Decision tree + gap rule | 0.536 | 0.584 | 0.631 |
+| v4 | Sequence models + ball contacts | 0.759 | 0.798 | 0.870 |
+| v6 | + team shape, 3 ball-dropout copies | 0.767 | 0.800 | 0.867 |
+| v8 | + player dropout, boundary output | 0.783 | 0.809 | 0.878 |
+| **v9 (submitted)** | **+ gap rule reinstated** | – | **0.808** | **0.878** |
 
 - **Holdout:** the locked holdout was looked at 8 times over the project, so we treat it as confirmation only.
-- **Metrica** gives three untouched matches from the same tracking vendor, with real ball loss.
-- **Version choices:** these were made on dev cross-validation over several simulated and real ball-loss views, with paired per-match differences and two training seeds.
+- **Metrica** gives three matches from the same tracking vendor that no model was trained on.
+  - Their ball coordinates are blank exactly while play is stopped, so dead-ball detection cannot be tested there: any missing-ball rule is right by construction.
+  - We therefore score ownership only. The reference's dead-ball frames are imposed on every prediction, and the score measures whether the H/A possessions are right.
+  - v9 equals v8 in this column because the gap rule only changes dead-ball calls.
+- **Withdrawn figure:** an earlier version of this document quoted 0.794 for v9 on the Metrica games, as evidence for the gap rule. It used an event-derived reference that mislabelled 11–14% of frames, the gap-rule stage was chosen on those games, and the gain was true by construction. We no longer quote it.
+- **Gap rule (v9):** it rests on BAR–ATH's label-free input statistics (§2), not on a measured gain.
+- **Version choices (v4–v8):** these were made on dev cross-validation over several simulated ball-loss views, with paired per-match differences and two training seeds. Those views removed the ball at random with respect to play, which BAR–ATH does not do, so they say less about BAR–ATH than we first assumed.
 - **Full history:** [docs/strong-emissions-results.md](strong-emissions-results.md).
 
 ## 7. Limitations
 
 - **Proxy labels.** External labels follow other providers' conventions:
   - SkillCorner has no dead-ball labels;
-  - Metrica's labels are derived from events;
+  - Metrica's owners are derived from events, and its dead ball from blanked ball coordinates;
   - the challenge's ground truth comes from corrected tracking.
 
   Boundary timing and dead-ball edges may differ systematically from BAR–ATH's reference.
-- **Gap rule assumption.** It assumes BAR–ATH's ball gaps mostly mean stopped play, as on Metrica and as BAR–ATH's input statistics suggest. Long, slow gaps inside live play would be mislabelled D.
+- **Gap rule assumption.** It assumes BAR–ATH's long ball gaps mean stopped play, as its input statistics suggest. No external data tests this:
+  - DFL freezes the ball during stoppages;
+  - Metrica blanks it;
+  - SkillCorner has no dead-ball labels.
+
+  Long, slow gaps inside live play would be mislabelled D, and the timing of dead ball at the edges of a gap is unvalidated.
 - **Weak spots:**
   - possessions shorter than 2 s (about half found, even with the ball visible);
   - long possessions with the ball missing;
-  - dead-ball recall when the ball is missing.
-- **Simulated degradation.** Ball and player loss in training are simulated from aggregate rates; we cannot measure BAR–ATH's real error modes without its labels.
-- **With more time:** train directly on matches with real vendor ball loss (the Metrica samples) and model ball loss that depends on game state instead of random gaps.
+  - dead-ball timing when the ball stays in view. On WCSF, the one external match where the ball is neither frozen nor blanked in stoppages, dead-ball handling costs v8 about 0.09 spellF1 (0.764 as predicted, 0.853 with dead ball taken from the reference).
+- **Simulated degradation.** Ball and player loss in training are simulated from aggregate rates and placed at random with respect to play, whereas BAR–ATH loses the ball mainly in long blocks. We cannot measure BAR–ATH's real error modes without its labels.
+- **With more time:** model ball and player loss that follows the state of play instead of random gaps, and add training data in which the ball stays visible and moving through stoppages.
 
 ## 8. Reproduction
 
