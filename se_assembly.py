@@ -68,5 +68,6 @@ def assemble(frames, supports, starts=(), *, missing_w=0.0, cost=32.0, cost_d=No
     second = apply_gap_rule(frames, materialize_abstentions(latent2, periods))
     patch = apply_kickoff_patch(frames, second.labels, starts)
     nogap = apply_kickoff_patch(frames, tuple(control), starts)
+    gapko = apply_kickoff_patch(frames, tuple(first.labels), starts)   # v9: gap rule on the main decode + kickoff patch
     return dict(control=tuple(control), gapped=tuple(first.labels), restarted=tuple(second.labels),
-                final=tuple(patch.labels), nogap=tuple(nogap.labels))
+                final=tuple(patch.labels), nogap=tuple(nogap.labels), gapko=tuple(gapko.labels))

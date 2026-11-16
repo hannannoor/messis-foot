@@ -99,6 +99,8 @@ def run(tag, mode, opts):
     out.mkdir(parents=True, exist_ok=True)
     (out / 'opts.json').write_text(json.dumps(dict(opts, mode=mode, n_features=len(keep))))
     folds = [(tuple(c for c in DEV if c not in f), f) for f in FOLDS] if mode == 'cv' else [(DEV, HOLDOUT)] if mode == 'final' else [(ALL, ())]
+    if mode == 'custom':   # round 9: train on ALL + opts["extra_train"], predict opts["test"]
+        folds = [(ALL + tuple(opts.get('extra_train', ())), tuple(opts['test']))]
     for train, test in folds:
         t = time.time()
         sp = swap_plan(names) if opts.get('sym') else None

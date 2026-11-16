@@ -251,6 +251,8 @@ def run(tag, mode, opts):
     names = load(DEV[0])[3]
     plan = swap_plan(names)
     folds = [(tuple(c for c in DEV if c not in f), f) for f in FOLDS] if mode == 'cv' else [(DEV, HOLDOUT)] if mode == 'final' else [(ALL, ())]
+    if mode == 'custom':   # round 9: train on ALL + opts["extra_train"], predict opts["test"] (e.g. Metrica leave-one-game-out)
+        folds = [(ALL + tuple(opts.get('extra_train', ())), tuple(opts['test']))]
     for tr, te in folds:
         t = time.time()
         Xall = np.concatenate([load(c)[0][::10] for c in tr])

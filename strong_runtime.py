@@ -15,7 +15,7 @@ MODEL_DIR = Path(__file__).resolve().parent / 'strong_model'
 POWER = 2.0
 MISSING_W = 1.0   # log-evidence weight on missing-ball rows (release: 0)
 SWITCH_COST = 20.0  # decoder switch cost (release: 32)
-GAP_RULE = False  # v3: model infers dead ball itself (trained with ball-dropout augmentation); kickoff patch kept
+GAP_RULE = 'gapko'  # v9: gap rule on the main decode, then kickoff patch (False = v3-v8 'nogap'; True = full release chain)
 WINDOW, CONTEXT = 6000, 1500
 SETS = (('gru.npz', 'gbm.npz', 0.15), ('gru8.npz', 'gbm8.npz', 0.85))   # (GRU file, GBM file, set weight)
 TOUCH_COST, TOUCH_K = 10.0, 6   # v5: switch cost within +-TOUCH_K frames of an impulse contact

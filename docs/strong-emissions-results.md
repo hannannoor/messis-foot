@@ -171,3 +171,21 @@ Changes, each tested on dev cross-validation (13 matches) against the v1 recipe 
 - **Holdout (eighth look):** clean 0.767 → **0.783**; ball loss 0.651 → **0.669**.
 - **Submission:** SHA-256 `bbc77547…`. CPU runs are byte-identical, the GPU path differs on 1 frame, and the official validator says OK. v6 is kept in `final-submission/previous-v6/`.
 - **New tooling:** CV fold models are saved; `se_predict.py` scores new views without retraining.
+
+## v9 (16 November 2026, submitted): Metrica evaluation and the gap rule
+- **Fresh evaluation:** 3 public Metrica sample games, already acquired with pinned hashes, with event-derived labels. Every released version was scored once with its exact runtime:
+
+| | Release | v2 | v4 | v5 | v6 | v8 | **v9** |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Metrica mean | 0.568 | 0.765 | 0.739 | 0.741 | 0.747 | 0.752 | **0.794** |
+
+- **Why:** real ball loss is state-dependent.
+  - Metrica: 79–89% of dead frames have no ball, against 7–16% of live frames.
+  - BAR–ATH inputs: missing on 77% of "still" frames against 19% of "moving" frames.
+  - Random-gap simulation (used since v3): 47% against 47%.
+- **The gap rule** (label-free; gap > 3 s with below-typical player speed → D), applied on the main decode, then the kickoff patch:
+  - on Metrica: changes 3–5% of frames, 83–90% of the changes correct, +0.042 (3/3 games);
+  - clean dev −0.001;
+  - on BAR–ATH: changes 4.5% of frames (7,193, all live → D), within Metrica's range.
+- **Submission:** SHA-256 `ed97ae73…`. Two CPU builds byte-identical, validator OK, and the model supports are identical to v8's. v8 is kept in `final-submission/previous-v8/`.
+- **In progress:** leave-one-game-out training with Metrica, and scoring the player-robust v4 set.

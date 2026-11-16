@@ -26,8 +26,21 @@ def provider(cid):
     return cid.split('-', 1)[0]
 
 
+METRICA = ('Sample_Game_1', 'Sample_Game_2', 'Sample_Game_3')
+METRICA_SOURCE = WORKSPACE / 'gap-liveness-private' / '2026-11-10' / 'metrica' / 'source'
+
+
 def load(cid):
     cohort, match = cid.split('-', 1)
+    if cohort == 'metrica':   # round 9: public Metrica samples, event-derived reference (metrica_event_reference)
+        from metrica_sample_adapter import load_game, load_events
+        from metrica_event_reference import build_reference
+        loaded, team_map = load_game(METRICA_SOURCE, match)
+        frames = list(loaded) if not isinstance(loaded, tuple) else list(loaded[0])
+        if isinstance(loaded, tuple):
+            team_map = loaded[1]
+        labels, _ = build_reference(load_events(METRICA_SOURCE, match, team_map), [f.period for f in frames])
+        return frames, np.asarray(['HADX'.index(v) for v in labels], dtype=np.uint8)
     if cohort == 'wcsf':
         import memory_ablation_protocol as p
         binding = p.input_bindings(ROOT)['evaluation'][cid]

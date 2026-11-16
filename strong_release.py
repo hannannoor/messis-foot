@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import numpy as np
 
-VERSION = '2026.11.16-strong-emissions-v8'
+VERSION = '2026.11.16-strong-emissions-v9'
 
 
 def generate(prefix, tags, out, *, features_out=None):
@@ -43,7 +43,8 @@ def generate(prefix, tags, out, *, features_out=None):
     sup = strong_runtime.supports(X, names, info['period'])
     stages = assemble(frames, sup, kickoff_starts(tags), missing_w=strong_runtime.MISSING_W,
                       cost=strong_runtime.SWITCH_COST, cost_rows=strong_runtime.cost_rows(X, names, strong_runtime.boundary()))
-    final = list(stages['final' if strong_runtime.GAP_RULE else 'nogap'])
+    g = strong_runtime.GAP_RULE
+    final = list(stages[g if isinstance(g, str) else ('final' if g else 'nogap')])
     data = submission_bytes(final)
     model_sha = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(strong_runtime.MODEL_DIR.glob('*.npz'))}
     receipt = dict(version=VERSION, rows=len(final), csv_sha256=hashlib.sha256(data).hexdigest(),
