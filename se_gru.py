@@ -35,10 +35,16 @@ def load(cid):
     return load_path(PRIVATE / 'cases' / (cid + '.npz'))
 
 
+KEEP_NAMES = None   # exact feature list (saved models), overrides XDROP when set
+
+
 def load_path(path):
     z = np.load(path)
     names = [str(s) for s in z['names']]
-    keep = [i for i, n in enumerate(names) if not (XDROP and n.startswith(XDROP))]
+    if KEEP_NAMES is not None:
+        keep = [names.index(n) for n in KEEP_NAMES]
+    else:
+        keep = [i for i, n in enumerate(names) if not (XDROP and n.startswith(XDROP))]
     return (z['X'][:, keep].astype(np.float32), z['ref'].astype(np.int64), z['period'].astype(np.int64),
             [names[i] for i in keep])
 
@@ -56,11 +62,11 @@ def segments(period):
 
 
 class Net(nn.Module):
-    def __init__(self, d, h, layers=2, drop=.1):
+    def __init__(self, d, h, layers=2, drop=.1, n_out=3):
         super().__init__()
         self.inp = nn.Sequential(nn.Linear(d, h), nn.GELU(), nn.Dropout(drop), nn.Linear(h, h), nn.GELU())
         self.gru = nn.GRU(h, h, num_layers=layers, batch_first=True, bidirectional=True, dropout=drop)
-        self.out = nn.Sequential(nn.Dropout(drop), nn.Linear(2 * h, h), nn.GELU(), nn.Linear(h, 3))
+        self.out = nn.Sequential(nn.Dropout(drop), nn.Linear(2 * h, h), nn.GELU(), nn.Linear(h, n_out))
 
     def forward(self, x):
         y, _ = self.gru(self.inp(x))
@@ -83,7 +89,29 @@ def spell_weights(ref, per, scale, cap):
     return w
 
 
-def loss_fn(logits, ref, dmask, wt=None):
+def boundary_target(ref, per, hasd, k=2):
+    """1 within +-k frames of a possession boundary. D providers: any change among H/A/D labels. SkillCorner (no D):
+    change of team between consecutive H/A-labelled frames (across X). Returns (target, valid mask)."""
+    n = len(ref)
+    ev = np.zeros(n, bool)
+    if hasd:
+        lab = ref < 3
+        ch = np.zeros(n, bool)
+        ch[1:] = lab[1:] & lab[:-1] & (ref[1:] != ref[:-1]) & (per[1:] == per[:-1])
+        ev = ch
+        valid = lab
+    else:
+        last, lastp = -1, -1
+        for t in np.flatnonzero(ref < 2):
+            if last >= 0 and ref[t] != last and per[t] == lastp:
+                ev[t] = True
+            last, lastp = ref[t], per[t]
+        valid = ref < 2
+    tgt = np.convolve(ev.astype(float), np.ones(2 * k + 1), 'same') > 0
+    return tgt.astype(np.float32), valid
+
+
+def loss_fn(logits, ref, dmask, wt=None, bt=None, bv=None, lam=0.0):
     """ref: 0 H,1 A,2 D,3 X. dmask: True where provider has D labels."""
     logp = torch.log_softmax(logits, -1)
     full = (ref < 3) & dmask
@@ -95,7 +123,12 @@ def loss_fn(logits, ref, dmask, wt=None):
     if wt is None:
         wt = torch.ones_like(l1)
     tot = (l1 * full * wt).sum() + (l2 * own * wt).sum()
-    return tot / ((full + own) * wt).sum().clamp(min=1)
+    main = tot / ((full + own) * wt).sum().clamp(min=1)
+    if lam and bt is not None:
+        bl = nn.functional.binary_cross_entropy_with_logits(logits[..., 3], bt, reduction='none',
+                                                            pos_weight=torch.tensor(5.0, device=logits.device))
+        main = main + lam * (bl * bv).sum() / bv.sum().clamp(min=1)
+    return main
 
 
 def train(cids, opts, plan, stats):
@@ -115,10 +148,13 @@ def train(cids, opts, plan, stats):
         elif opts.get('aug') and ap.exists():
             Xa = load_path(ap)[0]
             aug = (np.clip((Xa - mu) / sd, -6, 6).astype(np.float32), np.clip((swapped(Xa, plan) - mu) / sd, -6, 6).astype(np.float32))
-        data.append((X, Xs, ref, refs, segments(per), not cid.startswith('skillcorner'), wt, aug))
+        bt, bv = boundary_target(ref, per, not cid.startswith('skillcorner'))   # same under H/A swap
+        data.append((X, Xs, ref, refs, segments(per), not cid.startswith('skillcorner'), wt, aug, bt, bv))
     torch.manual_seed(opts.get('seed', 1729))
     rng = np.random.default_rng(opts.get('seed', 1729))
-    net = Net(data[0][0].shape[1], opts.get('hidden', 128), opts.get('layers', 2), opts.get('drop', .1)).to(DEVICE)
+    lam = float(opts.get('bnd', 0.0))
+    net = Net(data[0][0].shape[1], opts.get('hidden', 128), opts.get('layers', 2), opts.get('drop', .1),
+              4 if lam else 3).to(DEVICE)
     steps = opts.get('steps', 3000)
     opt = torch.optim.AdamW(net.parameters(), lr=opts.get('lr', 1e-3), weight_decay=1e-2)
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=opts.get('lr', 1e-3), total_steps=steps, pct_start=.1)
@@ -126,9 +162,9 @@ def train(cids, opts, plan, stats):
     net.train()
     t0 = time.time()
     for step in range(steps):
-        xb, rb, db, wb = [], [], [], []
+        xb, rb, db, wb, bb, vb = [], [], [], [], [], []
         for _ in range(B):
-            X, Xs, ref, refs, segs, hasd, wt, aug = data[rng.integers(len(data))]
+            X, Xs, ref, refs, segs, hasd, wt, aug, btt, bvv = data[rng.integers(len(data))]
             raw = None
             if aug is not None and rng.random() < opts.get('aug_p', .5):
                 if isinstance(aug[0], str):
@@ -146,16 +182,22 @@ def train(cids, opts, plan, stats):
                 x = (Xs if sw else X)[s:e]
             r = (refs if sw else ref)[s:e]
             ww = wt[s:e]
+            b1, v1 = btt[s:e], bvv[s:e].astype(np.float32)
             if e - s < L:
                 x = np.pad(x, ((0, L - (e - s)), (0, 0)))
                 r = np.pad(r, (0, L - (e - s)), constant_values=3)
                 ww = np.pad(ww, (0, L - (e - s)), constant_values=1)
-            xb.append(x); rb.append(r); db.append(hasd); wb.append(ww)
+                b1, v1 = np.pad(b1, (0, L - (e - s))), np.pad(v1, (0, L - (e - s)))
+            xb.append(x); rb.append(r); db.append(hasd); wb.append(ww); bb.append(b1); vb.append(v1)
         xb = torch.from_numpy(np.stack(xb)).to(DEVICE)
         rb = torch.from_numpy(np.stack(rb)).to(DEVICE)
         dm = torch.tensor(db, device=DEVICE)[:, None].expand_as(rb)
         wtb = torch.from_numpy(np.stack(wb)).to(DEVICE)
-        loss = loss_fn(net(xb), rb, dm, wtb)
+        if lam:
+            loss = loss_fn(net(xb), rb, dm, wtb, torch.from_numpy(np.stack(bb)).to(DEVICE),
+                           torch.from_numpy(np.stack(vb)).to(DEVICE), lam)
+        else:
+            loss = loss_fn(net(xb), rb, dm, wtb)
         opt.zero_grad()
         loss.backward()
         nn.utils.clip_grad_norm_(net.parameters(), 1.0)
@@ -172,23 +214,32 @@ def predict(net, cid, plan, stats, path=None):
     net.eval()
     X, ref, per, _ = load(cid) if path is None else load_path(path)
     sup = np.tile(np.array([[.45, .45, .1]]), (len(X), 1))
+    bnd = np.zeros(len(X), np.float32)
     for sw in (False, True):
         Z = swapped(X, plan) if sw else X
         Z = np.clip((Z - mu) / sd, -6, 6).astype(np.float32)
         Z[:, sd < 1e-2] = 0.0  # constant in training (e.g. geometry-valid flag): neutral at inference
         for a, b in segments(per):
             p = np.zeros((b - a, 3), np.float32)
+            pb = np.zeros(b - a, np.float32)
             W, C = 6000, 1500  # window, context on each side
             for s in range(a, b, W):
                 lo, hi = max(a, s - C), min(b, s + W + C)
-                q = torch.softmax(net(torch.from_numpy(np.ascontiguousarray(Z[lo:hi]))[None].to(DEVICE)), -1)[0]
-                q = q.cpu().numpy()
+                o = net(torch.from_numpy(np.ascontiguousarray(Z[lo:hi]))[None].to(DEVICE))[0]
+                q = torch.softmax(o[:, :3], -1).cpu().numpy()
                 e = min(b, s + W)
                 p[s - a:e - a] = q[s - lo:e - lo]
+                if o.shape[-1] > 3:
+                    pb[s - a:e - a] = torch.sigmoid(o[:, 3]).cpu().numpy()[s - lo:e - lo]
             if sw:
                 p = p[:, [1, 0, 2]]
             sup[a:b] = p if not sw else .5 * (sup[a:b] + p)
+            bnd[a:b] = pb if not sw else .5 * (bnd[a:b] + pb)
+    LAST_BND[0] = bnd
     return sup
+
+
+LAST_BND = [None]   # boundary probabilities of the last predict() call (models with a boundary head)
 
 
 def run(tag, mode, opts):
@@ -206,19 +257,23 @@ def run(tag, mode, opts):
         mu, sd = Xall.mean(0), Xall.std(0) + 1e-3
         net = train(tr, opts, plan, (mu, sd))
         for cid in te:
-            np.savez_compressed(out / (cid + '.npz'), sup=predict(net, cid, plan, (mu, sd)))
+            np.savez_compressed(out / (cid + '.npz'), sup=predict(net, cid, plan, (mu, sd)), bnd=LAST_BND[0])
             dp = PRIVATE / 'cases_deg' / (cid + '.npz')
             if dp.exists():
                 (out / 'deg').mkdir(exist_ok=True)
-                np.savez_compressed(out / 'deg' / (cid + '.npz'), sup=predict(net, None, plan, (mu, sd), dp))
+                np.savez_compressed(out / 'deg' / (cid + '.npz'), sup=predict(net, None, plan, (mu, sd), dp), bnd=LAST_BND[0])
             for v in opts.get('eval_dirs', ()):   # extra evaluation views (investigation)
                 vp = PRIVATE / v / (cid + '.npz')
                 if vp.exists():
                     (out / v).mkdir(exist_ok=True)
-                    np.savez_compressed(out / v / (cid + '.npz'), sup=predict(net, None, plan, (mu, sd), vp))
+                    np.savez_compressed(out / v / (cid + '.npz'), sup=predict(net, None, plan, (mu, sd), vp), bnd=LAST_BND[0])
+        if mode == 'cv':   # keep fold models so new evaluation views need no retraining (se_predict.py)
+            torch.save(dict(state=net.state_dict(), mu=mu, sd=sd, opts=opts, names=names, test=list(te),
+                            hidden=opts.get('hidden', 128), layers=opts.get('layers', 2), n_out=4 if opts.get('bnd') else 3),
+                       out / f'fold{FOLDS.index(te)}.pt')
         if mode in ('final', 'all'):
             prov = PRIVATE / 'provided' / 'features.npz'
-            np.savez_compressed(out / 'provided.npz', sup=predict(net, None, plan, (mu, sd), prov))
+            np.savez_compressed(out / 'provided.npz', sup=predict(net, None, plan, (mu, sd), prov), bnd=LAST_BND[0])
             torch.save(dict(state=net.state_dict(), mu=mu, sd=sd, opts=opts, names=names), out / 'model.pt')
         print('fold', te, round(time.time() - t, 1), flush=True)
 

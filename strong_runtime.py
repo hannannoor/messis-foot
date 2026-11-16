@@ -17,16 +17,22 @@ MISSING_W = 1.0   # log-evidence weight on missing-ball rows (release: 0)
 SWITCH_COST = 20.0  # decoder switch cost (release: 32)
 GAP_RULE = False  # v3: model infers dead ball itself (trained with ball-dropout augmentation); kickoff patch kept
 WINDOW, CONTEXT = 6000, 1500
-SETS = (('gru.npz', 'gbm.npz', 0.3), ('gru6.npz', 'gbm6.npz', 0.7))   # (GRU file, GBM file, set weight)
+SETS = (('gru.npz', 'gbm.npz', 0.15), ('gru8.npz', 'gbm8.npz', 0.85))   # (GRU file, GBM file, set weight)
 TOUCH_COST, TOUCH_K = 10.0, 6   # v5: switch cost within +-TOUCH_K frames of an impulse contact
+BND_LO = 8.0   # v8: switch cost falls towards 8 where the GRUs' boundary channel fires
 
 
-def cost_rows(X, names):
-    """Per-frame switch cost: TOUCH_COST near impulse contacts (itouch_last_dt == 0), SWITCH_COST elsewhere."""
+def cost_rows(X, names, bnd=None):
+    """Per-frame switch cost: TOUCH_COST near impulse contacts (itouch_last_dt == 0), SWITCH_COST elsewhere; with
+    BND_LO set and boundary probabilities b given, also SWITCH_COST - (SWITCH_COST - BND_LO) * max_{+-2} b (minimum)."""
     names = list(names)
     t = (np.asarray(X)[:, names.index('itouch_last_dt')] == 0) & (np.asarray(X)[:, names.index('itouch_last')] != 0)
     near = np.convolve(t.astype(float), np.ones(2 * TOUCH_K + 1), 'same') > 0
-    return np.where(near, TOUCH_COST, SWITCH_COST)
+    c = np.where(near, TOUCH_COST, SWITCH_COST)
+    if BND_LO is not None and bnd is not None:
+        b = np.maximum.reduce([np.roll(bnd, k) for k in range(-2, 3)])
+        c = np.minimum(c, SWITCH_COST - (SWITCH_COST - BND_LO) * np.clip(b, 0, 1))
+    return c
 
 
 # ----- gradient-boosted heads ---------------------------------------------------------------------------------
@@ -113,9 +119,15 @@ def _net(p, k, x):
         layer += 1
     y = _gelu(y @ g('out.1.weight').T + g('out.1.bias'))
     logits = y @ g('out.3.weight').T + g('out.3.bias')
+    bnd = _sigmoid(logits[..., 3]) if logits.shape[-1] > 3 else None
+    logits = logits[..., :3]
     logits = logits - logits.max(-1, keepdims=True)
     e = np.exp(logits)
+    LAST_BND[0] = bnd
     return e / e.sum(-1, keepdims=True)
+
+
+LAST_BND = [None]
 
 
 def _segments(period):
@@ -141,6 +153,7 @@ def gru_supports(p, k, X, period, plan):
 
     Z = np.stack([norm(X), norm(swapped(X, plan))])  # batch: original, swapped
     sup = np.tile(np.array([[.45, .45, .1]]), (len(X), 1))
+    bnd = np.zeros(len(X))
     for a, b in _segments(period):
         for s in range(a, b, WINDOW):
             lo, hi = max(a, s - CONTEXT), min(b, s + WINDOW + CONTEXT)
@@ -149,7 +162,13 @@ def gru_supports(p, k, X, period, plan):
             orig = q[0, s - lo:e - lo]
             swp = q[1, s - lo:e - lo][:, [1, 0, 2]]
             sup[s:e] = .5 * (orig + swp)
+            if LAST_BND[0] is not None:
+                bnd[s:e] = .5 * (LAST_BND[0][0, s - lo:e - lo] + LAST_BND[0][1, s - lo:e - lo])
+    GRU_BND.append(bnd if LAST_BND[0] is not None else None)
     return sup
+
+
+GRU_BND = []
 
 
 # ----- blend --------------------------------------------------------------------------------------------------
@@ -171,7 +190,14 @@ def _set_logp(gru_file, gbm_file, X, names, period):
     return np.log(np.clip(p / p.sum(1, keepdims=True), 1e-9, 1))
 
 
+def boundary():
+    """Mean boundary probability over the GRUs (of the last supports() call) that have a boundary channel."""
+    bs = [b for b in GRU_BND if b is not None]
+    return np.mean(bs, 0) if bs else None
+
+
 def supports(X, names, period):
+    GRU_BND.clear()
     lp = sum(w * _set_logp(a, b, X, names, period) for a, b, w in SETS) / sum(w for _, _, w in SETS)
     p = np.exp(lp - lp.max(1, keepdims=True))
     p /= p.sum(1, keepdims=True)

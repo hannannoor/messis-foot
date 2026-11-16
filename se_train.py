@@ -121,6 +121,9 @@ def run(tag, mode, opts):
                     ph = .5 * (ph + 1 - models['own'].predict_proba(swapped(Xd, sp))[:, 1])
                 pdd = models['live'].predict_proba(Xd)[:, 1]
                 np.savez_compressed(out / sub / (cid + '.npz'), sup=np.column_stack(((1 - pdd) * ph, (1 - pdd) * (1 - ph), pdd)))
+        if mode == 'cv':   # keep fold models (se_predict.py)
+            import pickle
+            (out / f'fold{FOLDS.index(test)}.pkl').write_bytes(pickle.dumps(dict(models=models, names=names, keep=keep, sym=bool(sp is not None), test=list(test))))
         if mode in ('final', 'all'):
             X, _, _, _ = (lambda z: (z['X'][:, keep], 0, 0, 0))(np.load(PRIVATE / 'provided' / 'features.npz'))
             ph = models['own'].predict_proba(X)[:, 1]

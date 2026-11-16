@@ -156,3 +156,18 @@ Changes, each tested on dev cross-validation (13 matches) against the v1 recipe 
 - The investigation showed v6's ball-loss gain holds on real SkillCorner gap layouts, and round 7 found nothing better.
 - `final-submission/submission.csv` is v6 (SHA-256 `e2ff053d…`), and v5 is kept in `final-submission/previous-v5/`.
 - The branch rebuilds v6 byte-identically, and the official validator says OK.
+
+## v8 (16 November 2026, submitted): player-dropout robustness + possession-boundary head
+- **Recon (aggregate input statistics only):** BAR–ATH tracks 10.1 players per team. No player is missing on about 63% of frames per team, 1 on 21%, and 3 or more on about 6%. The missing player is usually the most extreme along the pitch. DFL and WCSF always have 11.
+- **Stress test:** run-based player dropout on top of ball loss (`cases_evalp`, `cases_evalrp`) cost v6 about 0.03.
+- **Changes:**
+  1. Training copies with ball and player dropout (`cases_augp*`). The v4 set weight is cut to 0.15 because it is far weaker with the ball missing.
+  2. A 4th GRU output trained to predict possession boundaries (λ 0.3). The decoder lowers the switch cost toward 8 where it fires.
+  3. Restart / set-piece features were tested and rejected (within noise).
+- **Dev, v8 against v6:**
+  - clean +0.008 ± 0.004;
+  - 5 ball-loss views +0.005 to +0.013 (average 0.691 → 0.700);
+  - 2 ball + player views +0.022 and +0.019, 6/6 matches each (0.664 → 0.684).
+- **Holdout (eighth look):** clean 0.767 → **0.783**; ball loss 0.651 → **0.669**.
+- **Submission:** SHA-256 `bbc77547…`. CPU runs are byte-identical, the GPU path differs on 1 frame, and the official validator says OK. v6 is kept in `final-submission/previous-v6/`.
+- **New tooling:** CV fold models are saved; `se_predict.py` scores new views without retraining.

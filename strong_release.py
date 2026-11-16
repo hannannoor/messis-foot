@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import numpy as np
 
-VERSION = '2026.11.15-strong-emissions-v6'
+VERSION = '2026.11.16-strong-emissions-v8'
 
 
 def generate(prefix, tags, out, *, features_out=None):
@@ -36,12 +36,13 @@ def generate(prefix, tags, out, *, features_out=None):
     frames = list(frames)
     f18 = np.asarray(list(feature_rows(frames)), dtype=np.float64)
     X, names, info = se_features.build(frames, f18)
-    for fn in (se_features.impulse_features, se_features.impulse_rel_features, se_features.team_shape_features):
+    for fn in (se_features.impulse_features, se_features.impulse_rel_features, se_features.team_shape_features,
+               se_features.restart_features):
         Xe, ne = fn(frames)
         X, names = np.concatenate([X, Xe], 1), tuple(names) + tuple(ne)
     sup = strong_runtime.supports(X, names, info['period'])
     stages = assemble(frames, sup, kickoff_starts(tags), missing_w=strong_runtime.MISSING_W,
-                      cost=strong_runtime.SWITCH_COST, cost_rows=strong_runtime.cost_rows(X, names))
+                      cost=strong_runtime.SWITCH_COST, cost_rows=strong_runtime.cost_rows(X, names, strong_runtime.boundary()))
     final = list(stages['final' if strong_runtime.GAP_RULE else 'nogap'])
     data = submission_bytes(final)
     model_sha = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(strong_runtime.MODEL_DIR.glob('*.npz'))}
@@ -50,7 +51,7 @@ def generate(prefix, tags, out, *, features_out=None):
                    model_sha256=model_sha, counts={k: final.count(k) for k in 'HADX'},
                    missing_w=strong_runtime.MISSING_W, switch_cost=strong_runtime.SWITCH_COST,
                    gap_rule=strong_runtime.GAP_RULE, touch_cost=strong_runtime.TOUCH_COST,
-                   touch_k=strong_runtime.TOUCH_K, sets=[list(x) for x in strong_runtime.SETS])
+                   touch_k=strong_runtime.TOUCH_K, sets=[list(x) for x in strong_runtime.SETS], bnd_lo=strong_runtime.BND_LO)
     out.mkdir(parents=True, exist_ok=False)
     (out / 'submission.csv').write_bytes(data)
     (out / 'strong-release-receipt.json').write_text(json.dumps(receipt, sort_keys=True, indent=1, default=str) + '\n',

@@ -481,3 +481,65 @@ def team_shape_features(frames, ext=False):
 
 def team_shape_ext_features(frames):
     return team_shape_features(frames, ext=True)
+
+
+def restart_features(frames):
+    """Round 8: player-only dead-ball / restart cues (pitch 105 x 68 m). Stillness, touchline and corner occupancy,
+    penalty-box and six-yard crowding, kickoff shape (each team in its own half, someone at the centre spot) and
+    windows. Team-symmetric quantities only, so no home/away swap pairing is needed except per-team stillness."""
+    per, val, obs, ball, H, A, Hid, Aid = _arr(frames)
+    n = len(per)
+    seg = _segments(per)
+    allP = np.concatenate([H, A], 1)
+    x, y = allP[..., 0], allP[..., 1]
+    ok = np.isfinite(x)
+    cols, names = [], []
+
+    def add(name, v):
+        v = np.asarray(v, np.float64)
+        cols.append(np.where(np.isfinite(v), v, 0.0).astype(np.float32)); names.append(name)
+
+    with np.errstate(all='ignore'):
+        spH, spA = _speeds(H, Hid, seg), _speeds(A, Aid, seg)
+        sp = np.concatenate([spH, spA], 1)
+        still = lambda s: np.nanmean(np.where(np.isfinite(s), s < 1.0, np.nan), 1)
+        stH, stA, stAll = still(spH), still(spA), still(sp)
+        msp = np.nanmean(sp, 1)
+        touch_y = np.minimum(y, 68 - y)
+        n_touch = (ok & (touch_y < 2.5)).sum(1)
+        cx = np.minimum(x, 105 - x)
+        n_corner = (ok & (cx < 4) & (touch_y < 4)).sum(1)
+        n_goalline = (ok & (cx < 2.5)).sum(1)
+        inbox = ok & (cx < 16.5) & (y > 13.85) & (y < 54.15)
+        n_box = np.maximum(inbox & (x < 52.5), False).sum(1), (inbox & (x >= 52.5)).sum(1)
+        box_max = np.maximum(n_box[0], n_box[1])
+        six = ok & (cx < 5.5) & (y > 24.84) & (y < 43.16)
+        n_six = six.sum(1)
+        centre = np.hypot(x - 52.5, y - 34.0)
+        near_centre = np.nanmin(np.where(ok, centre, np.inf), 1)
+        hcx, _ = _nanmean(H[:, :, 0], 1)
+        acx, _ = _nanmean(A[:, :, 0], 1)
+        sgn = np.sign(np.nan_to_num(acx - hcx))
+        for s_ in np.unique(seg):
+            m = seg == s_
+            sgn[m] = 1.0 if sgn[m].sum() >= 0 else -1.0
+        own_h = np.nanmean(np.where(np.isfinite(H[:, :, 0]), sgn[:, None] * (H[:, :, 0] - 52.5) <= 1.0, np.nan), 1)
+        own_a = np.nanmean(np.where(np.isfinite(A[:, :, 0]), sgn[:, None] * (A[:, :, 0] - 52.5) >= -1.0, np.nan), 1)
+        kickoff = np.minimum(own_h, own_a) * (near_centre < 3)
+        dmsp = msp - _shift(msp, 25)
+    sig = dict(still_all=stAll, mean_spd=msp, n_touch=n_touch, n_corner=n_corner, n_goalline=n_goalline,
+               box_max=box_max, n_six=n_six, near_centre=np.minimum(near_centre, 40), kickoff=kickoff, dspd1=dmsp)
+    for k_, v in sig.items():
+        add('rs_' + k_, v)
+    add('rsH_still', stH); add('rsA_still', stA)
+    for k_ in ('still_all', 'mean_spd', 'n_touch', 'box_max', 'kickoff', 'n_corner'):
+        for w in (50, 125):
+            for d in (-1, 1):
+                m, _ = _window_mean(sig[k_], w, seg, d)
+                add(f'rs_{k_}_{"p" if d < 0 else "f"}{w}', m)
+    # time since / until the whole field was mostly still (>= 60% players under 1 m/s)
+    ev = np.nan_to_num(stAll) >= 0.6
+    _, ldt = _event_ref(ev, ev.astype(float), seg, -1)
+    _, ndt = _event_ref(ev, ev.astype(float), seg, +1)
+    add('rs_since_still', ldt); add('rs_until_still', ndt)
+    return np.stack(cols, 1), tuple(names)

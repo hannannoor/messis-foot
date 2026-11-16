@@ -10,7 +10,8 @@ def job(path):
     todo = [(m, f) for m, f in (('itouch_last', se_features.impulse_features),
                                  ('itouch_last_rel', se_features.impulse_rel_features),
                                  ('tsH_cx', se_features.team_shape_features),
-                                 ('tsH_line_p50', se_features.team_shape_ext_features)) if m not in names]
+                                 ('tsH_line_p50', se_features.team_shape_ext_features),
+                                 ('rs_still_all', se_features.restart_features)) if m not in names]
     if not todo:
         return path.name, 'skip'
     kind = path.parent.name
@@ -21,8 +22,10 @@ def job(path):
         cid = path.stem
         frames, _ = se_load.load(cid)
         if kind == 'cases_deg' or kind.startswith(('cases_aug', 'cases_eval')):
-            from se_degrade import degrade
+            from se_degrade import degrade, drop_players
             frames = degrade(frames, z['drop'])
+            if 'kH' in z:
+                frames = drop_players(frames, z['kH'], z['kA'])
     for _, fn in todo:
         Xe, ne = fn(frames)
         z['X'] = np.concatenate([z['X'], Xe], 1)

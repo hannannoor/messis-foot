@@ -78,6 +78,56 @@ def transplant_mask(period, sc_cid):
     return drop
 
 
+# Player dropout (round 8): rounded aggregate rates only (see round-8 design). Per team, alternating present/missing
+# runs; missing runs log-normal (median 4 s, p90 ~35 s); in a missing run k players are absent (k=1 most often),
+# always the k most extreme along the pitch axis at that frame (camera edges).
+P_MISS_TEAM = 0.36
+K_DIST = {1: .58, 2: .15, 3: .07, 4: .08, 5: .06, 6: .06}
+
+
+def player_k(n, period, seed):
+    rng = np.random.default_rng(zlib.crc32(seed.encode()))
+    mu, sig = np.log(100.0), 1.69
+    lm = np.exp(mu + sig * sig / 2)
+    lp = lm * (1 - P_MISS_TEAM) / P_MISS_TEAM
+    k = np.zeros(n, np.int8)
+    t, missing = 0, rng.random() < P_MISS_TEAM
+    ks, ps = list(K_DIST), list(K_DIST.values())
+    while t < n:
+        if missing:
+            L = int(min(3000, max(1, rng.lognormal(mu, sig))))
+            k[t:t + L] = rng.choice(ks, p=ps)
+        else:
+            L = int(max(1, rng.exponential(lp)))
+        t += L
+        missing = not missing
+    k[np.asarray(period) == 0] = 0
+    return k
+
+
+def drop_players(frames, kH, kA, centre_x=52.5):
+    from math import hypot
+    out = []
+    for f, a, b in zip(frames, kH, kA):
+        if a or b:
+            def keep(xy, ids, k):
+                if not k or not len(xy):
+                    return tuple(xy), tuple(ids)
+                order = sorted(range(len(xy)), key=lambda i: -abs(float(xy[i][0]) - centre_x))
+                gone = set(order[:min(int(k), len(xy))])
+                return (tuple(v for i, v in enumerate(xy) if i not in gone),
+                        tuple(v for i, v in enumerate(ids) if i not in gone) if len(ids) == len(xy) else tuple(ids))
+            hxy, hid = keep(f.home_xy, f.home_ids, a)
+            axy, aid = keep(f.away_xy, f.away_ids, b)
+            hd, ad = f.home_distance, f.away_distance
+            if f.ball_x is not None and f.ball_y is not None:
+                hd = min((hypot(float(x) - float(f.ball_x), float(y) - float(f.ball_y)) for x, y in hxy), default=None)
+                ad = min((hypot(float(x) - float(f.ball_x), float(y) - float(f.ball_y)) for x, y in axy), default=None)
+            f = replace(f, home_xy=hxy, home_ids=hid, away_xy=axy, away_ids=aid, home_distance=hd, away_distance=ad)
+        out.append(f)
+    return out
+
+
 def degrade(frames, drop):
     out = []
     for f, d in zip(frames, drop):
@@ -114,11 +164,20 @@ def build(cids, kind='deg'):
         else:
             drop = make_mask(len(frames), per, cid if kind == 'deg' else cid + '#' + kind)
         frames = degrade(frames, drop)
+        extra = {}
+        PSRC = {'evalp': 'cases_deg', 'evalrp': 'cases_evalr1', 'augp': 'cases_aug', 'augp2': 'cases_aug2', 'augp3': 'cases_aug3'}
+        if kind in PSRC:   # ball loss (from an existing view) + player dropout; training kinds use their own seeds
+            src = PSRC[kind]
+            drop = np.load(se_load.PRIVATE / src / (cid + '.npz'))['drop']
+            frames, _ = se_load.load(cid)
+            frames = degrade(frames, drop)
+            extra = dict(kH=player_k(len(frames), per, cid + '#' + kind + 'H'), kA=player_k(len(frames), per, cid + '#' + kind + 'A'))
+            frames = drop_players(frames, extra['kH'], extra['kA'])
         f18 = np.asarray(list(feature_rows(frames)), dtype=np.float64)
         sup = np.asarray(predict_supports(f18, model), dtype=np.float64)
         X, names, info = se_features.build(frames, f18)
         np.savez_compressed(out / (cid + '.npz'), X=X, names=np.array(names), ref=ref, period=info['period'],
-                            observed=info['observed'], release_sup=sup, drop=drop)
+                            observed=info['observed'], release_sup=sup, drop=drop, **extra)
         act = per > 0
         print(cid, 'missing frac on active', round(float((~info['observed'])[act].mean()), 3), flush=True)
 

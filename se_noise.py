@@ -13,7 +13,7 @@ import numpy as np
 import se_load
 
 VIEWS = [('clean', ''), ('deg', '_deg'), ('evalg1', '_cases_evalg1'), ('evalg2', '_cases_evalg2'),
-         ('evalr1', '_cases_evalr1'), ('evalr2', '_cases_evalr2')]
+         ('evalr1', '_cases_evalr1'), ('evalr2', '_cases_evalr2'), ('evalp', '_cases_evalp'), ('evalrp', '_cases_evalrp')]
 
 
 def per_match(tag, suf, cfg):
