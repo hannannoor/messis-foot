@@ -27,10 +27,18 @@ FOLDS = (('dfl-J03WR9', 'dfl-J03WMX', 'skillcorner-1874553', 'skillcorner-200744
 assert sorted(sum(FOLDS, ())) == sorted(DEV)
 
 
+HA_ONLY = ('skillcorner', 'metrica')   # no live/dead supervision (see se_gru.HA_ONLY)
+
+
 def load(cid, keep):
     z = np.load(PRIVATE / 'cases' / (cid + '.npz'))
     X = z['X'][:, keep]
-    return X, z['ref'], z['period'], z['observed']
+    ref = z['ref']
+    if cid.startswith('metrica'):   # round 10: ball-flag reference (se_metrica_ballref.py)
+        ref = np.load(PRIVATE / 'metrica_ballref' / (cid + '.npy'))
+        if len(ref) != len(X):
+            raise ValueError('Metrica ball-flag reference length differs from the case')
+    return X, ref, z['period'], z['observed']
 
 
 def columns(opts):
@@ -61,7 +69,7 @@ def rows(cids, keep, step, head):
         if head == 'own':
             m = (ref < 2) & (per > 0)
         else:
-            if cid.startswith('skillcorner'):
+            if cid.startswith(HA_ONLY):
                 continue
             m = (ref < 3) & (per > 0)
         st = step if sw == 1.0 else int(round(step / sw))   # keep total aug rows as with one copy

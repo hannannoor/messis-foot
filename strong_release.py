@@ -4,9 +4,9 @@
 
 Runtime: CPython 3.14 + numpy (inference only; models in strong_model/ were fitted on external data only).
 Decoder: 3-state Viterbi over model supports (evidence kept on missing-ball rows, switch cost 20, 10 within
-+-6 frames of an impulse contact) -> automatic
-kickoff patch (se_assembly.py, 'nogap' stage). v3 drops the gap rule: the models are trained with ball-dropout
-augmentation and infer dead ball from player context.
++-6 frames of an impulse contact, down towards 8 where the GRU boundary channel fires) -> label-free gap rule
+(gap_liveness.py: a ball gap over 3 s with below-typical player speed becomes dead ball) -> automatic kickoff patch.
+This is the 'gapko' stage of se_assembly.py, selected by strong_runtime.GAP_RULE (v9; v3-v8 used 'nogap').
 """
 import argparse
 import hashlib

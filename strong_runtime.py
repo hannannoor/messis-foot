@@ -1,8 +1,9 @@
 """Deterministic numpy inference for the strong-emission model (no torch / scikit-learn at runtime).
 
 Each model set = geometric blend (equal weights) of two bidirectional-GRU heads and one gradient-boosted pair of
-heads (ownership with home/away swap averaging, live/dead). v5 blends two sets geometrically (v4 set 0.3 on 171
-features, v6 set 0.7 on 241 features incl. team-shape, trained with 3 ball-dropout views), then squares (power 2) and renormalises.
+heads (ownership with home/away swap averaging, live/dead). v9 blends two sets geometrically (SETS below: v4 set 0.15
+on 171 features, v8 set 0.85 on 241 features incl. team-shape, trained with ball- and player-dropout views and a
+boundary head), then squares (power 2) and renormalises.
 Models were fitted on external matches only (DFL, SkillCorner, WCSF); see docs/strong-emissions-results.md.
 """
 from pathlib import Path

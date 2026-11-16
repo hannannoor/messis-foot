@@ -29,10 +29,18 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 XDROP = ()   # feature-name prefixes to leave out (opts "xdrop"), for ablations
+# Providers supervised for H-vs-A only. SkillCorner has no D labels. Metrica (round 10): its dead ball IS the missing
+# ball, so D supervision there would teach an exact-edge shortcut that the provided match does not share.
+HA_ONLY = ('skillcorner', 'metrica')
 
 
 def load(cid):
-    return load_path(PRIVATE / 'cases' / (cid + '.npz'))
+    X, ref, per, names = load_path(PRIVATE / 'cases' / (cid + '.npz'))
+    if cid.startswith('metrica'):   # round 10: ball-flag reference (se_metrica_ballref.py), not the event-derived one
+        ref = np.load(PRIVATE / 'metrica_ballref' / (cid + '.npy')).astype(np.int64)
+        if len(ref) != len(X):
+            raise ValueError('Metrica ball-flag reference length differs from the case')
+    return X, ref, per, names
 
 
 KEEP_NAMES = None   # exact feature list (saved models), overrides XDROP when set
@@ -148,8 +156,8 @@ def train(cids, opts, plan, stats):
         elif opts.get('aug') and ap.exists():
             Xa = load_path(ap)[0]
             aug = (np.clip((Xa - mu) / sd, -6, 6).astype(np.float32), np.clip((swapped(Xa, plan) - mu) / sd, -6, 6).astype(np.float32))
-        bt, bv = boundary_target(ref, per, not cid.startswith('skillcorner'))   # same under H/A swap
-        data.append((X, Xs, ref, refs, segments(per), not cid.startswith('skillcorner'), wt, aug, bt, bv))
+        bt, bv = boundary_target(ref, per, not cid.startswith(HA_ONLY))   # same under H/A swap
+        data.append((X, Xs, ref, refs, segments(per), not cid.startswith(HA_ONLY), wt, aug, bt, bv))
     torch.manual_seed(opts.get('seed', 1729))
     rng = np.random.default_rng(opts.get('seed', 1729))
     lam = float(opts.get('bnd', 0.0))

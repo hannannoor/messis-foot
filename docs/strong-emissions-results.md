@@ -188,4 +188,19 @@ Changes, each tested on dev cross-validation (13 matches) against the v1 recipe 
   - clean dev −0.001;
   - on BAR–ATH: changes 4.5% of frames (7,193, all live → D), within Metrica's range.
 - **Submission:** SHA-256 `ed97ae73…`. Two CPU builds byte-identical, validator OK, and the model supports are identical to v8's. v8 is kept in `final-submission/previous-v8/`.
-- **In progress:** leave-one-game-out training with Metrica, and scoring the player-robust v4 set.
+- **Paused:** leave-one-game-out training with Metrica (baseline trained; held-out runs stopped). Do not resume as configured; see round 10.
+
+## Round 10 (16 November 2026): audit, and a corrected Metrica yardstick
+Details: `docs/superpowers/specs/2026-11-16-round10-audit-fixes-design.md`. No change to the submission.
+- **The round 9 Metrica evidence for the gap rule is circular.** In the sample games the ball is an in-play flag: it disappears one frame after play stops (80–90% of stoppages) and returns on the restart frame (84–99%). All 22 players are always tracked. The +0.042 is true by construction there, so 0.794 is not an estimate for BAR–ATH.
+- **The event-derived reference was wrong in both directions:** 11–22 stoppages per game kept as H/A, and 14–17 long stretches per game kept as D while play went on. 11–14% of frames change label under the corrected reference.
+- **Corrected reference:** dead ball from the ball flag, owners from events (`metrica_ball_reference.py`). The honest score on it is **ownership-only** (dead-ball calls taken out):
+
+| | Release | v2 | v4 | v5 | v6 | v8 | v9 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Metrica ownership-only | 0.631 | 0.835 | 0.870 | 0.866 | 0.867 | **0.878** | **0.878** |
+
+- v8 is best on all three games and v2 falls to fifth, which matches dev CV. v9 equals v8 here by design.
+- **BAR–ATH inputs** (no labels): 150 ball gaps, 133 over 3 s, 85% of missing frames in gaps over 10 s. But the ball is lost slow and in-field (fast when lost 6%, against 55–65% in Metrica), so its gap edges are probably not dead-ball edges. v9 keeps the gap rule on the grounds that long gaps are overwhelmingly stoppages; the timing of D at gap edges is untested on any data we hold.
+- **Bug found, not yet fixed:** `se_sym.py` line 50 leaves the 8 `nearH_*` window features wrong in the swapped view on 8–27% of rows (checked against truly mirrored frames; the other 233 features are exact). The fix goes into the next retrain.
+- **Tooling:** dev comparisons now score the submitted `gapko` stage by default; the random-loss views are legacy.

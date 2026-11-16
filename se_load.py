@@ -30,7 +30,9 @@ METRICA = ('Sample_Game_1', 'Sample_Game_2', 'Sample_Game_3')
 METRICA_SOURCE = WORKSPACE / 'gap-liveness-private' / '2026-11-10' / 'metrica' / 'source'
 
 
-def load(cid):
+def load(cid, reference='event'):
+    """reference: Metrica only. 'event' = round-9 event-derived labels; 'ball' = round-10 ball-flag dead ball
+    (metrica_ball_reference). Other cohorts ignore it."""
     cohort, match = cid.split('-', 1)
     if cohort == 'metrica':   # round 9: public Metrica samples, event-derived reference (metrica_event_reference)
         from metrica_sample_adapter import load_game, load_events
@@ -39,7 +41,14 @@ def load(cid):
         frames = list(loaded) if not isinstance(loaded, tuple) else list(loaded[0])
         if isinstance(loaded, tuple):
             team_map = loaded[1]
-        labels, _ = build_reference(load_events(METRICA_SOURCE, match, team_map), [f.period for f in frames])
+        events, periods = load_events(METRICA_SOURCE, match, team_map), [f.period for f in frames]
+        if reference == 'ball':
+            from metrica_ball_reference import build_ball_reference
+            labels, _ = build_ball_reference(events, periods, [bool(f.ball_observed) for f in frames])
+        elif reference == 'event':
+            labels, _ = build_reference(events, periods)
+        else:
+            raise ValueError('Unknown Metrica reference')
         return frames, np.asarray(['HADX'.index(v) for v in labels], dtype=np.uint8)
     if cohort == 'wcsf':
         import memory_ablation_protocol as p

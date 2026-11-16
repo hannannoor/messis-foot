@@ -21,7 +21,7 @@ def job(path):
     else:
         cid = path.stem
         frames, _ = se_load.load(cid)
-        if kind == 'cases_deg' or kind.startswith(('cases_aug', 'cases_eval')):
+        if kind == 'cases_deg' or kind.startswith(('cases_aug', 'cases_eval', 'cases_sd')):
             from se_degrade import degrade, drop_players
             frames = degrade(frames, z['drop'])
             if 'kH' in z:
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     paths = sorted((P / 'cases').glob('*.npz')) + sorted((P / 'cases_deg').glob('*.npz')) + sorted((P / 'cases_aug').glob('*.npz')) + [P / 'provided' / 'features.npz']
     for d in sorted(P.glob('cases_aug?*')):
         paths += sorted(d.glob('*.npz'))
-    for d in sorted(P.glob('cases_eval*')):
+    for d in sorted(P.glob('cases_eval*')) + sorted(P.glob('cases_sd*')):   # cases_sd*: round 10 state-dependent views
         paths += sorted(d.glob('*.npz'))
     if '--only-new' in sys.argv:
         paths = [p for p in paths if p.parent.name in ('cases_aug2', 'cases_aug3')]
@@ -50,6 +50,7 @@ if __name__ == '__main__':
         paths = [p for p in paths if p.parent.name in keep]
     if '--only-eval' in sys.argv:
         paths = [p for p in paths if p.parent.name.startswith('cases_eval')]
-    with Pool(8) as pool:
+    procs = int(sys.argv[sys.argv.index('--procs') + 1]) if '--procs' in sys.argv else 8
+    with Pool(procs) as pool:
         for r in pool.imap_unordered(job, paths):
             print(*r, flush=True)

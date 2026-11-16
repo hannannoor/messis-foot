@@ -128,6 +128,103 @@ def drop_players(frames, kH, kA, centre_x=52.5):
     return out
 
 
+# State-dependent loss (round 10). The provided match loses the ball in about 150 long blocks, not at random: its inputs
+# show the ball missing on 3 of 4 frames when players stand still, and about 3 fewer players tracked while it is
+# missing (rounded aggregates of inputs only). So stoppages (reference D runs of the EXTERNAL training match) lose the
+# ball from shortly after the stop until around the restart, and live play keeps it apart from a few long gaps.
+# Frame counts at 25 fps. The lag between the stop and the ball vanishing is not observable anywhere, so it is drawn
+# from a broad distribution and the evaluation views use deliberately different ones (SD_KINDS).
+SD_DEFAULT = dict(min_stop=75,            # shorter stoppages keep the ball
+                  p_no_gap=.10,           # a long stoppage with the ball in view throughout
+                  p_instant=.30,          # ball lost within 0.2 s of the stop (out over a line)
+                  lag_median=50, lag_sigma=.8,     # otherwise log-normal lag before it vanishes
+                  p_early=.15, early=(25, 100),    # ball back (placed) this long before the restart
+                  p_late=.15, late=(5, 25),        # ball picked up again this long after the restart
+                  live_gaps=3.0, live_len=(75, 200),   # long gaps in live play: Poisson mean per half, length
+                  k_stop={0: .20, 1: .30, 2: .25, 3: .15, 4: .10},   # players lost per team during a stoppage gap
+                  p_live_miss=.20, k_live={1: .8, 2: .2})            # players lost per team in live play (run-based)
+SD_KINDS = {'sda': {}, 'sda2': {}, 'sda3': {},                        # training copies (independent seeds)
+            'sde1': {},                                                # evaluation: same generator, other seed
+            'sde2': dict(p_instant=.5, lag_median=25),                 # evaluation: ball vanishes sooner
+            'sde3': dict(p_instant=.1, lag_median=100)}                # evaluation: ball vanishes later
+
+
+def _stoppages(ref, period):
+    """[first, stop) reference dead-ball runs, each inside one period."""
+    out, i, n = [], 0, len(ref)
+    while i < n:
+        if period[i] == 0 or ref[i] != 2:
+            i += 1
+            continue
+        j = i
+        while j < n and ref[j] == 2 and period[j] == period[i]:
+            j += 1
+        out.append((i, j))
+        i = j
+    return out
+
+
+def state_loss(ref, period, seed, **over):
+    """(drop, kH, kA): ball mask and players lost per team that follow the state of play. Deterministic per seed."""
+    cfg = dict(SD_DEFAULT, **over)
+    rng = np.random.default_rng(zlib.crc32(seed.encode()))
+    ref, period = np.asarray(ref), np.asarray(period)
+    n = len(ref)
+    drop = np.zeros(n, bool)
+    k = [np.zeros(n, np.int8), np.zeros(n, np.int8)]
+    ks, ps = list(cfg['k_stop']), list(cfg['k_stop'].values())
+    for s, e in _stoppages(ref, period):
+        if e - s < cfg['min_stop'] or rng.random() < cfg['p_no_gap']:
+            continue
+        if rng.random() < cfg['p_instant']:
+            lag = int(rng.integers(0, 6))
+        else:
+            lag = int(rng.lognormal(np.log(cfg['lag_median']), cfg['lag_sigma']))
+        u = rng.random()
+        end = e
+        if u < cfg['p_early']:
+            end = e - int(rng.integers(cfg['early'][0], cfg['early'][1] + 1))
+        elif u < cfg['p_early'] + cfg['p_late']:
+            end = e + int(rng.integers(cfg['late'][0], cfg['late'][1] + 1))
+            while end > e and (end > n or period[end - 1] != period[s]):
+                end -= 1
+        a = s + lag
+        if end - a < 25:
+            continue
+        drop[a:end] = True
+        for side in k:
+            side[a:end] = rng.choice(ks, p=ps)
+    live = (ref < 2) & (period > 0)
+    for p in (1, 2):
+        idx = np.flatnonzero(live & (period == p))
+        if not len(idx):
+            continue
+        for _ in range(int(rng.poisson(cfg['live_gaps']))):
+            a = int(rng.choice(idx))
+            b = a + int(rng.integers(cfg['live_len'][0], cfg['live_len'][1] + 1))
+            if b <= n and live[a:b].all() and (period[a:b] == p).all():
+                drop[a:b] = True
+    kl, pl = list(cfg['k_live']), list(cfg['k_live'].values())
+    mu, sig = np.log(100.0), 1.0
+    mean_missing = np.exp(mu + sig * sig / 2)
+    mean_present = mean_missing * (1 - cfg['p_live_miss']) / cfg['p_live_miss']
+    for side in k:
+        t, missing = 0, rng.random() < cfg['p_live_miss']
+        while t < n:
+            if missing:
+                L = int(min(3000, max(1, rng.lognormal(mu, sig))))
+                value = rng.choice(kl, p=pl)
+                seg = side[t:t + L]
+                seg[seg == 0] = value          # a stoppage gap keeps its own count
+            else:
+                L = int(max(1, rng.exponential(mean_present)))
+            t += L
+            missing = not missing
+        side[period == 0] = 0
+    drop &= period > 0
+    return drop, k[0], k[1]
+
+
 def degrade(frames, drop):
     out = []
     for f, d in zip(frames, drop):
@@ -156,7 +253,9 @@ def build(cids, kind='deg'):
     for cid in cids:
         frames, ref = se_load.load(cid)
         per = np.asarray([f.period for f in frames])
-        if kind.startswith('evalr'):   # real SkillCorner gap layout, rotated over SC dev matches
+        if kind in SD_KINDS:   # round 10: state-dependent ball and player loss (uses the external match's own labels)
+            drop, sd_kH, sd_kA = state_loss(ref, per, cid + '#' + kind, **SD_KINDS[kind])
+        elif kind.startswith('evalr'):   # real SkillCorner gap layout, rotated over SC dev matches
             k = DEG_CASES.index(cid) + (0 if kind == 'evalr1' else 3)
             drop = transplant_mask(per, sorted(SC_DEV)[k % len(SC_DEV)])
         elif kind == 'augsc':   # SkillCorner training copy: extra ~25% removal on top of its natural ball loss
@@ -165,6 +264,9 @@ def build(cids, kind='deg'):
             drop = make_mask(len(frames), per, cid if kind == 'deg' else cid + '#' + kind)
         frames = degrade(frames, drop)
         extra = {}
+        if kind in SD_KINDS:
+            extra = dict(kH=sd_kH, kA=sd_kA)
+            frames = drop_players(frames, sd_kH, sd_kA)
         PSRC = {'evalp': 'cases_deg', 'evalrp': 'cases_evalr1', 'augp': 'cases_aug', 'augp2': 'cases_aug2', 'augp3': 'cases_aug3'}
         if kind in PSRC:   # ball loss (from an existing view) + player dropout; training kinds use their own seeds
             src = PSRC[kind]

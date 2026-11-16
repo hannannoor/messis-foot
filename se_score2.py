@@ -77,6 +77,7 @@ def one(args):
         d0 = se_load.PRIVATE / 'scores2' / (tag + ('_' + VIEW if VIEW else '_deg' if DEG else '')); d0.mkdir(parents=True, exist_ok=True)
         np.save(d0 / f'{cid}.{cfg}.final.npy', np.asarray(['HADX'.index(s) for s in st['final']], np.uint8))
         np.save(d0 / f'{cid}.{cfg}.nogap.npy', np.asarray(['HADX'.index(s) for s in st['nogap']], np.uint8))
+        np.save(d0 / f'{cid}.{cfg}.gapko.npy', np.asarray(['HADX'.index(s) for s in st['gapko']], np.uint8))
         out[cfg] = {k: score_variant(ref, np.asarray(['HADX'.index(s) for s in v], np.uint8), per, obs)['metrics']['spell_f1_mean'] for k, v in st.items()}
     d = se_load.PRIVATE / 'scores2' / (tag + ('_' + VIEW if VIEW else '_deg' if DEG else '')); d.mkdir(parents=True, exist_ok=True)
     prev = json.loads((d / (cid + '.json')).read_text()) if (d / (cid + '.json')).exists() else {}
@@ -100,7 +101,7 @@ if __name__ == '__main__':
     with Pool(len(cids), initializer=_init, initargs=(DEG, VIEW, BND_TAGS)) as pool:
         res = dict(pool.map(one, [(tag, c, cfgs) for c in cids]))
     for cfg in cfgs:
-        for stage in ('control', 'final', 'nogap'):
+        for stage in ('control', 'final', 'nogap', 'gapko'):   # gapko = the v9 submission
             by = {}
             for c in cids: by.setdefault(se_load.provider(c), []).append(res[c][cfg][stage])
             m = {k: round(float(np.mean(v)), 4) for k, v in by.items()}

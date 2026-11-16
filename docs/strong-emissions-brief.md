@@ -52,7 +52,7 @@
 
 ## Caveats
 - Simulated ball loss shares one generator between training and evaluation, so it can flatter changes that adapt to that generator.
-- Expected BAR–ATH performance: the closest proxy is now the Metrica games (v9: 0.794). That rests on BAR–ATH's ball loss resembling Metrica's (supported by input statistics), and Metrica labels are event-derived, so they approximate the competition definition.
+- Expected BAR–ATH performance: there is no clean proxy. The round 10 audit showed the Metrica ball is an in-play flag, so v9's 0.794 there is true by construction and is not an estimate. With dead-ball calls taken out and a corrected reference, v8 and v9 score 0.878 on Metrica ownership (v4 0.870, v2 0.835). How well D is timed at BAR–ATH's ball-gap edges is untested.
 - The holdout has now been looked at eight times.
 - v6's ball-loss gain over v5 held on real SkillCorner gap layouts (+0.010 to +0.013) but not on the 2-match degraded holdout (−0.0015), most likely small-sample noise.
 
