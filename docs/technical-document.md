@@ -1,101 +1,155 @@
-# MESSI's FOOT — possession submission
+# MESSI's FOOT: possession labelling for BAR–ATH (technical document)
 
 ## 1. Summary
 
-We submit one H/A/D/X label per original video frame. The pipeline is the frozen control, a missing-ball gap rule, decoder restart across selected stoppage gaps, then an automatic kickoff patch. Run from the checkout, with `$prefix` set to the tactical filename prefix and `$out` to a new absolute output directory:
+We label all 199,319 frames of BAR–ATH as H, A, D or X with a fully automatic pipeline.
+
+1. **Features:** label-free geometry features computed from the provided tactical tracking.
+2. **Evidence:** per-frame H/A/D evidence from sequence models (bidirectional GRUs plus gradient-boosted trees) trained only on external matches.
+3. **Decoder:** a 3-state Viterbi decoder whose switch cost drops at detected ball contacts and at predicted possession boundaries.
+4. **Gap rule:** a label-free rule that turns long, slow ball-tracking gaps into dead ball.
+5. **Kickoff patch:** an automatic patch from the Smart Tagging kickoff tags.
+
+Reproduce the submitted file from the repository (`$prefix` is the local tactical filename prefix; `$out` must be a new directory):
 
 ```powershell
-python -I restart_release.py --prefix "$prefix" --tags "${prefix}_smart_tagging.xml" --out "$out"
+python strong_release.py --prefix "$prefix" --tags "${prefix}_smart_tagging.xml" --out "$out"
 ```
 
-The CSV has 199,319 rows. SHA-256: `15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685`.
+Expected output: `submission.csv` with 199,319 rows, SHA-256 `ed97ae735a57e81dbd788f94c40de210dcbcb5aed40bc94d9552f1dade2897cd`. Two independent CPU runs are byte-identical, and the official `validate_submission.py` passes.
+
+Code: https://github.com/hannannoor/messis-foot/tree/experiment/strong-emissions (submission built at commit `cd07b0e`).
 
 ## 2. Approach and why
 
-The ranking metric matches whole possession spells, so fragmented labels are expensive. The [frozen control](https://github.com/hannannoor/messis-foot/blob/30a7ace010e3fc1ece23c440e54151058dbf8b19/release_runtime.py) uses 18 geometry and recent-control features, a fixed 31-node decision tree, and H/A/D log-emissions. State changes cost 32. The motion-head weight is zero. Decoding is offline within usable stretches and halves; later evidence can resolve earlier uncertainty. Outside graded periods labels are X.
+**Why possession objects, not frames.** spellF1 matches whole possessions, so a pipeline must neither fragment a possession (spurious switches) nor merge two (missed switches). We therefore produce smooth per-frame *evidence* and leave the segmentation to a decoder that pays for every switch.
 
-The [gap rule](https://github.com/hannannoor/messis-foot/blob/30a7ace010e3fc1ece23c440e54151058dbf8b19/gap_liveness.py) considers consecutive missing-ball blocks longer than 75 frames. This three-second definition was chosen from the provided track's label-free long-gap investigation, not fitted to ground truth. Every fifth frame, associated players' one-second displacement speeds are filtered below 12 m/s; at least ten pairs are needed for a defined sample. A gap becomes D when its median defined sample is below the match median outside long gaps.
+**Features** ([`se_features.py`](../se_features.py)). 241 per-frame features, all computed from positions alone, with no labels:
 
-The [release wrapper](https://github.com/hannannoor/messis-foot/blob/30a7ace010e3fc1ece23c440e54151058dbf8b19/restart_release.py) decodes again with those stoppage-gap frames unusable, using identical emissions and switch costs. The [official definition](https://github.com/metrica-sports/more-than-a-hack-2027/blob/f8f2629ff1e0985f81d7e59d8413678514ee1530/CHALLENGE.md) says a restart has a clear possessor. The reset removes cross-gap decoder continuity; it does not rebuild the existing features. The gap rule is applied again, then the [kickoff patch](https://github.com/hannannoor/messis-foot/blob/30a7ace010e3fc1ece23c440e54151058dbf8b19/kickoff_patch.py) marks graded frames before each half's unique automatic kickoff tag D. Decoder parity and unchanged stoppage gaps are checked.
+- **Ball–player geometry:** nearest-player distances per team, players within 2/5/10 m, closing speeds, ball velocity in each team's attacking direction.
+- **Ball contacts:** a contact is a peak in the ball's velocity change with a player within 2 m. Features cover the last and next contact (which team, how long ago or until), with a reliability flag for contacts at the edge of a tracking gap.
+- **Player-only team shape:** each team described in its own attacking direction: centroid depth, defensive line, length and width, forward and backward runners, and marking distance, plus ±2/5/15 s window means.
+  - These matter because the ball is missing on 41% of graded frames.
+  - Example: the team in possession is about 9 m wider and moves forward rather than back.
+- **Missing-ball timing:** time since and until the ball was last and next observed.
+
+**Evidence models** ([`se_gru.py`](../se_gru.py), [`se_train.py`](../se_train.py)). Two model sets, combined as a geometric blend (0.15 × set A + 0.85 × set B), then squared and renormalised.
+
+- **Each set:** two bidirectional GRUs (2 layers, 128 hidden units, 60 s training chunks) plus a pair of HistGradientBoosting heads (ownership and live/dead).
+- **Home/away swap augmentation** and swap-averaged inference make both models team-symmetric.
+- **Loss:** short possessions are up-weighted, because spellF1 counts each possession equally.
+- **Set A** (171 features, no team shape) protects clean-tracking accuracy.
+- **Set B** (241 features) is trained with copies of the D-labelled matches in which the ball *and* some players are removed. The removal follows the provided tracking's rates: about 10.1 tracked players per team, with the ball missing in runs.
+- **Set B's GRUs also predict possession boundaries** as an auxiliary output. This multi-task signal improved every evaluation view.
+
+**Decoder** ([`se_assembly.py`](../se_assembly.py), [`strong_runtime.py`](../strong_runtime.py)). A 3-state Viterbi over the evidence, decoding offline within each half:
+
+- **Switch cost 20.** It drops to 10 within ±6 frames of a detected ball contact, and towards 8 where the boundary output fires.
+- Changes of possession therefore need sustained evidence, except at moments where a real contact or a learned boundary makes a change plausible.
+
+**Gap rule** ([`gap_liveness.py`](../gap_liveness.py)). A ball-tracking gap longer than 3 s becomes D when the median player speed inside it is below the match's typical speed outside long gaps. The rule uses no labels and no constants tied to this match's frames.
+
+**Kickoff patch** ([`kickoff_patch.py`](../kickoff_patch.py)). Graded frames before each half's automatic `Kick Off (Start)` tag are set to D.
+
+**Why the gap rule is in, after we had removed it.** On random-gap simulations it hurts. On three public Metrica sample games, where the ball-loss pattern is real, it helps: there, a missing ball mostly means stopped play (79–89% of dead frames have no ball, against 7–16% of live frames). BAR–ATH's inputs show the same pattern, label-free: the ball is missing on 77% of frames where most players stand still, against 19% where they move.
 
 ## 3. Assets used and dropped
 
-Used: tactical `_atd.xml`, `_atd.txt`, `_homography.csv`; from Smart Tagging, only `Kick Off (Start)` enters prediction. Homography quality gates geometry. Anonymous player association is automatic. The entry point processes provided inputs locally.
+**Used:**
+- tactical tracking (`_atd.xml`, `_atd.txt`);
+- homography (geometry validity);
+- from Smart Tagging, only `Kick Off (Start)`.
 
-| Tried and dropped | Reason |
+Everything runs locally on the provided files.
+
+| Tried and dropped | Why |
 |---|---|
-| Broadcast camera and clock synchronisation | No usable automatic alignment links. |
-| Learned motion model | External confidence-policy experiment failed its gates; selected weight is zero. |
-| Velocity repair | Failed external liveness safeguards. |
-| Smart Tagging attacking-phase ownership | Failed its external ownership test. |
-| Ball-velocity touch evidence | Clean-track gains vanished at provided-like touch density. |
-| Higher/lower switch cost | Helps one provider's labelling convention and harms another's. |
+| Broadcast video and broadcast tracking | No reliable automatic alignment to the tactical timeline. |
+| Smart Tagging phases as ownership evidence | Failed an external ownership test (earlier phase). |
+| 31-node decision tree (previous release) | Replaced by the sequence models (+0.19 spellF1 on external holdout matches). |
+| Decoder-only tweaks: costs, power, separate dead-ball cost | Within noise. |
+| Wider GRU; stronger augmentation dose; 5 rather than 3 dropout copies | No gain, or the gain didn't generalise across evaluation views. |
+| Restart and set-piece features (stillness, box crowding, corners) | Signal already captured by existing speed features; within noise. |
+| Longer (±30 s) team-shape windows | Clean accuracy dropped. |
 
 ## 4. Training and evaluation data
 
-According to the committed experiment records, no label of any kind from the provided match was used to train, tune or select. The public five minutes were used only for pipeline checks. Individual annotators and annotation error rates were not independently audited.
+No label, annotation or human-produced data about BAR–ATH was used for training, tuning or selection. BAR–ATH enters only at inference. The repository's public 5-minute ground truth was used once, only as a pipeline-correctness check on the final file (orientation, frame alignment, label meaning), never to compare or choose versions.
 
-| Dataset, source and licence | Labels and amount | Use |
-|---|---|---|
-| [DFL / Sportec Solutions](https://doi.org/10.6084/m9.figshare.28196177.v1), CC BY 4.0; Bassek, Rein, Weber et al. | Provider BallStatus/BallPossession. Four fitting matches: J03WOH, J03WOY, J03WPY, J03WMX; J03WQQ validation; J03WR9/J03WN1 original test. | Tree fitting with original/fixed 30% masking; validation, selection and repeated evaluation. |
-| [SkillCorner / PySport](https://github.com/SkillCorner/opendata/tree/4340d274572876239c154c90bc507a9b3250a656), MIT repository licence | Provider possession phases, H/A on known play; unannotated regions X, no D reference. Twenty exports: eight development, two calibration, two validation, eight diagnostic/test. | Research motion-model fitting, selection and evaluation; selected tree fitted on DFL. Ten reused in latest tests. |
-| [WCSF SolutionRoom](https://github.com/MatKempeGroningen/WCSF_SolutionRoom/tree/1c9ba798f98a9fffb16081a5d3965774d4e5662c), MIT dataset terms per recorded source-owner clarification | One anonymous Dutch match, two halves; manual SciSports Alive/Possession annotations; smoothed 10 Hz tracking resampled to 25 Hz. | Transfer/evaluation only for the control; subsequently reused. |
-| [Metrica Sports Sample Data](https://github.com/metrica-sports/sample-data/tree/e706dd506b360d69d9d123d5b8026e7294b13996) | Three sample matches; possession reference derived from provider events. Pinned README requests responsible use and source acknowledgement; no formal dataset licence stated there. | Evaluation only. Credit: Metrica Sports. Manually corrected tracks and event-reference conventions limit independence. |
+| Dataset (source, licence) | Labels: who and how | Amount | Use |
+|---|---|---|---|
+| [DFL / Sportec Solutions open data](https://doi.org/10.6084/m9.figshare.28196177.v1) (Bassek, Rein, Weber, Memmert 2025), CC BY 4.0 | Provider `BallPossession`/`BallStatus` from official DFL data (Sportec; trained analysts with quality control, per the paper) | 7 matches (J03WMX, J03WN1, J03WOH, J03WOY, J03WPY, J03WQQ, J03WR9), about 145,000 frames each | H/A/D training and evaluation |
+| [SkillCorner open data](https://github.com/SkillCorner/opendata), MIT | Provider possession phases; H/A on known play, no dead-ball labels | 10 matches | H vs A training (conditional loss) and evaluation |
+| [WCSF SolutionRoom](https://github.com/MatKempeGroningen/WCSF_SolutionRoom), MIT | Manual SciSports alive/possession annotations; 10 Hz tracking resampled to 25 Hz | 1 match | H/A/D training (final model) and holdout evaluation |
+| [Metrica Sports sample data](https://github.com/metrica-sports/sample-data) | Possession derived algorithmically from the public event data ([`metrica_event_reference.py`](../metrica_event_reference.py)) | 3 matches | Evaluation only |
+
+**Splits.**
+- Development: 13 matches with grouped 4-fold cross-validation.
+- Locked holdout: 5 matches (WCSF, DFL J03WN1, SkillCorner 2013725/2016236/2017461), fixed before modelling.
+- The submitted models are retrained on all 18 labelled matches.
+- Training copies with ball and player dropout are generated algorithmically from the DFL and WCSF matches ([`se_degrade.py`](../se_degrade.py)).
 
 ## 5. Possession rules implemented
 
-State changes need sustained evidence because of the switch cost: single touches, deflections and brief challenges do not normally flip ownership. Loose or contested balls tend to retain the last team through recent-control features and sequence decoding. Short missing-ball stretches have neutral emissions; the decoder uses both sides, so the previous owner is not always carried.
-
-D comes from the tree, gap rule and kickoff patch. After a selected stoppage gap, the decoder starts a fresh sequence using post-gap emission rows, with no cross-gap decoder state. The unchanged rows still contain recent-control features whose history can predate the gap; that feature memory is not reset. The inherited abstention materialisation forward-fills then head-backfills within each period; an entirely unknown active period defaults to D. These conventions are not adjudicated possession truth.
+- **Ball in play vs dead.**
+  - D comes from three sources: the models' live/dead evidence, the gap rule (long ball gaps with slow players), and the kickoff patch.
+  - We never assign dead-ball ownership.
+- **Change of possession = sustained control.** Because every switch costs something, a single touch, a deflection or a brief challenge does not flip ownership unless the evidence afterwards keeps favouring the other team. Switches are cheaper exactly where a ball contact is detected or the boundary output fires, which is where controlled changes happen.
+- **Loose and contested balls** keep the last team's possession: the decoder carries the current state unless the evidence pays for a switch.
+- **Missing ball inside play:** evidence comes from team shape (width, runners, defensive line) and from the nearest contacts before and after the gap. Short gaps rarely change ownership; long, slow gaps become D.
+- **Restarts:** after a D stretch, possession starts with whichever team the evidence supports. There is no carry-over rule across a stoppage.
+- **X:** only outside the graded periods (before kickoff, halftime, after the final whistle). Inside play every frame gets H, A or D.
 
 ## 6. Evidence
 
-Spell F1 is averaged over temporal IoU thresholds 0.3–0.7. DFL/WCSF primary means weight the two primary DFL matches one quarter each and WCSF one half. [Committed evidence](https://github.com/hannannoor/messis-foot/tree/13d7e2b45ffba7197e380735e0f8dcfe03438ae7/reports) contains counts and protocols.
+Spell F1 throughout, scored on external data only.
 
-| Check | Result | Caveat |
-|---|---|---|
-| Fifteen external matches, natural | Control .551816 → gap .550876. | Equal-provider mean on 13 fitting-disjoint primary matches; two fitting overlaps secondary. Reused matches, little labelled natural-gap support. |
-| Same, random 30% masking | .469149 → .438025; SkillCorner .555155 → .479297. | Gap rule harms when missingness is unrelated to stoppages. |
-| Three Metrica samples | .446712 → .545105. | Partly circular tracking/reference construction. |
-| Stoppage regimes: control → gap | Natural .529441 → .529441; stop100 .481276 → .535956; stop75 .444251 → .455214; stop50 .401310 → .401842; stop75-jitter .343783 → .401270. | No primary-mean loss; WR9 loses .011672 in stop75 and .026738 in stop50. Reference-built masks model, rather than measure, provided missingness. |
-| Touch transfer / restart | Touch failed B/C: thinned SC confirmation −.014216; primary gain −.002969. Restart passed E/F/G; gains WN1 +.009363, WR9 +.016101, WCSF +.021546, WOH +.011955, WOY +.011527; SC confirmation .000000. | Post-hoc, reused evidence; two reset-gating matches establish consistency, not population benefit. |
-| Provided, label-free | Final D 41.458%; 113 of 133 long gaps relabelled; 434 → 415 spells; 388 changed frames (0.244%); 29 → 9 spells under 25 frames; 19 gaps change first owner. | Coverage and fewer spells do not measure correctness. |
-| Public five minutes, once after decision | Spell F1 0.360976, macro F1 0.677701, accuracy 0.734667; 24 predicted / 17 reference spells. Previous candidate: .362 / .677 / .734, 25 / 17 spells. | Pipeline check only; 17 reference spells cannot rank these files. Numbers chose nothing. |
+| Version | Change | Locked holdout (5) | Dev CV (13) | Metrica samples (3, never fitted) |
+|---|---|---:|---:|---:|
+| Previous release | Decision tree + gap rule | 0.536 | 0.584 | 0.568 |
+| v4 | Sequence models + ball contacts | 0.759 | 0.798 | 0.739 |
+| v6 | + team shape, 3 ball-dropout copies | 0.767 | 0.800 | 0.747 |
+| v8 | + player dropout, boundary output | 0.783 | 0.809 | 0.752 |
+| **v9 (submitted)** | **+ gap rule reinstated** | – | **0.808** | **0.794** |
 
-The organisers' published full-match baseline is .2433. Our full-match score is unknown.
+- **Holdout:** the locked holdout was looked at 8 times over the project, so we treat it as confirmation only.
+- **Metrica** gives three untouched matches from the same tracking vendor, with real ball loss.
+- **Version choices:** these were made on dev cross-validation over several simulated and real ball-loss views, with paired per-match differences and two training seeds.
+- **Full history:** [docs/strong-emissions-results.md](strong-emissions-results.md).
 
 ## 7. Limitations
 
-Neither the gap rule nor restart has labelled validation on tracking with this exact gap pattern. The rule relabels an entire gap and can erase live play. It has no minimum count of defined speed samples inside a gap: the 113 relabelled gaps have minimum/10th-percentile/median support 24/30/64 samples, none below five; 3 of 20 unclassified gaps have no defined sample. 11 selected gaps are within 10% below the speed threshold, accounting for 4.967% of relabelled frames.
+- **Proxy labels.** External labels follow other providers' conventions:
+  - SkillCorner has no dead-ball labels;
+  - Metrica's labels are derived from events;
+  - the challenge's ground truth comes from corrected tracking.
 
-Restart gains are about .01–.02 on DFL-type references and zero on the SkillCorner confirmation mean. Tagged set-piece match/mismatch/no-transition counts are 15/9/3 before and 14/10/3 after restart. Corner agreement fell 10/12 → 6/12; goal kicks improved 2/7 → 4/7 among those with a transition, and free kicks 3/5 → 4/5. At corners, the pre-stoppage team usually also takes the restart, so removing continuity can hurt; this is an interpretation, not an independently measured cause.
-
-The gap rule's restart extension is inactive. The kickoff tag starts a few seconds before play; the remaining short interval keeps its earlier labels. The team-role mapping in `gap_solver/input_contract.py` recognises this match's two team names; another match needs its names added. Geometry can be noisy, identities mistaken, or observations stale. All external matches were reused; none is a fresh holdout, and several ideas followed earlier rejections. With more time, we would obtain independent labelled long-gap tracking and test restart ownership by restart type before changing the rule.
+  Boundary timing and dead-ball edges may differ systematically from BAR–ATH's reference.
+- **Gap rule assumption.** It assumes BAR–ATH's ball gaps mostly mean stopped play, as on Metrica and as BAR–ATH's input statistics suggest. Long, slow gaps inside live play would be mislabelled D.
+- **Weak spots:**
+  - possessions shorter than 2 s (about half found, even with the ball visible);
+  - long possessions with the ball missing;
+  - dead-ball recall when the ball is missing.
+- **Simulated degradation.** Ball and player loss in training are simulated from aggregate rates; we cannot measure BAR–ATH's real error modes without its labels.
+- **With more time:** train directly on matches with real vendor ball loss (the Metrica samples) and model ball loss that depends on game state instead of random gaps.
 
 ## 8. Reproduction
 
-Use CPython 3.14.5; inference is standard library only and uses no network. Acquire the permitted provided assets locally. Clone the repository:
+- **Inference** (what produces the submission): CPython 3.14.5 + numpy 2.5.1. The models run as plain numpy, deterministically on CPU, in about 4 minutes. Weights are committed in `strong_model/` (`gru.npz`, `gbm.npz` for set A; `gru8.npz`, `gbm8.npz` for set B). Run the command in §1, then:
 
-```powershell
-git clone https://github.com/hannannoor/messis-foot.git messis-foot
-cd messis-foot
-git checkout 30a7ace010e3fc1ece23c440e54151058dbf8b19
-```
+  ```powershell
+  python evaluation/validate_submission.py <out>/submission.csv
+  ```
 
-For format validation, obtain the pinned official code and its separate check dependencies before working offline:
-
-```powershell
-git clone https://github.com/metrica-sports/more-than-a-hack-2027.git official
-git -C official checkout f8f2629ff1e0985f81d7e59d8413678514ee1530
-python -m pip install numpy==2.5.1 pandas==3.0.5
-```
-
-These packages are for the official validator/scorer, not inference. Inference itself needs no package installation or network. Set `$official` to that checkout's absolute path.
-
-Set `$prefix` to the local tactical filename prefix, `$out` to a nonexistent absolute folder, and `$official` to the local official repository folder. Run the command in section 1. Expected SHA-256 is `15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685`; compare the receipt and validate the exact CSV:
-
-```powershell
-python "$official/evaluation/validate_submission.py" "$out/submission.csv"
-```
-
-[Release tests](https://github.com/hannannoor/messis-foot/blob/30a7ace010e3fc1ece23c440e54151058dbf8b19/tests/test_restart_release.py) cover disabled-path parity, restart behaviour and deterministic output.
+  (from the challenge repository).
+- **Training** (to rebuild the weights):
+  - GRUs: PyTorch 2.8 (CUDA).
+  - Boosted trees: Python 3.12 with scikit-learn 1.5.1 (`requirements-training.txt`).
+  - Pipeline:
+    1. `se_extract.py` (features), then `se_append.py` (feature groups);
+    2. `se_degrade.py` (dropout copies);
+    3. `se_gru.py <tag> all` and `se_train.py <tag> all`;
+    4. `se_export_gru.py` / `se_export_gbm.py`.
+  - The external datasets must be downloaded separately from the sources above.
+  - GPU training is not bit-reproducible across hardware. The submission is reproducible exactly from the committed weights.
+- **Data:** no match data is in the repository.
