@@ -183,7 +183,11 @@ def _set_logp(gru_file, gbm_file, X, names, period):
     if missing:
         raise ValueError('Feature schema lacks model columns: ' + ', '.join(missing[:5]))
     Xs = np.asarray(X, np.float32)[:, [have.index(n) for n in want]]
-    plan = swap_plan(want)
+    # Model sets trained from round 10 on carry symfix=True (corrected nearH swap, se_sym.swap_plan); older sets do not.
+    fixes = {bool(m['symfix']) if 'symfix' in m.files else False for m in (gbm, gru)}
+    if len(fixes) != 1:
+        raise ValueError('GRU and GBM files of one set disagree on the swap fix')
+    plan = swap_plan(want, fix=fixes.pop())
     parts = [gru_supports(gru, k, Xs, period, plan) for k in range(int(gru['n_models']))]
     parts.append(gbm_supports(gbm, Xs, plan))
     lp = sum(np.log(np.clip(p, 1e-9, 1)) for p in parts) / len(parts)

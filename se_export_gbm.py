@@ -18,6 +18,8 @@ for head, clf in blob['models'].items():
     out.update({f'{head}_{k}': np.concatenate(v) for k, v in dict(feature=feats, threshold=thr, left=left, right=right, leaf=leaf, value=val, missing_left=mleft).items()})
     out[f'{head}_roots'] = np.asarray(roots, np.int64)
     out[f'{head}_baseline'] = np.asarray(clf._baseline_prediction, np.float64).ravel()
+if blob.get('symfix'):   # only written for round-10 models, so older exports stay byte-identical
+    out['symfix'] = np.array(True)
 np.savez_compressed(dst, names=np.array(blob['names']), **out)
 # self-check against sklearn on a probe matrix
 z = np.load(sys.argv[3]); zn = [str(s) for s in z['names']]

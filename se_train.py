@@ -106,12 +106,23 @@ def run(tag, mode, opts):
     out = PRIVATE / 'preds' / tag
     out.mkdir(parents=True, exist_ok=True)
     (out / 'opts.json').write_text(json.dumps(dict(opts, mode=mode, n_features=len(keep))))
-    folds = [(tuple(c for c in DEV if c not in f), f) for f in FOLDS] if mode == 'cv' else [(DEV, HOLDOUT)] if mode == 'final' else [(ALL, ())]
-    if mode == 'custom':   # round 9: train on ALL + opts["extra_train"], predict opts["test"]
-        folds = [(ALL + tuple(opts.get('extra_train', ())), tuple(opts['test']))]
+    dev, fold_defs, hold = DEV, FOLDS, HOLDOUT
+    if opts.get('wcsf_dev'):   # round 10: WCSF is a dev match in the last fold (same rule as se_gru.fold_plan)
+        dev = DEV + ('wcsf-used-match',)
+        fold_defs = FOLDS[:-1] + (FOLDS[-1] + ('wcsf-used-match',),)
+        hold = tuple(c for c in HOLDOUT if c != 'wcsf-used-match')
+    extra = tuple(opts.get('extra_train', ()))
+    if mode == 'cv':
+        folds = [(tuple(c for c in dev if c not in f) + extra, f) for f in fold_defs]
+    elif mode == 'final':
+        folds = [(dev + extra, hold)]
+    elif mode == 'custom':   # round 9: train on ALL + extra, predict opts["test"]
+        folds = [(ALL + extra, tuple(opts['test']))]
+    else:
+        folds = [(ALL + extra, ())]
     for train, test in folds:
         t = time.time()
-        sp = swap_plan(names) if opts.get('sym') else None
+        sp = swap_plan(names, fix=bool(opts.get('symfix'))) if opts.get('sym') else None
         models = {}
         for h in ('own', 'live'):
             X, y, w = rows(train, keep, step, h)
@@ -133,7 +144,7 @@ def run(tag, mode, opts):
                 np.savez_compressed(out / sub / (cid + '.npz'), sup=np.column_stack(((1 - pdd) * ph, (1 - pdd) * (1 - ph), pdd)))
         if mode == 'cv':   # keep fold models (se_predict.py)
             import pickle
-            (out / f'fold{FOLDS.index(test)}.pkl').write_bytes(pickle.dumps(dict(models=models, names=names, keep=keep, sym=bool(sp is not None), test=list(test))))
+            (out / f'fold{fold_defs.index(test)}.pkl').write_bytes(pickle.dumps(dict(models=models, names=names, keep=keep, sym=bool(sp is not None), symfix=bool(opts.get('symfix')), test=list(test))))
         if mode in ('final', 'all'):
             X, _, _, _ = (lambda z: (z['X'][:, keep], 0, 0, 0))(np.load(PRIVATE / 'provided' / 'features.npz'))
             ph = models['own'].predict_proba(X)[:, 1]
@@ -142,7 +153,7 @@ def run(tag, mode, opts):
             pdd = models['live'].predict_proba(X)[:, 1]
             np.savez_compressed(out / 'provided.npz', sup=np.column_stack(((1 - pdd) * ph, (1 - pdd) * (1 - ph), pdd)))
             import pickle
-            (out / 'models.pkl').write_bytes(pickle.dumps(dict(models=models, names=names)))
+            (out / 'models.pkl').write_bytes(pickle.dumps(dict(models=models, names=names, symfix=bool(opts.get('symfix')))))
         print('fold', test, round(time.time() - t, 1), flush=True)
 
 

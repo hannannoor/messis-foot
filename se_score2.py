@@ -94,11 +94,14 @@ if __name__ == '__main__':
         i = args.index('--bnd'); BND_TAGS = tuple(args[i + 1].split(',')); del args[i:i + 2]
     if '--view' in args:
         i = args.index('--view'); VIEW = args[i + 1]; del args[i:i + 2]; DEG = True
+    procs = None
+    if '--procs' in args:
+        i = args.index('--procs'); procs = int(args[i + 1]); del args[i:i + 2]
     tag, cfgs = args[0], args[1:]
     cids = cases or [c for c in se_load.ALL if c not in se_load.HOLDOUT]
     if DEG and not cases:
         cids = [c for c in cids if c.startswith('dfl')]
-    with Pool(len(cids), initializer=_init, initargs=(DEG, VIEW, BND_TAGS)) as pool:
+    with Pool(min(len(cids), procs or len(cids)), initializer=_init, initargs=(DEG, VIEW, BND_TAGS)) as pool:
         res = dict(pool.map(one, [(tag, c, cfgs) for c in cids]))
     for cfg in cfgs:
         for stage in ('control', 'final', 'nogap', 'gapko'):   # gapko = the v9 submission

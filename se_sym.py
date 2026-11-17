@@ -2,8 +2,13 @@
 import numpy as np
 
 
-def swap_plan(names):
-    """(perm, sign, one_minus) such that X_swapped = X[:, perm] * sign (+ 1 - x for one_minus cols)."""
+def swap_plan(names, fix=False):
+    """(perm, sign, one_minus) such that X_swapped = X[:, perm] * sign (+ 1 - x for one_minus cols).
+
+    fix=True (round 10, opts "symfix") adds a 4th element: for each one_minus column (the nearH_* window means) the
+    index of its window-support column (obs_* over the same window). Without it, swapped() cannot tell "no ball seen
+    in the window" from "away always nearer" (both 0) and leaves the second case at 0 instead of 1: wrong on 8-27% of
+    rows against truly mirrored frames. Models trained before round 10 keep the old behaviour (fix=False)."""
     idx = {n: i for i, n in enumerate(names)}
     perm = list(range(len(names)))
     sign = np.ones(len(names))
@@ -41,13 +46,26 @@ def swap_plan(names):
             sign[i] = -1
         if base == 'nearH':
             onem[i] = True
-    return np.asarray(perm), sign, onem
+    if not fix:
+        return np.asarray(perm), sign, onem
+    support = np.full(len(names), -1)
+    for n, i in idx.items():
+        if onem[i]:
+            s = 'obs_' + n.split('_', 1)[1]   # nearH_p12 -> obs_p12 (same window, same direction)
+            if s not in idx:
+                raise ValueError('Swap fix needs the window-support column ' + s)
+            support[i] = idx[s]
+    return np.asarray(perm), sign, onem, support
 
 
 def swapped(X, plan):
-    perm, sign, onem = plan
+    perm, sign, onem = plan[:3]
     Y = X[:, perm] * sign.astype(np.float32)
-    Y[:, onem] = np.where(Y[:, onem] != 0, 1 - Y[:, onem], 0)
+    if len(plan) > 3:   # round 10 fix: 1 - x wherever the window saw the ball at all
+        cols = np.flatnonzero(onem)
+        Y[:, cols] = np.where(Y[:, plan[3][cols]] > 0, 1 - Y[:, cols], 0)
+    else:
+        Y[:, onem] = np.where(Y[:, onem] != 0, 1 - Y[:, onem], 0)
     return Y
 
 

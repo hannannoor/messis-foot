@@ -16,7 +16,9 @@ import se_load
 from se_metrica_rescore import ownership_only
 
 GAMES = tuple('metrica-' + g for g in se_load.METRICA)
-ARMS = {'baseline': lambda k: ('lgbasea', 'lgbaseb', 'lgbaseg'), 'metrica': lambda k: (f'lo{k}a', f'lo{k}b', f'lo{k}g')}
+ARMS = {'baseline': lambda k: ('lgbasea', 'lgbaseb', 'lgbaseg'), 'metrica': lambda k: (f'lo{k}a', f'lo{k}b', f'lo{k}g'),
+        # round 10 retrain recipe (state-dependent copies + swap fix), all external data, no Metrica in training
+        'c10': lambda k: ('c10a', 'c10b', 'c10g')}
 
 
 def set_supports(tags, cid):
@@ -81,6 +83,7 @@ if __name__ == '__main__':
               + ' | spells gt/pred ' + ' '.join(f'{r["spells_gt"]}/{r["spells_pred"]}' for r in rows)
               + ' | team acc ' + ' '.join(f'{r["team_accuracy"]:.3f}' for r in rows)
               + ' | full ' + ' '.join(f'{r["ball"]:.4f}' for r in rows))
-    if all(len(res[c]) == 2 for c in GAMES):
-        d = np.array([res[c]['metrica']['ownership'] - res[c]['baseline']['ownership'] for c in GAMES])
-        print(f'metrica - baseline (ownership): {d.mean():+.4f} +- {d.std(ddof=1) / np.sqrt(len(d)):.4f}  per game {d.round(4).tolist()}  up {int((d > 0).sum())}/3')
+    for arm in ARMS:
+        if arm != 'baseline' and all(arm in res[c] and 'baseline' in res[c] for c in GAMES):
+            d = np.array([res[c][arm]['ownership'] - res[c]['baseline']['ownership'] for c in GAMES])
+            print(f'{arm} - baseline (ownership): {d.mean():+.4f} +- {d.std(ddof=1) / np.sqrt(len(d)):.4f}  per game {d.round(4).tolist()}  up {int((d > 0).sum())}/3')

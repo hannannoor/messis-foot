@@ -24,7 +24,7 @@ def gru(tag, views):
         se_gru.KEEP_NAMES = list(ck['names'])
         net = se_gru.Net(len(ck['names']), ck['hidden'], ck['layers'], opts.get('drop', .1), ck.get('n_out', 3)).to(se_gru.DEVICE)
         net.load_state_dict(ck['state'])
-        plan = se_gru.swap_plan(ck['names'])
+        plan = se_gru.swap_plan(ck['names'], fix=bool(opts.get('symfix')))
         for v in views:
             for cid in ck['test']:
                 vp = P / v / (cid + '.npz')
@@ -39,7 +39,7 @@ def gbm(tag, views):
     for f in sorted((P / 'preds' / tag).glob('fold*.pkl')):
         b = pickle.loads(f.read_bytes())
         models, keep = b['models'], b['keep']
-        sp = swap_plan(b['names']) if b['sym'] else None
+        sp = swap_plan(b['names'], fix=bool(b.get('symfix'))) if b['sym'] else None
         for v in views:
             for cid in b['test']:
                 vp = P / v / (cid + '.npz')

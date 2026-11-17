@@ -249,6 +249,28 @@ def predict(net, cid, plan, stats, path=None):
 
 LAST_BND = [None]   # boundary probabilities of the last predict() call (models with a boundary head)
 
+WCSF = 'wcsf-used-match'
+
+
+def fold_plan(mode, opts):
+    """([(train cids, test cids)], fold definitions). opts "wcsf_dev" (round 10): WCSF is a dev match in the last fold
+    instead of a holdout match. opts "extra_train": matches added to every training set (Metrica, ownership only)."""
+    dev, fold_defs, hold = DEV, FOLDS, HOLDOUT
+    if opts.get('wcsf_dev'):
+        dev = DEV + (WCSF,)
+        fold_defs = FOLDS[:-1] + (FOLDS[-1] + (WCSF,),)
+        hold = tuple(c for c in HOLDOUT if c != WCSF)
+    extra = tuple(opts.get('extra_train', ()))
+    if mode == 'cv':
+        folds = [(tuple(c for c in dev if c not in f) + extra, f) for f in fold_defs]
+    elif mode == 'final':
+        folds = [(dev + extra, hold)]
+    elif mode == 'custom':   # round 9: train on ALL + extra, predict opts["test"] (e.g. Metrica leave-one-game-out)
+        folds = [(ALL + extra, tuple(opts['test']))]
+    else:
+        folds = [(ALL + extra, ())]
+    return folds, fold_defs
+
 
 def run(tag, mode, opts):
     out = PRIVATE / 'preds' / tag
@@ -257,10 +279,8 @@ def run(tag, mode, opts):
     global XDROP
     XDROP = tuple(opts.get('xdrop', ()))
     names = load(DEV[0])[3]
-    plan = swap_plan(names)
-    folds = [(tuple(c for c in DEV if c not in f), f) for f in FOLDS] if mode == 'cv' else [(DEV, HOLDOUT)] if mode == 'final' else [(ALL, ())]
-    if mode == 'custom':   # round 9: train on ALL + opts["extra_train"], predict opts["test"] (e.g. Metrica leave-one-game-out)
-        folds = [(ALL + tuple(opts.get('extra_train', ())), tuple(opts['test']))]
+    plan = swap_plan(names, fix=bool(opts.get('symfix')))
+    folds, fold_defs = fold_plan(mode, opts)
     for tr, te in folds:
         t = time.time()
         Xall = np.concatenate([load(c)[0][::10] for c in tr])
@@ -280,7 +300,7 @@ def run(tag, mode, opts):
         if mode == 'cv':   # keep fold models so new evaluation views need no retraining (se_predict.py)
             torch.save(dict(state=net.state_dict(), mu=mu, sd=sd, opts=opts, names=names, test=list(te),
                             hidden=opts.get('hidden', 128), layers=opts.get('layers', 2), n_out=4 if opts.get('bnd') else 3),
-                       out / f'fold{FOLDS.index(te)}.pt')
+                       out / f'fold{fold_defs.index(te)}.pt')
         if mode in ('final', 'all'):
             prov = PRIVATE / 'provided' / 'features.npz'
             np.savez_compressed(out / 'provided.npz', sup=predict(net, None, plan, (mu, sd), prov), bnd=LAST_BND[0])
