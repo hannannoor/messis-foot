@@ -33,8 +33,8 @@ Their per-frame H/A/D evidence is decoded by a 3-state Viterbi decoder whose swi
 contacts and predicted possession boundaries. A label-free gap rule then turns long ball-tracking gaps with slow
 players into dead ball, and graded frames before each half's kickoff tag become dead ball.
 
-On external matches the submitted recipe was never trained on, spell F1 is 0.785 on our locked holdout (against
-0.536 for our first release); the organisers' published baseline on the provided match is 0.2433. Details, all
+On external matches the models were never trained on, spell F1 is 0.783 on our five locked holdout matches
+(against 0.536 for our first release); the organisers' published baseline on the provided match is 0.2433. Details, all
 external checks and their limits are in the [technical document](technical-document.pdf).
 
 ## Repository layout
