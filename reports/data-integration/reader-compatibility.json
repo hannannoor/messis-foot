@@ -1,0 +1,100 @@
+{
+  "model_imports": false,
+  "model_predictions": false,
+  "release_feature_name_subsets": {
+    "gbm.npz": true,
+    "gbm8.npz": true
+  },
+  "matches": [
+    {
+      "match_id": "1899585",
+      "gbm_reader": true,
+      "gru_reader": true,
+      "feature_shape": [
+        151325,
+        343
+      ]
+    },
+    {
+      "match_id": "1925299",
+      "gbm_reader": true,
+      "gru_reader": true,
+      "feature_shape": [
+        153253,
+        343
+      ]
+    },
+    {
+      "match_id": "1927964",
+      "gbm_reader": true,
+      "gru_reader": true,
+      "feature_shape": [
+        147675,
+        343
+      ]
+    },
+    {
+      "match_id": "1953632",
+      "gbm_reader": true,
+      "gru_reader": true,
+      "feature_shape": [
+        148125,
+        343
+      ]
+    },
+    {
+      "match_id": "1959846",
+      "gbm_reader": true,
+      "gru_reader": true,
+      "feature_shape": [
+        146353,
+        343
+      ]
+    },
+    {
+      "match_id": "1986691",
+      "gbm_reader": true,
+      "gru_reader": true,
+      "feature_shape": [
+        147725,
+        343
+      ]
+    },
+    {
+      "match_id": "1996435",
+      "gbm_reader": true,
+      "gru_reader": true,
+      "feature_shape": [
+        144053,
+        343
+      ]
+    },
+    {
+      "match_id": "1996436",
+      "gbm_reader": true,
+      "gru_reader": true,
+      "feature_shape": [
+        150700,
+        343
+      ]
+    },
+    {
+      "match_id": "2006229",
+      "gbm_reader": true,
+      "gru_reader": true,
+      "feature_shape": [
+        148175,
+        343
+      ]
+    },
+    {
+      "match_id": "2006363",
+      "gbm_reader": true,
+      "gru_reader": true,
+      "feature_shape": [
+        147753,
+        343
+      ]
+    }
+  ]
+}

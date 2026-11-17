@@ -105,6 +105,16 @@ All four datasets are public. We added no labels of our own.
 - The submitted models are retrained on all 18 labelled matches (7 DFL, 10 SkillCorner, 1 WCSF).
 - Training copies with ball and player dropout are generated algorithmically from the DFL and WCSF matches ([`se_degrade.py`](../se_degrade.py)).
 
+**Additional data, prepared after v9 (17 November 2026).** Ten more pinned SkillCorner
+matches have been acquired and converted on `experiment/skillcorner-additional-10`.
+This makes the data catalogue 28 external matches (7 DFL, 20 SkillCorner, 1 WCSF).
+The submitted v9 models still use the original 18; no training, predictions or model
+performance experiments were run for this integration. `se_load.AVAILABLE` lists the
+expanded catalogue, while historical `ALL`, `HOLDOUT`, `DEV` and fold definitions stay
+fixed. The existing trainers can read the additional cases using their `extra_train`
+data option. See the [acquisition and compatibility report](skillcorner-additional-10.md)
+for frame counts, local locations, annotation limitations and historical split overlap.
+
 ## 5. Possession rules implemented
 
 - **Ball in play vs dead.**

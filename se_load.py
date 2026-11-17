@@ -6,6 +6,8 @@ from pathlib import Path
 
 import numpy as np
 
+from se_data_catalog import ADDITIONAL_SKILLCORNER, ADDITIONAL_CASES
+
 ROOT = Path(__file__).resolve().parent
 WORKSPACE = ROOT.parent
 PRIVATE = WORKSPACE / 'strong-emissions-reference'
@@ -14,6 +16,12 @@ SKILLCORNER = ('1874553', '1886347', '2007448', '2007721', '2010085', '2011166',
                '2017461')
 DFL = ('J03WMX', 'J03WN1', 'J03WOH', 'J03WOY', 'J03WPY', 'J03WQQ', 'J03WR9')
 ALL = tuple('skillcorner-' + m for m in SKILLCORNER) + tuple('dfl-' + m for m in DFL) + ('wcsf-used-match',)
+
+# Data availability is distinct from the frozen historical training/evaluation splits.
+# The trainers already accept ADDITIONAL_CASES through their extra_train option.
+AVAILABLE = ALL + ADDITIONAL_CASES
+ADDITIONAL_ROOT = WORKSPACE / 'skillcorner-additional-data'
+assert len(AVAILABLE) == len(set(AVAILABLE)) == 28
 
 # Fixed before any modelling (design doc 2026-11-14-strong-emissions).
 HOLDOUT = ('wcsf-used-match', 'dfl-J03WN1', 'skillcorner-2013725', 'skillcorner-2016236', 'skillcorner-2017461')
@@ -60,7 +68,8 @@ def load(cid, reference='event'):
         return frames, np.asarray(ref, dtype=np.uint8)
     if cohort == 'skillcorner':
         from gap_solver.skillcorner import load_motion_cache
-        data = load_motion_cache(WORKSPACE / 'independent-reference' / 'cache' / (match + '-detected'))
+        root = ADDITIONAL_ROOT if match in ADDITIONAL_SKILLCORNER else WORKSPACE / 'independent-reference'
+        data = load_motion_cache(root / 'cache' / (match + '-detected'))
         frames = data.frames()
     else:
         from gap_solver.external import load_cache

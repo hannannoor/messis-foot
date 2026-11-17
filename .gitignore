@@ -584,3 +584,8 @@ Thumbs.db
 
 # Strong-emission release model weights (fitted on external data only)
 !strong_model/*.npz
+
+# Data integration publishes audit metadata only; source data stays outside this repository.
+!reports/data-integration/
+!reports/data-integration/*.json
+!benchmark/skillcorner/additional-training-data.json
