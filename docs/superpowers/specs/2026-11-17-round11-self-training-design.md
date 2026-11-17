@@ -117,3 +117,38 @@ The model learns SkillCorner's stoppage convention, but on the two checks whose 
 Likely cause: the event-derived stoppage starts at the last touch, before the ball goes out, so the model learns to
 call dead ball early. Variant `scma` (`sc_deadref_m20`: the first 2 s of each stoppage left unlabelled) is checked
 with the same rule (`scm_chain.sh`).
+
+## Result: check C2, 2 s margin (19:36) — fails too
+
+`scma`: SkillCorner dev +0.115 ± 0.012 (7/7); WCSF 0.7954 → 0.7764; DFL 0.8110 → 0.8044. Training dead ball on the
+event-derived SkillCorner stoppages is dropped.
+
+**Why v9 misses half of SkillCorner's stoppages.** 60% of the missed frames have no ball, and most of those sit in
+long ball gaps (over 10 s) with slow players, which the gap rule should catch. It cannot: inside long gaps the broadcast
+camera shows on average 1.7 players (replays, close-ups), so 46% of long-gap frames have no player-speed sample and the
+rule skips them (75% of those frames are dead). BAR–ATH's tactical camera keeps about 19 players tracked when the ball
+is missing, so this miss is mostly a broadcast artefact, not a BAR–ATH estimate.
+
+## Label-free ball rules after the decoder (`se_rule_dead.py`, 19:45–20:10)
+
+Pass rule, fixed before the run: WCSF and the DFL dev mean each no worse than −0.002, SkillCorner gain at least 2 SE;
+then one look at the locked holdout. Models never trained on the match; release decoder; rule applied afterwards.
+
+| Rule | DFL dev (6) | WCSF | SkillCorner (17) |
+|---|---:|---:|---:|
+| ball > 0.5 m out | −0.005 (0/6) | +0.005 | +0.007 |
+| ball > 1 m out | −0.002 (0/6) | +0.004 | +0.002 |
+| ball > 0.5 m out + following gap | −0.005 | +0.005 | +0.031 (17/17) |
+| ball > 1 m out + following gap | −0.0022 | +0.004 | +0.019 (17/17) |
+| ball still 2 s / 4 s | −0.010 / −0.004 | +0.009 / +0.009 | −0.001 / 0.000 |
+| **ball > 1 m out + following gap, released 0.4 s before a tracked re-entry (`outgapt1`)** | **−0.0019 (0/6)** | **+0.004** | **+0.022 ± 0.002 (17/17)** |
+
+DFL's losses come from restarts: in all 227 of its ball-out runs the frames DFL calls live are the last few (median
+4 per run), a throw-in or kick taken while the ball is still just outside. Releasing D 0.4 s before re-entry addresses
+that; the trimmed variant was the sixth tried, so the pass is narrow and selected.
+
+Holdout, one look (dev-only models): DFL J03WN1 −0.0017; SkillCorner 2013725 +0.018, 2016236 +0.032, 2017461 +0.040.
+
+On BAR–ATH (counts only): the ball is observed more than 1 m outside the lines on 2,207 frames in 56 runs; the rule
+changes 841 submission frames, all H/A → D. Candidate v10 = v9 + this rule (`ball_out_rule.py`, branch
+`candidate/ball-out-rule`), expected SHA-256 `c86cf7ee…`. Swapping it in is the user's decision.
