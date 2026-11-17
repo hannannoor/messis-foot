@@ -21,7 +21,7 @@ pip install -r requirements.txt
 python strong_release.py --prefix "$prefix" --tags "${prefix}_smart_tagging.xml" --out "$out"
 ```
 
-Expected `submission.csv`: 199,319 rows, SHA-256 `ed97ae735a57e81dbd788f94c40de210dcbcb5aed40bc94d9552f1dade2897cd`.
+Expected `submission.csv`: 199,319 rows, SHA-256 `c86cf7ee8b04dec4dfb5fee3c2eea01e6ed76f6a2733ce3398a97e9fc2fb7fe7`.
 Inference is deterministic plain numpy on CPU and takes under 10 minutes on a laptop. Then, from the challenge
 repository: `python evaluation/validate_submission.py "$out/submission.csv"`.
 
@@ -31,7 +31,8 @@ Label-free geometry features (241 per frame) feed two sets of sequence models (b
 gradient-boosted trees) trained only on public matches from other providers: 7 DFL, 10 SkillCorner and 1 WCSF match.
 Their per-frame H/A/D evidence is decoded by a 3-state Viterbi decoder whose switch cost drops at detected ball
 contacts and predicted possession boundaries. A label-free gap rule then turns long ball-tracking gaps with slow
-players into dead ball, and graded frames before each half's kickoff tag become dead ball.
+players into dead ball, a ball tracked more than 1 m outside the lines is dead (v10), and graded frames before each
+half's kickoff tag become dead ball.
 
 On external matches the models were never trained on, spell F1 is 0.783 on our five locked holdout matches
 (against 0.536 for our first release); the organisers' published baseline on the provided match is 0.2433. Details, all

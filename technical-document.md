@@ -9,6 +9,7 @@ We label all 199,319 frames of BAR–ATH as H, A, D or X with a fully automatic 
 3. **Decoder:** a 3-state Viterbi decoder whose switch cost drops at detected ball contacts and at predicted possession boundaries.
 4. **Gap rule:** a label-free rule that turns long, slow ball-tracking gaps into dead ball.
 5. **Kickoff patch:** graded frames before each half's automatic kickoff tag become dead ball.
+6. **Ball-out rule (v10):** a ball tracked more than 1 m outside the lines is dead, through the tracking gap that follows.
 
 Reproduce the submitted file from the repository (`$prefix` is the local tactical filename prefix; `$out` must be a new directory):
 
@@ -17,11 +18,11 @@ pip install -r requirements.txt
 python strong_release.py --prefix "$prefix" --tags "${prefix}_smart_tagging.xml" --out "$out"
 ```
 
-Expected output: `submission.csv` with 199,319 rows, SHA-256 `ed97ae735a57e81dbd788f94c40de210dcbcb5aed40bc94d9552f1dade2897cd`. Independent CPU runs are byte-identical, and the official `validate_submission.py` passes.
+Expected output: `submission.csv` with 199,319 rows, SHA-256 `c86cf7ee8b04dec4dfb5fee3c2eea01e6ed76f6a2733ce3398a97e9fc2fb7fe7`. Independent CPU runs are byte-identical, and the official `validate_submission.py` passes.
 
 Code: https://github.com/hannannoor/messis-foot, branch `main`. The submission was built at commit `cd07b0e`. On 17 November the repository was reorganised (submission files at the root, all other code in `development/`, no change in behaviour); a fresh clone of `main` reproduces the same file.
 
-**Results in brief.** On external matches the models were never trained on, spellF1 is 0.783 on our five locked holdout matches (v8 models; v9 adds only the gap rule), against 0.536 for our first release (§6). A late check on 17 SkillCorner matches, with dead-ball labels derived from SkillCorner's own public stoppage events, supports the gap rule: it raised spellF1 on every one of them (+0.017 on average). The same check shows our largest remaining weakness: the models label only about half of the stoppage frames there as dead ball (§6, §7). The organisers' published baseline on BAR–ATH is 0.2433.
+**Results in brief.** The submission is v10. On external matches the models were never trained on, spellF1 is 0.783 on our five locked holdout matches (v8 models; v9 adds the gap rule, v10 the ball-out rule), against 0.536 for our first release (§6). The ball-out rule, the last change, raised spellF1 on all 17 SkillCorner matches (+0.022) and on WCSF (+0.004), and cost 0.002 on DFL. A late check on 17 SkillCorner matches, with dead-ball labels derived from SkillCorner's own public stoppage events, supports the gap rule: it raised spellF1 on every one of them (+0.017 on average). The same check shows our largest remaining weakness: the models label only about half of the stoppage frames there as dead ball (§6, §7). The organisers' published baseline on BAR–ATH is 0.2433.
 
 ## 2. Approach and why
 
@@ -52,6 +53,8 @@ Code: https://github.com/hannannoor/messis-foot, branch `main`. The submission w
 - Changes of possession therefore need sustained evidence, except at moments where a real contact or a learned boundary makes a change plausible.
 
 **Gap rule** ([`gap_liveness.py`](development/gap_liveness.py)). A ball-tracking gap longer than 3 s becomes D when the median player speed inside it is below the match's typical speed outside long gaps. D then continues past the end of the gap for as long as the reappeared ball is nearly still (under 0.5 m/s, at most 10 s). The rule uses no labels and no constants tied to this match's frames.
+
+**Ball-out rule** ([`ball_out_rule.py`](development/ball_out_rule.py), v10). A ball tracked more than 1 m outside a touchline or goal line is dead, and D continues through the ball-tracking gap that directly follows (the ball went out, then left the camera's view). When the ball comes back onto the pitch while still tracked (a throw-in or a kick taken from outside the line), D is released 0.4 s before it re-enters, because play restarts while the ball is just outside. It changes 841 of BAR–ATH's 199,319 labels, all from H/A to D.
 
 **Kickoff patch** ([`kickoff_patch.py`](development/kickoff_patch.py)). Graded frames before each half's automatic `Kick Off (Start)` tag are set to D. The halves themselves come from the period field of the tracking file.
 
@@ -112,7 +115,7 @@ All four datasets are public. We added no hand labels of our own; the SkillCorne
 ## 5. Possession rules implemented
 
 - **Ball in play vs dead.**
-  - D comes from three sources: the models' live/dead evidence, the gap rule (long ball gaps with slow players), and the kickoff patch.
+  - D comes from four sources: the models' live/dead evidence, the gap rule (long ball gaps with slow players), the ball-out rule (ball tracked outside the lines), and the kickoff patch.
   - We never assign dead-ball ownership.
 - **Change of possession = sustained control.** Because every switch costs something, a single touch, a deflection or a won aerial duel does not flip ownership unless the evidence afterwards keeps favouring the other team. Switches are cheaper exactly where a ball contact is detected or the boundary output fires, which is where controlled changes happen.
 - **Loose and contested balls** keep the last team's possession: the decoder carries the current state unless the evidence pays for a switch.
@@ -131,13 +134,15 @@ Spell F1 throughout, scored on external data only. BAR–ATH's full-match ground
 | v4 | Sequence models + ball contacts | 0.759 | 0.798 | 0.870 |
 | v6 | + team shape, 3 ball-dropout copies | 0.767 | 0.800 | 0.867 |
 | v8 | + player dropout, boundary output | 0.783 | 0.809 | 0.878 |
-| **v9 (submitted)** | **+ gap rule reinstated** | – | **0.808** | **0.878** |
+| v9 | + gap rule reinstated | – | 0.808 | 0.878 |
+| **v10 (submitted)** | **+ ball-out rule** | see below | see below | – |
 
 - **Holdout:** the locked holdout was looked at 9 times over the project, so we treat it as confirmation only.
 - **Metrica** gives three matches from the same tracking vendor that no submitted model was trained on.
   - Their ball coordinates are blank exactly while play is stopped, so dead-ball detection cannot be tested there: any missing-ball rule is right by construction.
   - We therefore score ownership only. The reference's dead-ball frames are imposed on every prediction, and the score measures whether the H/A possessions are right.
   - v9 equals v8 in this column because the gap rule only changes dead-ball calls.
+- **Ball-out rule (v10):** same models and decoder, rule applied afterwards, rules for passing fixed before the run. SkillCorner (17 matches, dead-ball labels derived from the provider's public stoppage events) +0.022 ± 0.002, all 17 up; SkillCorner holdout +0.018, +0.032, +0.040; WCSF +0.004; DFL dev −0.0019 and DFL holdout −0.0017, because DFL marks a throw-in live a moment before the ball re-enters. It was the sixth rule variant tried, so its pass is narrow.
 - **Gap rule (v9):** it rests on BAR–ATH's label-free input statistics (§2), not on a measured gain.
 - **Version choices (v4–v8):** these were made on dev cross-validation over several simulated ball-loss views, with paired per-match differences and two training seeds. Those views removed the ball at random with respect to play, which BAR–ATH does not do, so they say less about BAR–ATH than we first assumed.
 - **Checks after v9:** two further retrains were tested against v9's recipe and rejected (§3). WCSF was moved out of the holdout for the first of them. The second was checked on the four remaining holdout matches: 0.785 without the extra games against 0.781 with them.
