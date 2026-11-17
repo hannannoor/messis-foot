@@ -11,6 +11,7 @@ SPEED_CAP=12
 MIN_PLAYERS=10
 RESTART_SPEED=.5
 MAX_EXTENSION=250
+SPEED_FACTOR=1.0   # round 11: a long gap is a stoppage when its median player speed < SPEED_FACTOR x the match reference
 
 @dataclass(frozen=True)
 class GapApplication:
@@ -87,7 +88,7 @@ def apply_gap_rule(frames,control_labels):
     result=list(control_labels);stoppages=[];extensions=[]
     for first,stop in gaps:
         values=[v for v in statistics[first:stop] if v is not None]
-        if reference is None or not values or not median(values)<reference:continue
+        if reference is None or not values or not median(values)<reference*SPEED_FACTOR:continue
         stoppages.append((first,stop));result[first:stop]=['D']*(stop-first)
         previous=first-1
         if previous<0 or frames[previous].period!=frames[first].period or not frames[previous].ball_observed:continue

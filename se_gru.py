@@ -31,11 +31,19 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 XDROP = ()   # feature-name prefixes to leave out (opts "xdrop"), for ablations
 # Providers supervised for H-vs-A only. SkillCorner has no D labels. Metrica (round 10): its dead ball IS the missing
 # ball, so D supervision there would teach an exact-edge shortcut that the provided match does not share.
-HA_ONLY = ('skillcorner', 'metrica')
+# 'pl-' (round 11): a match with algorithm-made pseudo-labels (se_pseudo.py), supervised for ownership only.
+HA_ONLY = ('skillcorner', 'metrica', 'pl-')
+
+
+SC_DEAD = False   # opts "sc_dead" (round 11): SkillCorner supervised for H/A/D with event-derived stoppages (se_sc_dead.py)
 
 
 def load(cid):
     X, ref, per, names = load_path(PRIVATE / 'cases' / (cid + '.npz'))
+    if SC_DEAD and cid.startswith('skillcorner'):
+        ref = np.load(PRIVATE / (SC_DEAD if isinstance(SC_DEAD, str) else 'sc_deadref') / (cid + '.npy')).astype(np.int64)
+        if len(ref) != len(X):
+            raise ValueError('SkillCorner dead-ball reference length differs from the case')
     if cid.startswith('metrica'):   # round 10: ball-flag reference (se_metrica_ballref.py), not the event-derived one
         ref = np.load(PRIVATE / 'metrica_ballref' / (cid + '.npy')).astype(np.int64)
         if len(ref) != len(X):
@@ -144,8 +152,11 @@ def train(cids, opts, plan, stats):
     data = []
     for cid in cids:
         X, ref, per, _ = load(cid)
-        X = np.clip((X - mu) / sd, -6, 6).astype(np.float32)
-        Xs = np.clip((swapped(load(cid)[0], plan) - mu) / sd, -6, 6).astype(np.float32)
+        if opts.get('lazy_swap'):   # round 11: raw copy only; swapped + normalised per chunk (same values, half the RAM)
+            Xs = None
+        else:
+            X = np.clip((X - mu) / sd, -6, 6).astype(np.float32)
+            Xs = np.clip((swapped(load(cid)[0], plan) - mu) / sd, -6, 6).astype(np.float32)
         refs = np.where(ref == 0, 1, np.where(ref == 1, 0, ref))
         wt = spell_weights(ref, per, opts.get('short_scale', 0), opts.get('short_cap', 4.0))
         aug = None
@@ -158,6 +169,8 @@ def train(cids, opts, plan, stats):
             aug = (np.clip((Xa - mu) / sd, -6, 6).astype(np.float32), np.clip((swapped(Xa, plan) - mu) / sd, -6, 6).astype(np.float32))
         bt, bv = boundary_target(ref, per, not cid.startswith(HA_ONLY))   # same under H/A swap
         data.append((X, Xs, ref, refs, segments(per), not cid.startswith(HA_ONLY), wt, aug, bt, bv))
+        if cid.startswith('pl-'):   # opts "pl_repeat": sample a pseudo-labelled match this many times as often
+            data.extend([data[-1]] * (int(opts.get('pl_repeat', 1)) - 1))
     torch.manual_seed(opts.get('seed', 1729))
     rng = np.random.default_rng(opts.get('seed', 1729))
     lam = float(opts.get('bnd', 0.0))
@@ -185,6 +198,9 @@ def train(cids, opts, plan, stats):
             sw = rng.random() < .5
             if raw is not None:
                 z = swapped(raw[s:e], plan) if sw else raw[s:e]
+                x = np.clip((z - mu) / sd, -6, 6).astype(np.float32)
+            elif Xs is None:
+                z = swapped(X[s:e], plan) if sw else X[s:e]
                 x = np.clip((z - mu) / sd, -6, 6).astype(np.float32)
             else:
                 x = (Xs if sw else X)[s:e]
@@ -276,8 +292,11 @@ def run(tag, mode, opts):
     out = PRIVATE / 'preds' / tag
     out.mkdir(parents=True, exist_ok=True)
     (out / 'opts.json').write_text(json.dumps(dict(opts, mode=mode, model='gru')))
-    global XDROP
+    global XDROP, SC_DEAD, HA_ONLY
     XDROP = tuple(opts.get('xdrop', ()))
+    if opts.get('sc_dead'):
+        SC_DEAD = opts['sc_dead']   # True = sc_deadref/, or a directory name
+        HA_ONLY = tuple(p for p in HA_ONLY if p != 'skillcorner')
     names = load(DEV[0])[3]
     plan = swap_plan(names, fix=bool(opts.get('symfix')))
     folds, fold_defs = fold_plan(mode, opts)

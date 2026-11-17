@@ -27,13 +27,25 @@ FOLDS = (('dfl-J03WR9', 'dfl-J03WMX', 'skillcorner-1874553', 'skillcorner-200744
 assert sorted(sum(FOLDS, ())) == sorted(DEV)
 
 
-HA_ONLY = ('skillcorner', 'metrica')   # no live/dead supervision (see se_gru.HA_ONLY)
+HA_ONLY = ('skillcorner', 'metrica', 'pl-')   # no live/dead supervision (see se_gru.HA_ONLY)
+
+
+SC_DEAD = False   # opts "sc_dead" (round 11): SkillCorner supervised for H/A/D (se_sc_dead.py), see se_gru.SC_DEAD
+
+
+def sc_dead_ref(cid, n):
+    ref = np.load(PRIVATE / (SC_DEAD if isinstance(SC_DEAD, str) else 'sc_deadref') / (cid + '.npy'))
+    if len(ref) != n:
+        raise ValueError('SkillCorner dead-ball reference length differs from the case')
+    return ref
 
 
 def load(cid, keep):
     z = np.load(PRIVATE / 'cases' / (cid + '.npz'))
     X = z['X'][:, keep]
     ref = z['ref']
+    if SC_DEAD and cid.startswith('skillcorner'):
+        ref = sc_dead_ref(cid, len(X))
     if cid.startswith('metrica'):   # round 10: ball-flag reference (se_metrica_ballref.py)
         ref = np.load(PRIVATE / 'metrica_ballref' / (cid + '.npy'))
         if len(ref) != len(X):
@@ -51,6 +63,7 @@ def columns(opts):
 
 
 AUG = False
+PL_REPEAT = 1.0
 VIEWS = ()   # opts "aug_views": several dropout copies, together weighted like the single copy
 
 
@@ -60,7 +73,8 @@ def _sources(cid, keep):
     if AUG and all(ap.exists() for ap in paths):
         for ap in paths:
             z = np.load(ap)
-            yield (z['X'][:, keep], z['ref'], z['period'], z['observed']), 1.0 / len(paths)
+            r = sc_dead_ref(cid, len(z['ref'])) if (SC_DEAD and cid.startswith('skillcorner')) else z['ref']
+            yield (z['X'][:, keep], r, z['period'], z['observed']), 1.0 / len(paths)
 
 
 def rows(cids, keep, step, head):
@@ -75,7 +89,8 @@ def rows(cids, keep, step, head):
         st = step if sw == 1.0 else int(round(step / sw))   # keep total aug rows as with one copy
         idx = np.flatnonzero(m)[::st]
         y = (ref[idx] == 0) if head == 'own' else (ref[idx] == 2)
-        Xs.append(X[idx]); ys.append(y); ws.append(np.full(len(idx), sw / max(1, len(idx))))
+        rep = PL_REPEAT if cid.startswith('pl-') else 1.0   # opts "pl_repeat": weight of a pseudo-labelled match
+        Xs.append(X[idx]); ys.append(y); ws.append(np.full(len(idx), rep * sw / max(1, len(idx))))
     return np.concatenate(Xs), np.concatenate(ys), np.concatenate(ws) * 1e5
 
 
@@ -98,7 +113,11 @@ def predict(models, cid, keep, plan=None):
 
 
 def run(tag, mode, opts):
-    global AUG, VIEWS
+    global AUG, VIEWS, PL_REPEAT, SC_DEAD, HA_ONLY
+    if opts.get('sc_dead'):
+        SC_DEAD = opts['sc_dead']   # True = sc_deadref/, or a directory name
+        HA_ONLY = tuple(p for p in HA_ONLY if p != 'skillcorner')
+    PL_REPEAT = float(opts.get('pl_repeat', 1))
     AUG = bool(opts.get('aug'))
     VIEWS = tuple(opts.get('aug_views', ()))
     keep, names = columns(opts)
