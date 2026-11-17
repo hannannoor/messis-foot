@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / 'development'))   # all
 
 import numpy as np
 
-VERSION = '2026.11.16-strong-emissions-v9'
+VERSION = '2026.11.17-strong-emissions-v10-candidate'
 
 
 def generate(prefix, tags, out, *, features_out=None):
@@ -45,6 +45,9 @@ def generate(prefix, tags, out, *, features_out=None):
                       cost=strong_runtime.SWITCH_COST, cost_rows=strong_runtime.cost_rows(X, names, strong_runtime.boundary()))
     g = strong_runtime.GAP_RULE
     final = list(stages[g if isinstance(g, str) else ('final' if g else 'nogap')])
+    if getattr(strong_runtime, 'BALL_OUT_RULE', False):   # v10 candidate
+        from ball_out_rule import apply_ball_out
+        final = apply_ball_out(frames, final)
     data = submission_bytes(final)
     model_sha = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(strong_runtime.MODEL_DIR.glob('*.npz'))}
     receipt = dict(version=VERSION, rows=len(final), csv_sha256=hashlib.sha256(data).hexdigest(),
@@ -52,7 +55,8 @@ def generate(prefix, tags, out, *, features_out=None):
                    model_sha256=model_sha, counts={k: final.count(k) for k in 'HADX'},
                    missing_w=strong_runtime.MISSING_W, switch_cost=strong_runtime.SWITCH_COST,
                    gap_rule=strong_runtime.GAP_RULE, touch_cost=strong_runtime.TOUCH_COST,
-                   touch_k=strong_runtime.TOUCH_K, sets=[list(x) for x in strong_runtime.SETS], bnd_lo=strong_runtime.BND_LO)
+                   touch_k=strong_runtime.TOUCH_K, sets=[list(x) for x in strong_runtime.SETS], bnd_lo=strong_runtime.BND_LO,
+                   ball_out_rule=getattr(strong_runtime, 'BALL_OUT_RULE', False))
     out.mkdir(parents=True, exist_ok=False)
     (out / 'submission.csv').write_bytes(data)
     (out / 'strong-release-receipt.json').write_text(json.dumps(receipt, sort_keys=True, indent=1, default=str) + '\n',

@@ -20,6 +20,7 @@ GAP_RULE = 'gapko'  # v9: gap rule on the main decode, then kickoff patch (False
 WINDOW, CONTEXT = 6000, 1500
 SETS = (('gru.npz', 'gbm.npz', 0.15), ('gru8.npz', 'gbm8.npz', 0.85))   # (GRU file, GBM file, set weight)
 TOUCH_COST, TOUCH_K = 10.0, 6   # v5: switch cost within +-TOUCH_K frames of an impulse contact
+BALL_OUT_RULE = True   # v10 candidate: ball observed > 1 m outside the lines is dead (ball_out_rule.py)
 BND_LO = 8.0   # v8: switch cost falls towards 8 where the GRUs' boundary channel fires
 
 
