@@ -7,10 +7,11 @@ Submitted pipeline (v9, 16 November 2026): **strong-emission model** -> 3-state 
 With `$prefix` set to the local tactical filename prefix and `$out` to a new absolute output directory, run:
 
 ```powershell
+pip install -r requirements.txt
 python strong_release.py --prefix "$prefix" --tags "${prefix}_smart_tagging.xml" --out "$out"
 ```
 
-Expected `submission.csv`: 199,319 rows, SHA-256 `ed97ae735a57e81dbd788f94c40de210dcbcb5aed40bc94d9552f1dade2897cd`. CPython 3.14.5 + numpy 2.5.1 (deterministic CPU inference, ~4 min; run without `-I` if numpy is a user-site install). Model weights: `strong_model/gru.npz`, `strong_model/gbm.npz` (v4 set), `strong_model/gru8.npz`, `strong_model/gbm8.npz` (v8 set). Training code: `se_features.py`, `se_train.py` (scikit-learn 1.5.1), `se_gru.py` (PyTorch), exporters `se_export_*.py`.
+Expected `submission.csv`: 199,319 rows, SHA-256 `ed97ae735a57e81dbd788f94c40de210dcbcb5aed40bc94d9552f1dade2897cd`. CPython 3.14.5 + numpy 2.5.1, pinned in `requirements.txt` (deterministic CPU inference, under 10 minutes on a laptop; run without `-I` if numpy is a user-site install). Model weights: `strong_model/gru.npz`, `strong_model/gbm.npz` (v4 set), `strong_model/gru8.npz`, `strong_model/gbm8.npz` (v8 set). Training code: `se_features.py`, `se_train.py` (scikit-learn 1.5.1), `se_gru.py` (PyTorch), exporters `se_export_*.py`.
 
 Previously submitted: v8, SHA-256 `bbc77547f0a6c658014537c197e2ff5fa2f1c6bcdedcb778b56e412b582160b3` (commit 77bc24b); v6, SHA-256 `e2ff053ddfc6fe5e1122c5871161c24fb97b7280fb6548594e30f65f225f3c8b` (commit 7d027d0); v5, SHA-256 `f4d3d940561a5820b59c594156e6a7cd10a3459847e4f7487ad8786f7daf7285` (commit e7cee7c); v4, SHA-256 `a2761b6af25e2d7d07c0f90b3fa79a5b7bf60e0623c5d053a648d28b9dd6f659` (commit 288613c); v3, SHA-256 `27b4e25c24e66d48929914ca4590613ae7f4fbd884b4c206e16b1c3215be9ed9` (commit e85ab65); v2, SHA-256 `edc506854272f3fd2d07be00c4fd802345a9b519a4d0e99dc075fa29cc798d50` (commit 811ea5d); v1, SHA-256 `853d4e7c13de10e920fa6ded3225fedac03763b600c8e4552d27ee56847fea01` (commit 96a3acc); before that `restart_release.py` (frozen 31-node tree), SHA-256 `15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685`, retained unchanged. [Technical document](docs/technical-document.md) ([PDF](docs/technical-document.pdf)); the previous release's document is in git history.
 
