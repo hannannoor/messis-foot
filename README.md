@@ -1,172 +1,59 @@
-# MESSI's FOOT
+# MESSI's FOOT — possession labelling for More Than a Hack 2027
+
+Every frame of the provided match (FC Barcelona – Athletic Club, 199,319 frames) labelled H, A, D or X by a fully
+automatic pipeline. No model saw the provided match before inference, and nothing about it was labelled by hand.
 
 ## Submission
 
-Submitted pipeline (v9, 16 November 2026): **strong-emission model** -> 3-state Viterbi decoder (model evidence kept on missing-ball rows, switch cost 20, lowered to 10 within ±6 frames of a ball-impulse contact and towards 8 where the GRUs' learned possession-boundary channel fires) -> label-free gap rule (a ball gap over 3 s with players slower than the match's typical speed becomes dead ball; reinstated in v9 because BAR-ATH's inputs show its ball is lost in about 150 long blocks, mostly while players stand still) -> automatic kickoff patch. The per-frame H/A/D evidence is a 0.15/0.85 geometric blend of two model sets, each two bidirectional GRUs plus a gradient-boosted pair of heads: the v4 set over 171 geometry features (incl. 16 ball-impulse contact features) and the v8 set over 241 (adding 6 contact-reliability and 64 player-only team-shape features for long ball gaps; trained with three ball-and-player-dropout copies per D-labelled match, its GRUs also predicting possession boundaries), fitted on 18 external matches only (7 DFL, 10 SkillCorner, 1 WCSF); GRU training up-weights short possessions and uses ball-dropout augmentation on D-labelled matches. The provided match is used for inference only. On locked external holdout matches the provider-weighted spell F1 rose from 0.536 (old release) to 0.726 (v1), 0.742 (v2), 0.746 (v3), 0.759 (v4), 0.765 (v5), 0.767 (v6) and 0.783 (v8). On three public Metrica sample games (same tracking vendor, never used for fitting) v8 and v9 score 0.878 on possession ownership, against 0.870 for v4 and 0.631 for the old release; dead-ball detection cannot be tested there, because the ball coordinates are blank whenever play is stopped (an earlier 0.794 for v9 was true by construction and is withdrawn; see the [round 10 audit](docs/superpowers/specs/2026-11-16-round10-audit-fixes-design.md)). On five simulated ball-loss views of the dev matches (about 40% of the ball removed at random with respect to play, including real SkillCorner gap layouts) v8 averages 0.700 (v6 0.691, v5 0.679), and 0.684 when BAR-ATH-like player dropout is added (v6 0.664); the old release scored about 0.40 on the comparable WCSF view. See [results](docs/strong-emissions-results.md).
+| File | What it is |
+|---|---|
+| [`technical-document.pdf`](technical-document.pdf) ([Markdown](technical-document.md)) | Approach, data, possession rules, evidence, limitations, reproduction |
+| [`strong_release.py`](strong_release.py) | The command that regenerates the submitted `submission.csv` |
+| [`strong_model/`](strong_model) | Model weights used by the submission (`gru.npz`/`gbm.npz` set A, `gru8.npz`/`gbm8.npz` set B) |
+| [`requirements.txt`](requirements.txt) | Pinned inference dependencies (CPython 3.14.5, numpy 2.5.1) |
+| [`development/`](development) | All other code, tests, design notes and reports (see below) |
 
-With `$prefix` set to the local tactical filename prefix and `$out` to a new absolute output directory, run:
+Reproduce the submitted file. `$prefix` is the local prefix of the provided tactical files (for example
+`.../BAR-ATH_tactical`) and `$out` a new output directory:
 
 ```powershell
 pip install -r requirements.txt
 python strong_release.py --prefix "$prefix" --tags "${prefix}_smart_tagging.xml" --out "$out"
 ```
 
-Expected `submission.csv`: 199,319 rows, SHA-256 `ed97ae735a57e81dbd788f94c40de210dcbcb5aed40bc94d9552f1dade2897cd`. CPython 3.14.5 + numpy 2.5.1, pinned in `requirements.txt` (deterministic CPU inference, under 10 minutes on a laptop; run without `-I` if numpy is a user-site install). Model weights: `strong_model/gru.npz`, `strong_model/gbm.npz` (v4 set), `strong_model/gru8.npz`, `strong_model/gbm8.npz` (v8 set). Training code: `se_features.py`, `se_train.py` (scikit-learn 1.5.1), `se_gru.py` (PyTorch), exporters `se_export_*.py`.
+Expected `submission.csv`: 199,319 rows, SHA-256 `ed97ae735a57e81dbd788f94c40de210dcbcb5aed40bc94d9552f1dade2897cd`.
+Inference is deterministic plain numpy on CPU and takes under 10 minutes on a laptop. Then, from the challenge
+repository: `python evaluation/validate_submission.py "$out/submission.csv"`.
 
-Previously submitted: v8, SHA-256 `bbc77547f0a6c658014537c197e2ff5fa2f1c6bcdedcb778b56e412b582160b3` (commit 77bc24b); v6, SHA-256 `e2ff053ddfc6fe5e1122c5871161c24fb97b7280fb6548594e30f65f225f3c8b` (commit 7d027d0); v5, SHA-256 `f4d3d940561a5820b59c594156e6a7cd10a3459847e4f7487ad8786f7daf7285` (commit e7cee7c); v4, SHA-256 `a2761b6af25e2d7d07c0f90b3fa79a5b7bf60e0623c5d053a648d28b9dd6f659` (commit 288613c); v3, SHA-256 `27b4e25c24e66d48929914ca4590613ae7f4fbd884b4c206e16b1c3215be9ed9` (commit e85ab65); v2, SHA-256 `edc506854272f3fd2d07be00c4fd802345a9b519a4d0e99dc075fa29cc798d50` (commit 811ea5d); v1, SHA-256 `853d4e7c13de10e920fa6ded3225fedac03763b600c8e4552d27ee56847fea01` (commit 96a3acc); before that `restart_release.py` (frozen 31-node tree), SHA-256 `15756bcb57f184d717a5bc8f30b15a8777227165dd4973edbbaf69ba6a02a685`, retained unchanged. [Technical document](docs/technical-document.md) ([PDF](docs/technical-document.pdf)); the previous release's document is in git history.
+## Approach in brief
 
-Not submitted: `gap_release.py`, the previous gap-rule candidate (retained unchanged).
+Label-free geometry features (241 per frame) feed two sets of sequence models (bidirectional GRUs plus
+gradient-boosted trees) trained only on public matches from other providers: 7 DFL, 10 SkillCorner and 1 WCSF match.
+Their per-frame H/A/D evidence is decoded by a 3-state Viterbi decoder whose switch cost drops at detected ball
+contacts and predicted possession boundaries. A label-free gap rule then turns long ball-tracking gaps with slow
+players into dead ball, and graded frames before each half's kickoff tag become dead ball.
 
-Not submitted: `competition_release.py`, the frozen-control fallback (retained unchanged).
+On external matches the submitted recipe was never trained on, spell F1 is 0.785 on our locked holdout (against
+0.536 for our first release); the organisers' published baseline on the provided match is 0.2433. Details, all
+external checks and their limits are in the [technical document](technical-document.pdf).
 
-Not submitted: `touch_release.py`, the rejected touch alternative.
+## Repository layout
 
-## History
-
-
-**11 November decision:** existing `candidate` file is recommended after the fixed touch-transfer test. Decoder restart qualifies: **True**; no reset release has been built. [Results and limits](reports/touch-transfer/report.md). The user makes the final submission choice.
-
-
-An experimental local football-possession pipeline for More Than a Hack 2027.
-
-**9 November frozen release candidate:** `competition_release.py` packages the unchanged `w0-c32-neutral-missing` control as a selected-only standard-library entry point. Two clean runs match both historical selected CSVs byte-for-byte; exact-file validation and one frozen public-window check are complete. Follow [reproduction instructions](docs/competition-release.md), [technical document](docs/competition-technical.md) and the [release decision/evidence](docs/competition-release-decision.md). Packaging is not a predictive improvement. The [performance history](docs/performance-history-and-next-step.md) records what was already tried and the bounded next diagnosis. Older routes below remain preserved.
-
-**Ball-gap follow-up, 7 November:** [one fixed missing-evidence correction](docs/ball-gap-results.md) passed all predeclared checks on previously examined external validation/regression data. Masked SkillCorner frame accuracy improves75.78%→82.27%, while masked DFL stoppage recall improves92.64%→95.72%. Use the separate experimental `ball_gap_candidate.py`; the previous candidate remains preserved. These are seen-provider results, with target accuracy unmeasured. After one fresh review and fix pass:341tests OK,6skipped. The [review response](docs/ball-gap-code-review.md) records fixes, remaining limits and deferred minors.
-
-**7 November update:** the [accuracy-first experiment](docs/accuracy-first-results.md) selected a finite H/A/D sequence decoder using the frozen tactical head (motion weight 0, switch cost 32). Natural seen-regression possession-spell F1 improves from 0.4977 to 0.5646; frame accuracy improves modestly on observed tracking but declines under the SkillCorner ball-gap stress. This is an experimental opt-in route, not fresh or target accuracy validation. The original pipeline, four-policy candidate and Desktop output are preserved. Software verification: 317 tests OK, 6 skipped.
-
-Existing standalone source version: `2026.11.06-temporal-research`. The existing **opt-in tactical route** retains its frozen model and behavior. New motion adapters and an independent-provider experiment are documented in [TEMPORAL_RECOVERY.md](TEMPORAL_RECOVERY.md). The temporal candidate was rejected on validation; no new local inference policy is installed. This remains provider-reference research, with challenge accuracy unmeasured.
-
-Read [RULES.md](RULES.md) before processing competition inputs. [CHANGELOG.md](CHANGELOG.md) explains what changed and why; [FOUR_GOALS.md](FOUR_GOALS.md) records reasoning, results, regressions and limitations.
-
-## Submission candidate, 10 November: control + gap rule + kickoff patch
-
-`gap_release.py` is the current submission entry point. It runs the unchanged frozen control (`w0-c32-neutral-missing`, artifact SHA-256 `e8d35e15be9524270bed82352791dc2849087b49b4c2b59c191023954b19eddb`, still the fallback), applies `gap_liveness.apply_gap_rule`, then `kickoff_patch.py`. Details, evidence and limitations: [DESIGN.md](DESIGN.md).
-
-Regenerate the submission (new, nonexistent output directory; Python 3.14.5, standard library only):
-
-```powershell
-python -I gap_release.py --prefix "<dir>/BAR-ATH_tactical" --tags "<dir>/BAR-ATH_tactical_smart_tagging.xml" --out <new-dir>
+```
+README.md, technical-document.*, requirements.txt, strong_release.py, strong_model/   the submission
+development/
+  *.py, gap_solver/     all modules: the release imports its runtime modules from here,
+                        plus training (se_*.py) and earlier experiments
+  tests/                unit tests (run from development/: python -m unittest discover tests)
+  docs/                 results, design notes (docs/superpowers/specs/), earlier technical documents
+  docs/history/         former README, changelog and project notes
+  benchmark/, reports/  frozen protocols and published aggregate reports
+  licenses/             third-party licences (official metric, baselines, datasets)
 ```
 
-Expected `submission.csv` SHA-256: `31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963` (199,319 rows; two independent runs were byte-identical; the official `validate_submission.py` passes).
+Training and research scripts are run from `development/`. They expect the downloaded external datasets in folders
+next to `development/` (for example `strong-emissions-reference/`, `external-reference/`); those folders are ignored
+by git. No match data, provided or external, is in this repository.
 
-## Alternative candidate, 10 November: observed-touch decoding (stoppage-regime test)
-
-`touch_release.py` decodes the frozen control's emissions with observed-touch evidence (`predict_observed_touch(frames, 3, 2, 8)`), then applies the gap rule and the kickoff patch. The current candidate (`gap_release.py`, CSV `31b947d3…f963`) is unchanged and remains available. Results, regimes and limits: [DESIGN.md](DESIGN.md).
-
-```powershell
-python -I touch_release.py --prefix "<dir>/BAR-ATH_tactical" --tags "<dir>/BAR-ATH_tactical_smart_tagging.xml" --out <new-dir>
-```
-
-Expected `submission.csv` SHA-256: `1de96acb8ac2198c960637f6b20c2438c9ff142e76a9ab463c384b52814b8d14` (199,319 rows; two runs byte-identical; official validator passes). The user decides which file is submitted.
-
-## What happened
-
-- Full automatic camera processing produced no bounded clock alignment, so camera fusion was paused.
-- Seven licensed external matches supplied a fixed split of four training, one validation and two test matches using the exact official spell metric.
-- A frozen 31-node geometry/history tree improved complete provider-reference test spellF1 from **.37361 to .50513**, averaged over two matches.
-- Local undecided coverage fell from **69.192% to 56.151%**, or 20,717 fewer X frames; unresolved intervals fell from 1,045 to 509. Local correctness was not measured.
-- External inactive ball coordinates are almost always frozen. This can inflate D performance. Active-only spellF1 slightly declined on both held-out matches; the pooled 96.32% newly resolved agreement is dominated by D. H/A agreement was 86.36%/88.95%.
-
-The independent-provider follow-up compared the old model on eight SkillCorner development matches: mean known-play spellF1 changed from.524729 to.527643 while unknown output fell from48.98% to23.01%. A new player-motion/temporal candidate was trained externally and rejected across the fixed27-policy validation grid. [The experiment report](TEMPORAL_RECOVERY.md) records the frozen diagnostic evaluation, simpler alternatives, review fixes and limitations. More assignments alone do not establish better possessions.
-
-## Run one file
-
-End users need only `football_pipeline.py`, Python 3.9+ and their local inputs. Tactical inference uses the standard library; it does not need sklearn, NumPy, a GPU or a hosted model.
-
-```powershell
-python football_pipeline.py --version
-python football_pipeline.py tactical run --data-dir "C:\football-data" --out outputs/tactical-validated
-```
-
-The data directory may contain `tactical/` or `tactical cam/`, with tactical `_atd.xml`, `_atd.txt` and `_homography.csv` exports. Optional Smart Tagging is used only for baseline comparison, never the selected model's features. This route does not open videos, use challenge GT or apply the disputed fixed pre-kickoff D interval. It writes a separate protected output directory and reports remaining uncertainty.
-
-The model uses a .8 leaf-support gate, 12-frame stable runs and bounded two-second owner continuity. Leaf support is not a calibrated correctness probability. Invalid, degenerate or excessive-error homographies mask the geometry. Missing ball/opponent observations cannot independently establish D. Offline confirmation can use later frames.
-
-## Camera work and historical commands
-
-```powershell
-python football_pipeline.py camera demo
-python football_pipeline.py camera auto-sync --help
-python football_pipeline.py --guide
-```
-
-[AUTOMATIC_SYNC.md](AUTOMATIC_SYNC.md) documents automatic window/region selection, dense local OCR, half ambiguity and atomic output publication. Video OCR additionally requires FFmpeg/ffprobe and pretrained Tesseract English. The measured automatic run produced zero bounded links; it did not improve possession or verify replay/live status. Detailed camera exports remain local.
-
-[TWO_CAMERA.md](TWO_CAMERA.md), [PROGRESS.md](PROGRESS.md) and older design notes preserve previous experiments, including manual setup and the disputed D shortcut. They are historical records. The explicit tactical route above excludes that shortcut; the legacy default has not been promoted or certified as a final entry.
-
-## Development and reproducibility
-
-The frozen inference sources match the embedded modules in the single-file program. Additional confidence/ensemble/materialization diagnostics run from the checkout and do not add prediction routes to that bundle. `build_standalone.py` uses the preserved code-only `football_pipeline.original.py` scaffold; `football_pipeline.pre_tactical.py` is the previous automatic-sync source backup.
-
-The pinned external manifest, provenance and frozen model/policy are in [benchmark/](benchmark/README.md). Raw tracking, reference caches and frame-level predictions are obtained/generated locally outside the checkout. The external dataset is CC BY 4.0; preserve attribution and [the official metric's MIT license](OFFICIAL_METRIC_LICENSE.txt).
-
-Training/reproduction was verified with Python 3.12, NumPy 1.26.4, SciPy 1.13.1, scikit-learn 1.5.1 and pandas 2.2.2. Use a separate environment and [requirements-training.txt](requirements-training.txt). The frozen artifact is retained; do not reselect or tune using held-out results or challenge coverage.
-
-```powershell
-python -m unittest discover -s tests
-```
-
-The6 November temporal-research milestone ran **243 tests successfully, with five skips** under Python3.14. The7 November additive diagnostics suite runs **278 tests, with the same five skips**: the opt-in full-index fixture, two training-only sklearn checks, and two local-delivery tests whose protected local artifacts are absent. Five temporal training/export/calibration/gate checks passed separately under Python3.12. The40-tree motion/decoder ran from the exact31-module frozen bundle under Python3.11 `-I -S` with no third-party runtime imports. OCR integration uses generated video and optional Pillow/FFmpeg/Tesseract; availability can change skip counts. See [VERIFICATION.md](VERIFICATION.md) and the separate diagnostic/audit reports for distinct author/reviewer checks.
-
-`install_four_goal_results.ps1` and the delivery-verification utilities are local handover tools, not required for inference. They expect the completed local output/report layout; their integration tests skip when those private local fixtures are absent. `.gitattributes` preserves exact Python source bytes used by the frozen-source integrity checks.
-
-## Data boundaries
-
-Commit code, documentation, configuration, external model/provenance metadata and generated synthetic fixtures only. Keep provided footage, crops, tracking, tags, homographies, alignment maps, predictions and per-frame diagnostics local. No challenge assets or reconstruction-capable derivatives are included in this update.
-
-Do not check predictions against provided video, create manual game labels/correspondences, upload provided assets to AI services, or train/tune/calibrate using challenge data. External provider labels are evaluation targets, not inference inputs. Aggregate coverage is not accuracy, and zero X alone does not guarantee a better official temporal score.
-
-Experimental channel-contract candidate: see [input audit, reproducible command and limitations](docs/input-contract-candidate.md). This preserves the frozen baseline and reports carry separately from latent uncertainty.
-
-The new opt-in sequence route uses `python soft_candidate.py --prefix "C:/football-data/tactical cam/BAR-ATH_tactical" --out "../soft-sequence-new-run"`. Use a fresh/empty output folder. See [results, commands and tradeoffs](docs/accuracy-first-results.md), [method](docs/accuracy-first-method.md) and [fresh review/fixes](docs/accuracy-first-code-review.md).
-
-The separate missing-ball-neutral route uses `python ball_gap_candidate.py --prefix "C:/football-data/tactical cam/BAR-ATH_tactical" --out "../ball-gap-new-run"`. Preserve the earlier generation and use a fresh/empty output folder. Reproduce its fixed external comparison through `ball_gap_run.py`; the [results](docs/ball-gap-results.md) explain the serialization-only runner, remaining missed transitions and reference limitations.
-
-## Touch-transfer and decoder-restart test (11 November 2026)
-
-This test supersedes the earlier touch recommendation. [Full results](reports/touch-transfer/report.md), [fixed protocol](docs/touch-transfer-protocol.md), and aggregate JSON receipts under `reports/touch-transfer/`.
-
-Ten SkillCorner matches use natural tracking as a harm check; five DFL/WCSF matches use stop75-jitter plus deterministic touch thinning to the provided track’s owned-touch rate as a gain check. Six variants also test resetting the existing decoder across gap-rule stoppages. Settings and gates were fixed before the single 90-case run; five additional natural-control scores serve reproduction only.
-
-Provider ranges below use natural tracks. All provided-track information is bounded aggregates.
-
-| Track | Observed share | Speed m/s | Surprise m/s | Owned/min visible | Surprise ≥3 share | Remote peak share | Bonus frames/owned touch |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Provided | 0.584179 | 5.108300 | 1.126769 | 10.457861 | 0.155712 | 0.297080 | 96.377125 |
-| skillcorner (n=10) | 0.525990–0.643804 | 4.708561–5.217943 | 1.062871–1.201334 | 18.007388–21.637317 | 0.150967–0.175843 | 0.197628–0.231284 | 55.313980–61.575855 |
-| dfl (n=4) | 1.000000–1.000000 | 0.000000–1.585172 | 0.000000–0.200539 | 17.501858–19.617192 | 0.089603–0.111106 | 0.090788–0.136697 | 45.627598–49.993754 |
-| wcsf (n=1) | 1.000000–1.000000 | 1.592804–1.592804 | 0.112062–0.112062 | 21.271552–21.271552 | 0.121253–0.121253 | 0.129058–0.129058 | 43.945428–43.945428 |
-
-S* = 1.126768830; R* = 10.457861445. All profile stop checks passed.
-
-| DFL/WCSF scored track | Median surprise m/s |
-| --- | --- |
-| dfl-J03WN1 | 1.066647 |
-| dfl-J03WOH | 1.062326 |
-| dfl-J03WOY | 1.039035 |
-| dfl-J03WR9 | 1.081570 |
-| wcsf-used-match | 1.146687 |
-
-| Group | Control | Candidate | Touch | Thin | Reset | Touch+reset |
-|---|---|---|---|---|---|---|
-| dfl_wcsf_primary | 0.343783 | 0.401270 | 0.477651 | 0.398301 | 0.418409 | 0.490677 |
-| skillcorner_confirmation | 0.586912 | 0.584341 | 0.583469 | 0.570125 | 0.584341 | 0.583469 |
-| skillcorner_development | 0.606222 | 0.603152 | 0.616479 | 0.600876 | 0.603618 | 0.616766 |
-
-| Gate | Value | Pass |
-|---|---|---|
-| A | -0.000871 | True |
-| B | -0.014216 | False |
-| C | -0.002969 | False |
-| D | +0.000000 | True |
-| E | +0.018823 | True |
-| F | +0.000000 | True |
-| G | +0.000000 | True |
-
-Recommended existing file: **candidate**, SHA-256 `31b947d3b250b6267a7d8f0aac0c4e4eafd82a4fc873c82759806e676b1bf963`. Decoder restart qualifies: **True**. The user chooses the submission; no file was regenerated. A qualified reset needs a separate release brief. All reproduction checks passed within 1e-9.
-
-**Limits.** Every match has been scored before; touch settings were selected on five development SkillCorner matches and dfl-J03WN1. This is the third test of touch evidence and is post-hoc. SkillCorner references have no dead ball and longer possessions than the challenge. White noise and random thinning match two tracking statistics, not the causes of missing touches; real misses may be nonrandom. Touch gating sets contain five and three matches. Expected reset gain is about 0.01, below what two matches can confirm; gate E is a consistency check, not proof. The reset idea was chosen after a probe on nongating matches. The regime hides the ball up to two seconds after a restart, which may not match the provided track reacquisition delay.
-
-The full report contains every match’s spell/macro scores, dead recall, spell counts, touch rates and bonus shares, reset changed shares and owner agreement, and the comparison with the earlier nongating probe. No public truth was opened or existing predictor changed. Both Desktop submission hashes are unchanged.
+Earlier submitted versions (v1–v8 and the original decision-tree release) are listed with their hashes and commits in
+[`development/docs/history/README-history.md`](development/docs/history/README-history.md).

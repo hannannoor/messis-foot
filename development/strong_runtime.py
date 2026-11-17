@@ -12,7 +12,7 @@ import numpy as np
 
 from se_sym import swap_plan, swapped
 
-MODEL_DIR = Path(__file__).resolve().parent / 'strong_model'
+MODEL_DIR = Path(__file__).resolve().parent.parent / 'strong_model'   # weights sit at the repository root
 POWER = 2.0
 MISSING_W = 1.0   # log-evidence weight on missing-ball rows (release: 0)
 SWITCH_COST = 20.0  # decoder switch cost (release: 32)
